@@ -184,6 +184,7 @@ function Hero() {
     const playHeroVideo = () => {
       video.muted = true
       video.playsInline = true
+      video.setAttribute('fetchpriority', 'high')
       void video.play().catch(() => {})
     }
 
@@ -347,6 +348,8 @@ function SupportPaymentDialog({ onClose }: { onClose: () => void }) {
             className="h-full w-full object-contain"
             src={assetPath('/wechat-pay-qr.jpg')}
             alt="微信收款码，固定支持金额 6 元"
+            loading="lazy"
+            decoding="async"
             onLoad={() => setIsQrReady(true)}
             onError={(event) => {
               setIsQrReady(false)
@@ -438,7 +441,7 @@ function FeatureCard({
       transition={{ duration: 0.75, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
     >
       <div>
-        <img className="mb-10 h-10 w-10 rounded-xl object-cover shadow-sm sm:h-12 sm:w-12" src={icon} alt="" />
+        <img className="mb-10 h-10 w-10 rounded-xl object-cover shadow-sm sm:h-12 sm:w-12" src={icon} alt="" loading="lazy" decoding="async" />
         <div className="mb-7 flex items-start justify-between gap-4">
           <h3 className="text-2xl leading-none text-[#2B221A] sm:text-3xl">{title}</h3>
           <span className="text-xs text-[#9B8A78]">{number}</span>
@@ -506,7 +509,7 @@ function Features({ onOpenWorks }: { onOpenWorks: () => void }) {
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
           >
-            <video className="absolute inset-0 h-full w-full object-cover opacity-80" src={cardVideo} autoPlay loop muted playsInline />
+            <video className="absolute inset-0 h-full w-full object-cover opacity-80" src={cardVideo} autoPlay loop muted playsInline preload="metadata" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#2B221A]/65 via-[#F8F1E6]/5 to-transparent" />
             <span className="absolute right-5 top-5 inline-flex items-center gap-2 rounded-full bg-[#FFF7E8]/90 px-3 py-2 text-xs font-bold text-[#2B221A] shadow-sm backdrop-blur-sm transition group-hover:gap-3">
               <Images className="h-4 w-4" />
@@ -793,6 +796,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                     controls
                     muted
                     playsInline
+                    preload="metadata"
                     onLoadedData={() => setLoadedWorks((current) => ({ ...current, [work.src]: true }))}
                     onError={() => setLoadedWorks((current) => ({ ...current, [work.src]: false }))}
                   />
@@ -801,6 +805,9 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                     className="h-full w-full object-cover"
                     src={work.src}
                     alt={work.title}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    fetchPriority={index === 0 ? 'high' : 'auto'}
                     onLoad={() => setLoadedWorks((current) => ({ ...current, [work.src]: true }))}
                     onError={(event) => {
                       setLoadedWorks((current) => ({ ...current, [work.src]: false }))
@@ -861,6 +868,8 @@ function DetailImage({ src, label, className = '' }: { src: string; label: strin
         className="h-full w-full object-cover"
         src={src}
         alt={label}
+        loading="lazy"
+        decoding="async"
         onLoad={() => setIsLoaded(true)}
         onError={(event) => {
           setIsLoaded(false)
