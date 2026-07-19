@@ -1,0 +1,13 @@
+.message-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.message-scrollbar::-webkit-scrollbar-track {
+  background: rgba(92, 70, 43, 0.08);
+  border-radius: 999px;
+}
+
+.message-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(92, 70, 43, 0.28);
+  border-radius: 999px;
+}
