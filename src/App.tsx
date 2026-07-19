@@ -811,7 +811,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                 {!loadedWorks[work.src] ? (
                   <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm leading-relaxed text-[#6B5A48]">
                     <span className="rounded-2xl border border-dashed border-[#CDB99F] bg-[#FFF7EA]/90 p-4">
-                      请添加文件：{work.src}
+                      加载中
                     </span>
                   </div>
                 ) : null}
@@ -869,7 +869,7 @@ function DetailImage({ src, label, className = '' }: { src: string; label: strin
       />
       {!isLoaded ? (
         <div className="absolute inset-0 flex items-center justify-center p-5 text-center text-sm leading-relaxed text-[#6B5A48]">
-          <span className="rounded-2xl border border-dashed border-[#CDB99F] bg-[#FFF7EA]/90 p-4">请添加图片：{src}</span>
+          <span className="rounded-2xl border border-dashed border-[#CDB99F] bg-[#FFF7EA]/90 p-4">加载中</span>
         </div>
       ) : null}
     </div>
