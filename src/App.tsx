@@ -168,6 +168,7 @@ function AnimatedLetter({
 }
 
 function Hero() {
+  const heroVideoRef = useRef<HTMLVideoElement>(null)
   const navItems = [
     { label: '我的故事', href: '#our-story' },
     { label: '个人信息', href: '#collective' },
@@ -176,10 +177,31 @@ function Hero() {
     { label: '留言联系', href: '#inquiries' },
   ]
 
+  useEffect(() => {
+    const video = heroVideoRef.current
+    if (!video) return undefined
+
+    const playHeroVideo = () => {
+      video.muted = true
+      video.playsInline = true
+      void video.play().catch(() => {})
+    }
+
+    playHeroVideo()
+    window.addEventListener('touchstart', playHeroVideo, { once: true, passive: true })
+    document.addEventListener('visibilitychange', playHeroVideo)
+
+    return () => {
+      window.removeEventListener('touchstart', playHeroVideo)
+      document.removeEventListener('visibilitychange', playHeroVideo)
+    }
+  }, [])
+
   return (
     <section className="h-screen bg-[#F8F1E6] p-4 md:p-6">
       <div className="relative h-full overflow-hidden rounded-2xl border border-[#E8DCCB] bg-[#FDF8EE] shadow-[0_30px_90px_rgba(112,88,58,0.18)] md:rounded-[2rem]">
         <video
+          ref={heroVideoRef}
           className="hero-video absolute inset-0 h-full w-full object-cover"
           src={heroVideo}
           autoPlay
