@@ -25,6 +25,7 @@ import {
 import './App.css'
 
 const ink = '#2B221A'
+const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 const heroVideo =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4'
 const cardVideo =
@@ -322,7 +323,7 @@ function SupportPaymentDialog({ onClose }: { onClose: () => void }) {
         <div className="relative mx-auto mt-6 flex aspect-square w-full max-w-[260px] items-center justify-center overflow-hidden rounded-2xl border border-[#E0CFB8] bg-white p-3">
           <img
             className="h-full w-full object-contain"
-            src="/wechat-pay-qr.jpg"
+            src={assetPath('/wechat-pay-qr.jpg')}
             alt="微信收款码，固定支持金额 6 元"
             onLoad={() => setIsQrReady(true)}
             onError={(event) => {
@@ -703,25 +704,25 @@ const works = [
   {
     title: '作品一：视觉练习',
     description: '把你的第一张作品图片放到 public/works/work-1.jpg，它会显示在这里。',
-    src: '/works/work-1.jpg',
+    src: assetPath('/works/work-1.jpg'),
     type: 'image',
   },
   {
     title: '作品二：趣味网站',
     description: '把你的第二张作品图片放到 public/works/work-2.jpg，用来展示网页或界面截图。',
-    src: '/works/work-2.jpg',
+    src: assetPath('/works/work-2.jpg'),
     type: 'image',
   },
   {
     title: '作品三：影像片段',
     description: '把视频作品放到 public/works/work-3.mp4，这张卡会自动以视频形式播放。',
-    src: '/works/work-3.mp4',
+    src: assetPath('/works/work-3.mp4'),
     type: 'video',
   },
   {
     title: '作品四：游戏开发',
     description: '把游戏截图放到 public/works/work-4.jpg，用来展示你的玩法、画面或关卡。',
-    src: '/works/work-4.jpg',
+    src: assetPath('/works/work-4.jpg'),
     type: 'image',
   },
 ] satisfies Array<{ title: string; description: string; src: string; type: 'image' | 'video' }>
@@ -806,8 +807,13 @@ function WorksPage({ onBack }: { onBack: () => void }) {
   )
 }
 
-const awardImages = ['/awards/honor-1.jpg', '/awards/honor-2.jpg', '/awards/honor-3.jpg', '/awards/honor-4.jpg']
-const featuredPhoto = '/photos/featured-photo.jpg'
+const awardImages = [
+  assetPath('/awards/honor-1.jpg'),
+  assetPath('/awards/honor-2.jpg'),
+  assetPath('/awards/honor-3.jpg'),
+  assetPath('/awards/honor-4.jpg'),
+]
+const featuredPhoto = assetPath('/photos/featured-photo.jpg')
 
 function calculateAge(birthday: string) {
   const birthDate = new Date(`${birthday}T00:00:00+08:00`)
