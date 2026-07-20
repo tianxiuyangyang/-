@@ -334,7 +334,7 @@ function About({ onOpenSecret }: { onOpenSecret: () => void }) {
             <Leaf className="h-4 w-4 text-[#6F9B5C]" />
             秘境空间
           </button>
-          <div className="secret-tree" aria-hidden="true">
+          <div className="secret-tree hidden sm:block" aria-hidden="true">
             <span className="secret-tree__leaf secret-tree__leaf--top" />
             <span className="secret-tree__leaf secret-tree__leaf--left" />
             <span className="secret-tree__leaf secret-tree__leaf--right" />
