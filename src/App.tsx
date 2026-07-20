@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import {
   ArrowRight,
   Award,
+  Bird,
   CalendarDays,
   Check,
   Clapperboard,
@@ -19,10 +20,12 @@ import {
   Star,
   Send,
   Sparkles,
+  Trash2,
   UserRound,
   X,
 } from 'lucide-react'
 import './App.css'
+import { loadStoredMessages, mergeMessages, messageStorageKey, saveStoredMessages } from './messageStorage'
 
 const ink = '#2B221A'
 const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
@@ -41,6 +44,39 @@ type Message = {
   name: string
   content: string
   created_at: string
+}
+
+const deletedMessagesKey = 'prisma-deleted-message-ids'
+
+const getDeletedMessageIds = () => {
+  if (typeof window === 'undefined') return new Set<string>()
+  try {
+    const savedIds = window.localStorage.getItem(deletedMessagesKey)
+    const parsed: unknown = savedIds ? JSON.parse(savedIds) : []
+    return new Set(Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [])
+  } catch {
+    return new Set<string>()
+  }
+}
+
+const rememberDeletedMessage = (messageId: string) => {
+  const deletedIds = getDeletedMessageIds()
+  deletedIds.add(messageId)
+  window.localStorage.setItem(deletedMessagesKey, JSON.stringify(Array.from(deletedIds)))
+}
+
+const removeDeletedMessages = (messages: Message[]) => {
+  const deletedIds = getDeletedMessageIds()
+  return messages.filter((message) => !deletedIds.has(message.id))
+}
+
+const getBrowserMessages = () => {
+  if (typeof window === 'undefined') return demoMessages
+  const savedMessages = loadStoredMessages(window.localStorage)
+  if (window.localStorage.getItem(messageStorageKey) !== null) {
+    return removeDeletedMessages(savedMessages)
+  }
+  return removeDeletedMessages(demoMessages)
 }
 
 const demoMessages: Message[] = [
@@ -272,6 +308,14 @@ function About({ onOpenSecret }: { onOpenSecret: () => void }) {
   return (
     <section id="our-story" className="bg-[#F8F1E6] px-4 py-20 sm:px-6 md:py-28">
       <div className="relative mx-auto max-w-6xl rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] px-6 py-16 text-center shadow-[0_24px_80px_rgba(112,88,58,0.12)] sm:px-10 md:py-24">
+        <div className="decor-lighthouse" aria-hidden="true">
+          <span className="decor-lighthouse__beam decor-lighthouse__beam--left" />
+          <span className="decor-lighthouse__beam decor-lighthouse__beam--right" />
+          <span className="decor-lighthouse__roof" />
+          <span className="decor-lighthouse__light" />
+          <span className="decor-lighthouse__tower" />
+          <span className="decor-lighthouse__base" />
+        </div>
         <div className="absolute right-4 top-4 z-10 flex flex-col items-end gap-2 sm:right-6 sm:top-6">
           <button
             type="button"
@@ -290,6 +334,13 @@ function About({ onOpenSecret }: { onOpenSecret: () => void }) {
             <Leaf className="h-4 w-4 text-[#6F9B5C]" />
             秘境空间
           </button>
+          <div className="secret-tree" aria-hidden="true">
+            <span className="secret-tree__leaf secret-tree__leaf--top" />
+            <span className="secret-tree__leaf secret-tree__leaf--left" />
+            <span className="secret-tree__leaf secret-tree__leaf--right" />
+            <span className="secret-tree__trunk" />
+            <span className="secret-tree__ground" />
+          </div>
         </div>
         <p className="mb-6 text-[10px] uppercase tracking-[0.3em] text-[#9A6B3F] sm:text-xs">视觉创作</p>
         <WordsPullUpMultiStyle
@@ -536,17 +587,18 @@ function getSupabaseConfig() {
 }
 
 function useMessages() {
-  const [messages, setMessages] = useState<Message[]>(demoMessages)
+  const [messages, setMessages] = useState<Message[]>(getBrowserMessages)
   const [isLoading, setIsLoading] = useState(false)
-  const [status, setStatus] = useState('演示模式：连接 Supabase 后，留言就能被所有访客共同看到。')
+  const [status, setStatus] = useState('')
   const config = useMemo(getSupabaseConfig, [])
   const hasSupabase = Boolean(config.url && config.key)
 
   useEffect(() => {
+    const savedMessages = removeDeletedMessages(loadStoredMessages(window.localStorage))
     if (!hasSupabase || !config.url || !config.key) {
-      const saved = window.localStorage.getItem('prisma-messages')
-      if (saved) {
-        setMessages(JSON.parse(saved) as Message[])
+      if (savedMessages.length > 0) {
+        setMessages(savedMessages)
+        setStatus('已加载本机保存的留言。')
       }
       return
     }
@@ -567,10 +619,17 @@ function useMessages() {
           throw new Error('无法加载留言')
         }
         const data = (await response.json()) as Message[]
-        setMessages(data)
+        const mergedMessages = removeDeletedMessages(mergeMessages(data, savedMessages))
+        setMessages(mergedMessages)
+        saveStoredMessages(window.localStorage, mergedMessages)
         setStatus('公开留言板已连接。')
       } catch {
-        setStatus('暂时无法连接 Supabase，当前显示本地演示留言。')
+        if (savedMessages.length > 0) {
+          setMessages(savedMessages)
+          setStatus('暂时无法连接 Supabase，已显示本机保存的留言。')
+        } else {
+          setStatus('暂时无法连接 Supabase，当前显示本地演示留言。')
+        }
       } finally {
         setIsLoading(false)
       }
@@ -588,9 +647,9 @@ function useMessages() {
     }
 
     if (!hasSupabase || !config.url || !config.key) {
-      const nextMessages = [nextMessage, ...messages]
+      const nextMessages = mergeMessages([nextMessage], messages)
       setMessages(nextMessages)
-      window.localStorage.setItem('prisma-messages', JSON.stringify(nextMessages))
+      saveStoredMessages(window.localStorage, nextMessages)
       setStatus('已保存到本机。部署前添加 Supabase 配置后，留言会变成公开共享。')
       return
     }
@@ -598,35 +657,65 @@ function useMessages() {
     const supabaseUrl = config.url
     const supabaseKey = config.key
 
-    const response = await fetch(`${supabaseUrl}/rest/v1/messages`, {
-      method: 'POST',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        Prefer: 'return=representation',
-      },
-      body: JSON.stringify({ name, content }),
-    })
+    const optimisticMessages = mergeMessages([nextMessage], messages)
+    setMessages(optimisticMessages)
+    saveStoredMessages(window.localStorage, optimisticMessages)
 
-    if (!response.ok) {
-      throw new Error('留言发送失败')
+    try {
+      const response = await fetch(`${supabaseUrl}/rest/v1/messages`, {
+        method: 'POST',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=representation',
+        },
+        body: JSON.stringify({ name, content }),
+      })
+
+      if (!response.ok) {
+        throw new Error('留言发送失败')
+      }
+
+      const [savedMessage] = (await response.json()) as Message[]
+      const syncedMessages = mergeMessages([savedMessage], optimisticMessages)
+      setMessages(syncedMessages)
+      saveStoredMessages(window.localStorage, syncedMessages)
+      setStatus('留言已发布，所有访客都可以看到。')
+    } catch {
+      setStatus('网络暂时不可用，留言已先保存到本机。')
     }
-
-    const [savedMessage] = (await response.json()) as Message[]
-    setMessages([savedMessage, ...messages])
-    setStatus('留言已发布，所有访客都可以看到。')
   }
 
-  return { messages, addMessage, isLoading, status }
+  const deleteMessage = (messageId: string) => {
+    rememberDeletedMessage(messageId)
+    setMessages((currentMessages) => {
+      const nextMessages = currentMessages.filter((message) => message.id !== messageId)
+      if (typeof window !== 'undefined') {
+        saveStoredMessages(window.localStorage, nextMessages)
+      }
+      return nextMessages
+    })
+    setStatus('管理员模式：留言已删除。')
+  }
+
+  return { messages, addMessage, deleteMessage, isLoading, status }
 }
 
 function MessageBoard() {
-  const { messages, addMessage, isLoading, status } = useMessages()
+  const { messages, addMessage, deleteMessage, isLoading, status } = useMessages()
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
   const [isPosting, setIsPosting] = useState(false)
   const [error, setError] = useState('')
+  const [isAdminPromptOpen, setIsAdminPromptOpen] = useState(false)
+  const [adminPassword, setAdminPassword] = useState('')
+  const [adminError, setAdminError] = useState('')
+  const [isAdminMode, setIsAdminMode] = useState(false)
+
+  useEffect(() => {
+    window.localStorage.removeItem('prisma-admin-mode')
+  }, [])
 
   const submitMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -650,10 +739,30 @@ function MessageBoard() {
     }
   }
 
+  const submitAdminPassword = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (adminPassword.trim() !== '3180') {
+      setAdminError('密码不正确。')
+      return
+    }
+
+    setIsAdminMode(true)
+    setAdminPassword('')
+    setAdminError('')
+    setIsAdminPromptOpen(false)
+  }
+
   return (
-    <section id="inquiries" className="bg-[#F8F1E6] px-4 py-20 sm:px-6 md:py-28">
+    <section
+      id="inquiries"
+      className={`px-4 py-20 transition-colors duration-500 sm:px-6 md:py-28 ${isAdminMode ? 'bg-[#DCEEFF]' : 'bg-[#F8F1E6]'}`}
+    >
       <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[0.85fr_1.15fr]">
-        <div className="rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] p-6 shadow-[0_24px_80px_rgba(112,88,58,0.12)] sm:p-8 md:p-10">
+        <div
+          className={`rounded-[1.75rem] border p-6 shadow-[0_24px_80px_rgba(112,88,58,0.12)] transition-colors duration-500 sm:p-8 md:p-10 ${
+            isAdminMode ? 'border-[#9CC9F2] bg-[#F3FAFF]' : 'border-[#E6D8C6] bg-[#FFF9EF]'
+          }`}
+        >
           <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-full bg-[#2B221A] text-[#FFF7E8]">
             <MessageCircle className="h-5 w-5" />
           </div>
@@ -677,7 +786,11 @@ function MessageBoard() {
           </div>
         </div>
 
-        <div className="rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF7EA] p-4 shadow-[0_24px_80px_rgba(112,88,58,0.10)] sm:p-5 md:p-6">
+        <div
+          className={`rounded-[1.75rem] border p-4 shadow-[0_24px_80px_rgba(112,88,58,0.10)] transition-colors duration-500 sm:p-5 md:p-6 ${
+            isAdminMode ? 'border-[#9CC9F2] bg-[#EEF8FF]' : 'border-[#E6D8C6] bg-[#FFF7EA]'
+          }`}
+        >
           <form onSubmit={submitMessage} className="grid gap-3 md:grid-cols-[0.8fr_1.2fr_auto]">
             <input
               value={name}
@@ -693,27 +806,101 @@ function MessageBoard() {
               placeholder="写一句留言"
               maxLength={280}
             />
-            <button
-              type="submit"
-              disabled={isPosting}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#2B221A] px-5 text-sm font-bold text-[#FFF7E8] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <Send className="h-4 w-4" />
-              {isPosting ? '发送中' : '发送'}
-            </button>
+            <div className="relative flex flex-col items-stretch">
+              <button
+                type="button"
+                onClick={() => {
+                  if (isAdminMode) {
+                    setIsAdminMode(false)
+                    setIsAdminPromptOpen(false)
+                    setAdminPassword('')
+                    setAdminError('')
+                    return
+                  }
+                  setIsAdminPromptOpen(true)
+                }}
+                className="admin-bird-button absolute -top-10 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[#D5E5F4] bg-white/45 text-[#5680A6] opacity-35 shadow-[0_8px_18px_rgba(68,110,150,0.16)] transition hover:scale-110 hover:bg-white hover:opacity-100"
+                aria-label="管理员入口"
+              >
+                <Bird className="h-4 w-4" />
+              </button>
+              <button
+                type="submit"
+                disabled={isPosting}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#2B221A] px-5 text-sm font-bold text-[#FFF7E8] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Send className="h-4 w-4" />
+                {isPosting ? '发送中' : '发送'}
+              </button>
+            </div>
           </form>
+          {isAdminPromptOpen ? (
+            <form
+              onSubmit={submitAdminPassword}
+              className="mt-4 rounded-2xl border border-[#B9D5EE] bg-white/75 p-4 shadow-[0_12px_30px_rgba(70,118,160,0.12)]"
+            >
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <p className="text-sm font-bold text-[#315D86]">密码</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAdminPromptOpen(false)
+                    setAdminPassword('')
+                    setAdminError('')
+                  }}
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E8F3FF] text-[#315D86] transition hover:bg-[#D5E9FA]"
+                  aria-label="关闭管理员密码输入"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  value={adminPassword}
+                  onChange={(event) => {
+                    setAdminPassword(event.target.value)
+                    setAdminError('')
+                  }}
+                  className="h-11 flex-1 rounded-2xl border border-[#B9D5EE] bg-white px-4 text-sm text-[#2B221A] outline-none transition placeholder:text-[#91A8BB] focus:border-[#5680A6]"
+                  placeholder="输入密码"
+                  type="password"
+                />
+                <button type="submit" className="h-11 rounded-2xl bg-[#315D86] px-5 text-sm font-bold text-white transition hover:bg-[#244C70]">
+                  进入
+                </button>
+              </div>
+              {adminError ? <p className="mt-2 text-xs text-red-600">{adminError}</p> : null}
+            </form>
+          ) : null}
+          {isAdminMode ? (
+            <p className="mt-3 rounded-2xl border border-[#B9D5EE] bg-[#E8F3FF] px-4 py-2 text-xs font-bold text-[#315D86]">
+              管理员模式已开启，可以删除留言。
+            </p>
+          ) : null}
           {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
-          <p className="mt-3 text-xs text-[#8F7E69]">{isLoading ? '正在加载留言...' : status}</p>
+          {isLoading || status ? <p className="mt-3 text-xs text-[#8F7E69]">{isLoading ? '正在加载留言...' : status}</p> : null}
           <div className="message-scrollbar mt-6 max-h-[430px] space-y-3 overflow-y-auto pr-2">
             {messages.map((message) => (
               <article key={message.id} className="rounded-2xl border border-[#E0CFB8] bg-white/55 p-4">
                 <div className="mb-2 flex items-center justify-between gap-4">
                   <h3 className="text-sm font-bold text-[#8C633F]">{message.name}</h3>
-                  <time className="shrink-0 text-[11px] text-[#9B8A78]">
-                    {new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' }).format(
-                      new Date(message.created_at),
-                    )}
-                  </time>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <time className="text-[11px] text-[#9B8A78]">
+                      {new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' }).format(
+                        new Date(message.created_at),
+                      )}
+                    </time>
+                    {isAdminMode ? (
+                      <button
+                        type="button"
+                        onClick={() => deleteMessage(message.id)}
+                        className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E8F3FF] text-[#315D86] transition hover:bg-red-50 hover:text-red-600"
+                        aria-label={`删除 ${message.name} 的留言`}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
                 <p className="text-sm leading-relaxed text-[#5F5144]">{message.content}</p>
               </article>
@@ -931,8 +1118,6 @@ function DetailInfoPage({ onBack }: { onBack: () => void }) {
               { icon: CalendarDays, label: '年龄', value: `${age} 岁` },
               { icon: Star, label: '星座', value: '射手座' },
               { icon: MapPin, label: '所在地', value: '山东淄博' },
-              { icon: MessageCircle, label: 'QQ', value: '2467548120' },
-              { icon: Mail, label: '邮箱', value: '2467548120@qq.com' },
             ].map((item) => {
               const Icon = item.icon
               return (
@@ -977,6 +1162,22 @@ function DetailInfoPage({ onBack }: { onBack: () => void }) {
                   />
                 ))}
               </div>
+              <div className="mt-5 grid gap-2 rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-3 text-left shadow-[0_10px_28px_rgba(112,88,58,0.06)]">
+                <div className="flex items-center gap-3 rounded-xl bg-white/55 px-3 py-2">
+                  <MessageCircle className="h-4 w-4 shrink-0 text-[#8C633F]" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-[#9B8A78]">QQ</p>
+                    <p className="break-all text-sm font-bold text-[#2B221A]">2467548120</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-xl bg-white/55 px-3 py-2">
+                  <Mail className="h-4 w-4 shrink-0 text-[#8C633F]" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-[#9B8A78]">邮箱</p>
+                    <p className="break-all text-sm font-bold text-[#2B221A]">2467548120@qq.com</p>
+                  </div>
+                </div>
+              </div>
             </article>
           </div>
 
@@ -998,12 +1199,211 @@ function DetailInfoPage({ onBack }: { onBack: () => void }) {
 
 const SECRET_VIDEO_SRC =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260511_080827_a9e5ad52-b6ee-4e79-b393-d936f179cfd7.mp4'
+const MEASURED_BG_IMAGE =
+  'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260713_140344_79e1296a-86d7-43fd-9b5f-63ffe560f291.png&w=1280&q=85'
+const MEASURED_FRONT_VIDEO =
+  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260713_162101_0d7498c5-29bb-47bf-a99f-2773c0a880a9.mp4'
+const MEASURED_OVERLAY_IMAGE = 'https://soft-zoom-63098134.figma.site/_assets/v11/3f10f1876e118f72a396e05a6c2d099569478272.png'
+const CINEMATIC_SECRET_VIDEO =
+  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_094145_4a271a6c-3869-4f1c-8aa7-aeb0cb227994.mp4'
+
+function CinematicSecretScene() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return undefined
+    void video.play().catch(() => {})
+    return undefined
+  }, [])
+
+  const metadata = [
+    { icon: Star, text: '8.7/10 IMDB', fill: true },
+    { icon: Clock3, text: '132 min' },
+    { icon: CalendarDays, text: '2026年7月20日' },
+  ]
+
+  return (
+    <div className="relative h-screen overflow-hidden bg-black font-helvetica-neue text-white">
+      <video
+        ref={videoRef}
+        className="fixed inset-0 z-0 h-full w-full object-cover"
+        src={CINEMATIC_SECRET_VIDEO}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        crossOrigin="anonymous"
+      />
+      <div
+        className="pointer-events-none fixed inset-0 z-[1] backdrop-blur-xl"
+        style={{
+          maskImage: 'linear-gradient(to top, black 0%, transparent 45%)',
+          WebkitMaskImage: 'linear-gradient(to top, black 0%, transparent 45%)',
+        }}
+      />
+      <div className="pointer-events-none relative z-10 flex h-screen flex-col justify-end px-4 pb-24 sm:px-6 md:px-12 md:pb-20">
+        <div className="max-w-4xl">
+          <div className="mb-6 flex flex-wrap gap-3 text-xs text-white sm:mb-8 sm:gap-6 sm:text-sm">
+            {metadata.map((item, index) => {
+              const Icon = item.icon
+              return (
+                <div key={item.text} className="animate-blur-fade-up flex items-center gap-2" style={{ animationDelay: `${300 + index * 80}ms` }}>
+                  <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${item.fill ? 'fill-white' : ''}`} />
+                  <span className="font-medium">{item.text}</span>
+                </div>
+              )
+            })}
+          </div>
+          <h2
+            className="animate-blur-fade-up mb-4 max-w-4xl text-3xl font-normal leading-[0.95] tracking-[-0.04em] text-white sm:text-5xl md:mb-6 md:text-6xl lg:text-7xl"
+            style={{ animationDelay: '540ms' }}
+          >
+            Step Through. Work Smarter.
+          </h2>
+          <p className="animate-blur-fade-up max-w-2xl text-base leading-relaxed text-gray-300 sm:text-lg md:text-xl" style={{ animationDelay: '680ms' }}>
+            A voyage through forgotten realms, where past and future intertwine.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function MeasuredSecretScene() {
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<SVGSVGElement>(null)
+  const maskCanvasRef = useRef<HTMLCanvasElement>(null)
+  const revealRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const section = sectionRef.current
+    const canvas = maskCanvasRef.current
+    const reveal = revealRef.current
+    const grid = gridRef.current
+    const video = videoRef.current
+    if (!section || !canvas || !reveal) return undefined
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return undefined
+
+    let width = 0
+    let height = 0
+    let targetX = window.innerWidth / 2
+    let targetY = window.innerHeight / 2
+    let smoothX = targetX
+    let smoothY = targetY
+    let gridX = 0
+    let gridY = 0
+    let rafId = 0
+
+    const resize = () => {
+      width = window.innerWidth
+      height = window.innerHeight
+      canvas.width = Math.round(width)
+      canvas.height = Math.round(height)
+    }
+
+    const drawMask = () => {
+      ctx.clearRect(0, 0, width, height)
+      const gradient = ctx.createRadialGradient(smoothX, smoothY, 0, smoothX, smoothY, 260)
+      gradient.addColorStop(0, 'rgba(255,255,255,1)')
+      gradient.addColorStop(0.4, 'rgba(255,255,255,1)')
+      gradient.addColorStop(0.6, 'rgba(255,255,255,0.75)')
+      gradient.addColorStop(0.75, 'rgba(255,255,255,0.4)')
+      gradient.addColorStop(0.88, 'rgba(255,255,255,0.12)')
+      gradient.addColorStop(1, 'rgba(255,255,255,0)')
+      ctx.fillStyle = gradient
+      ctx.fillRect(0, 0, width, height)
+      const maskImage = `url(${canvas.toDataURL('image/png')})`
+      reveal.style.maskImage = maskImage
+      reveal.style.webkitMaskImage = maskImage
+    }
+
+    const onPointerMove = (event: PointerEvent) => {
+      targetX = event.clientX
+      targetY = event.clientY
+    }
+
+    const tick = () => {
+      smoothX += (targetX - smoothX) * 0.1
+      smoothY += (targetY - smoothY) * 0.1
+      drawMask()
+
+      if (grid) {
+        const nextGridX = ((smoothX - width / 2) / Math.max(width / 2, 1)) * 16
+        const nextGridY = ((smoothY - height / 2) / Math.max(height / 2, 1)) * 16
+        gridX += (nextGridX - gridX) * 0.06
+        gridY += (nextGridY - gridY) * 0.06
+        grid.style.transform = `translate3d(${gridX}px, ${gridY}px, 0)`
+      }
+
+      rafId = window.requestAnimationFrame(tick)
+    }
+
+    resize()
+    void video?.play().catch(() => {})
+    window.addEventListener('resize', resize)
+    window.addEventListener('pointermove', onPointerMove)
+    rafId = window.requestAnimationFrame(tick)
+
+    return () => {
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.cancelAnimationFrame(rafId)
+    }
+  }, [])
+
+  return (
+    <div ref={sectionRef} className="font-helvetica-neue relative h-screen overflow-hidden bg-white text-white">
+      <svg ref={gridRef} className="pointer-events-none absolute inset-0 z-0 h-full w-full opacity-10" aria-hidden="true">
+        <defs>
+          <pattern id="measured-grid" width="48" height="48" patternUnits="userSpaceOnUse">
+            <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#64748b" strokeWidth="0.6" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#measured-grid)" />
+      </svg>
+
+      <div
+        className="absolute inset-0 z-10 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${MEASURED_BG_IMAGE})` }}
+        aria-hidden="true"
+      />
+
+      <div className="pointer-events-none absolute left-0 right-0 top-20 z-20 flex justify-center px-4 sm:top-28 md:top-32">
+        <h2 className="font-serif text-[4.5rem] uppercase leading-[0.9] text-white xs:text-[5.5rem] sm:text-[10rem] md:text-[13rem] lg:text-[16rem]">
+          Measured
+        </h2>
+      </div>
+
+      <img className="pointer-events-none absolute inset-0 z-[25] h-full w-full object-cover" src={MEASURED_OVERLAY_IMAGE} alt="" />
+
+      <div ref={revealRef} className="absolute inset-0 z-30" style={{ clipPath: 'inset(40% 0 0 0)' }} aria-hidden="true">
+        <video
+          ref={videoRef}
+          className="h-full w-full object-cover"
+          src={MEASURED_FRONT_VIDEO}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          crossOrigin="anonymous"
+        />
+      </div>
+
+      <canvas ref={maskCanvasRef} className="hidden" aria-hidden="true" />
+    </div>
+  )
+}
 
 function SecretSpacePage({ onBack }: { onBack: () => void }) {
-  const [framesReady, setFramesReady] = useState(false)
+  const [secretScene, setSecretScene] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const videoBgRef = useRef<HTMLDivElement>(null)
-  const displayCanvasRef = useRef<HTMLCanvasElement>(null)
   const butterflyLayerRef = useRef<HTMLDivElement>(null)
   const framesRef = useRef<HTMLCanvasElement[]>([])
 
@@ -1051,8 +1451,9 @@ function SecretSpacePage({ onBack }: { onBack: () => void }) {
       capturing = false
       if (frames.length > 1) {
         framesRef.current = frames
-        setFramesReady(true)
       }
+      video.currentTime = 0
+      void video.play().catch(() => {})
     }
 
     video.addEventListener('loadedmetadata', onLoaded)
@@ -1071,42 +1472,13 @@ function SecretSpacePage({ onBack }: { onBack: () => void }) {
   }, [])
 
   useEffect(() => {
-    if (!framesReady) return undefined
-    const canvas = displayCanvasRef.current
-    const frames = framesRef.current
-    if (!canvas || frames.length === 0) return undefined
+    if (secretScene !== 0) return undefined
+    const video = videoRef.current
+    if (!video) return undefined
 
-    canvas.width = frames[0].width
-    canvas.height = frames[0].height
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return undefined
-
-    let index = 0
-    let direction = 1
-    let last = performance.now()
-    const interval = 1000 / 30
-    let rafId = 0
-
-    const render = (now: number) => {
-      if (now - last >= interval) {
-        last = now
-        ctx.drawImage(frames[index], 0, 0)
-        index += direction
-        if (index >= frames.length - 1) {
-          index = frames.length - 1
-          direction = -1
-        }
-        if (index <= 0) {
-          index = 0
-          direction = 1
-        }
-      }
-      rafId = window.requestAnimationFrame(render)
-    }
-
-    rafId = window.requestAnimationFrame(render)
-    return () => window.cancelAnimationFrame(rafId)
-  }, [framesReady])
+    void video.play().catch(() => {})
+    return undefined
+  }, [secretScene])
 
   useEffect(() => {
     let targetX = 0
@@ -1177,7 +1549,9 @@ function SecretSpacePage({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="min-h-screen overflow-hidden bg-[#07120d] font-body text-white">
-      <div ref={videoBgRef} className="fixed -inset-[140px] z-0 origin-center">
+      {secretScene === 0 ? (
+        <>
+          <div ref={videoBgRef} className="fixed -inset-[140px] z-0 origin-center">
         <video
           ref={videoRef}
           src={SECRET_VIDEO_SRC}
@@ -1186,20 +1560,38 @@ function SecretSpacePage({ onBack }: { onBack: () => void }) {
           preload="auto"
           crossOrigin="anonymous"
           className="h-full w-full object-cover"
-          style={{ display: framesReady ? 'none' : 'block' }}
+          style={{ display: 'block' }}
         />
-        <canvas ref={displayCanvasRef} className="h-full w-full object-cover" style={{ display: framesReady ? 'block' : 'none' }} />
       </div>
 
-      <div ref={butterflyLayerRef} className="pointer-events-none fixed inset-0 z-40 overflow-hidden" aria-hidden="true" />
+          <div ref={butterflyLayerRef} className="pointer-events-none fixed inset-0 z-40 overflow-hidden" aria-hidden="true" />
+        </>
+      ) : null}
+      {secretScene === 1 ? (
+        <MeasuredSecretScene />
+      ) : null}
+      {secretScene === 2 ? (
+        <CinematicSecretScene />
+      ) : null}
+
+      <button
+        type="button"
+        onClick={() => setSecretScene((current) => (current + 1) % 3)}
+        className="fixed right-[22px] top-1/2 z-[9999] flex h-12 -translate-y-1/2 items-center gap-2 rounded-full border border-white/45 bg-black/55 px-4 text-sm font-bold text-white shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-black/75 active:scale-95 sm:right-[32px] sm:h-14 sm:px-5"
+        aria-label="切换秘境空间场景"
+      >
+        <span className="whitespace-nowrap">切换场景</span>
+        <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6" />
+      </button>
 
       <button
         type="button"
         onClick={onBack}
-        className="fixed right-[40px] top-[32px] z-[9999] flex h-16 w-16 items-center justify-center rounded-full border border-white/55 bg-black/65 text-white shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-black/80 active:scale-95"
+        className="fixed right-[28px] top-[28px] z-[9999] flex h-12 items-center gap-2 rounded-full border border-white/55 bg-black/65 px-4 text-sm font-bold text-white shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-black/80 active:scale-95 sm:right-[40px] sm:top-[32px] sm:h-14 sm:px-5"
         aria-label="返回首页"
       >
-        <ArrowRight className="h-7 w-7 rotate-180" />
+        <ArrowRight className="h-5 w-5 rotate-180 sm:h-6 sm:w-6" />
+        <span className="whitespace-nowrap">返回主页</span>
       </button>
     </div>
   )
