@@ -766,6 +766,10 @@ function MessageBoard() {
           <p className="mt-6 max-w-md text-sm leading-relaxed text-[#5F5144] sm:text-base">
             每个人都可以在这里留言。部署前连接 Supabase 后，这个留言板就会成为真正公开共享的访客墙。
           </p>
+          <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-4 py-2 text-sm font-bold text-[#2B221A] shadow-[0_10px_26px_rgba(112,88,58,0.08)]">
+            <MessageCircle className="h-4 w-4 text-[#8C633F]" />
+            QQ：2467548120，请加 QQ 联系
+          </p>
           <div className="mt-8 flex flex-wrap gap-3 text-xs text-[#8C633F]">
             <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">
               <Globe2 className="h-3.5 w-3.5" /> 公开可见
