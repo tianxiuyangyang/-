@@ -931,13 +931,15 @@ function DetailInfoPage({ onBack }: { onBack: () => void }) {
               { icon: CalendarDays, label: '年龄', value: `${age} 岁` },
               { icon: Star, label: '星座', value: '射手座' },
               { icon: MapPin, label: '所在地', value: '山东淄博' },
+              { icon: MessageCircle, label: 'QQ', value: '2467548120' },
+              { icon: Mail, label: '邮箱', value: '2467548120@qq.com' },
             ].map((item) => {
               const Icon = item.icon
               return (
                 <article key={item.label} className="rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-4 shadow-[0_12px_32px_rgba(112,88,58,0.07)]">
                   <Icon className="mb-4 h-5 w-5 text-[#8C633F]" />
                   <p className="mb-2 text-xs uppercase tracking-[0.24em] text-[#9B8A78]">{item.label}</p>
-                  <p className="text-2xl font-bold text-[#2B221A]">{item.value}</p>
+                  <p className="break-all text-xl font-bold text-[#2B221A] sm:text-2xl">{item.value}</p>
                 </article>
               )
             })}
