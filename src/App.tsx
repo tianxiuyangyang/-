@@ -334,13 +334,6 @@ function About({ onOpenSecret }: { onOpenSecret: () => void }) {
             <Leaf className="h-4 w-4 text-[#6F9B5C]" />
             秘境空间
           </button>
-          <div className="secret-tree hidden sm:block" aria-hidden="true">
-            <span className="secret-tree__leaf secret-tree__leaf--top" />
-            <span className="secret-tree__leaf secret-tree__leaf--left" />
-            <span className="secret-tree__leaf secret-tree__leaf--right" />
-            <span className="secret-tree__trunk" />
-            <span className="secret-tree__ground" />
-          </div>
         </div>
         <p className="mb-6 text-[10px] uppercase tracking-[0.3em] text-[#9A6B3F] sm:text-xs">视觉创作</p>
         <WordsPullUpMultiStyle
