@@ -395,6 +395,44 @@ button {
   animation: admin-bird-wing 0.72s ease-in-out infinite alternate;
 }
 
+.record-player__turntable {
+  position: relative;
+  overflow: hidden;
+}
+
+.record-player__turntable::after {
+  content: '';
+  position: absolute;
+  right: 9px;
+  top: 12px;
+  width: 20px;
+  height: 4px;
+  border-radius: 999px;
+  background: #d8c2a8;
+  transform: rotate(34deg);
+  transform-origin: right center;
+  box-shadow: 8px 8px 0 -2px #8c633f;
+  transition: transform 0.25s ease;
+}
+
+.record-player.is-playing .record-player__turntable::after {
+  transform: translate(-3px, 4px) rotate(48deg);
+}
+
+.record-player__disc {
+  transform-origin: center;
+}
+
+.record-player.is-playing .record-player__disc {
+  animation: record-spin 1.25s linear infinite;
+}
+
+@keyframes record-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes admin-bird-float {
   0%,
   100% {

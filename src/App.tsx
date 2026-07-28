@@ -10,6 +10,7 @@ import {
   Check,
   Clapperboard,
   Clock3,
+  Disc3,
   Globe2,
   Images,
   Leaf,
@@ -17,6 +18,8 @@ import {
   MapPin,
   MessageCircle,
   QrCode,
+  Pause,
+  Play,
   Star,
   Send,
   Sparkles,
@@ -543,6 +546,9 @@ function Features({ onOpenWorks }: { onOpenWorks: () => void }) {
             ]}
           />
         </div>
+        <div className="mb-6 flex justify-center lg:justify-end">
+          <RecordPlayer />
+        </div>
         <div className="grid gap-3 sm:gap-2 md:grid-cols-2 md:gap-2 lg:h-[480px] lg:grid-cols-4">
           <motion.button
             type="button"
@@ -936,6 +942,79 @@ const works = [
   },
 ] satisfies Array<{ title: string; description: string; src: string; type: 'image' | 'video' }>
 
+const worksMusicSrc = assetPath('/music/works-player.mp3')
+
+function RecordPlayer() {
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [hasAudioError, setHasAudioError] = useState(false)
+
+  const togglePlayback = async () => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    setHasAudioError(false)
+
+    if (isPlaying) {
+      audio.pause()
+      setIsPlaying(false)
+      return
+    }
+
+    try {
+      await audio.play()
+      setIsPlaying(true)
+    } catch {
+      setIsPlaying(false)
+      setHasAudioError(true)
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-start gap-2 sm:items-end">
+      <button
+        type="button"
+        onClick={togglePlayback}
+        className={`record-player group relative inline-flex items-center gap-3 rounded-full border border-[#D8C2A8] bg-[#FFF7EA] py-2 pl-2 pr-4 text-left text-[#2B221A] shadow-[0_16px_38px_rgba(112,88,58,0.12)] transition hover:-translate-y-0.5 hover:bg-white ${isPlaying ? 'is-playing' : ''}`}
+        aria-label={isPlaying ? '暂停作品页音乐' : '播放作品页音乐'}
+        aria-pressed={isPlaying}
+      >
+        <span className="record-player__turntable flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#2B221A] shadow-inner">
+          <span className="record-player__disc relative flex h-12 w-12 items-center justify-center rounded-full border border-[#8C633F] bg-[#17110C]">
+            <span className="absolute h-8 w-8 rounded-full border border-[#4A3526]" />
+            <span className="absolute h-4 w-4 rounded-full bg-[#C79B63]" />
+            <Disc3 className="relative h-7 w-7 text-[#FFF7E8]/80" aria-hidden="true" />
+          </span>
+        </span>
+        <span className="min-w-0">
+          <span className="block text-xs uppercase tracking-[0.22em] text-[#9A6B3F]">Music</span>
+          <span className="mt-1 flex items-center gap-2 text-sm font-bold text-[#2B221A]">
+            {isPlaying ? <Pause className="h-4 w-4" aria-hidden="true" /> : <Play className="h-4 w-4" aria-hidden="true" />}
+            {isPlaying ? '正在播放' : '播放音乐'}
+          </span>
+        </span>
+      </button>
+      {hasAudioError ? (
+        <p className="max-w-[13rem] text-xs leading-relaxed text-[#8C633F] sm:text-right">
+          请将音乐文件放到 public/music/works-player.mp3
+        </p>
+      ) : null}
+      <audio
+        ref={audioRef}
+        src={worksMusicSrc}
+        preload="metadata"
+        onPause={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+        onEnded={() => setIsPlaying(false)}
+        onError={() => {
+          setIsPlaying(false)
+          setHasAudioError(true)
+        }}
+      />
+    </div>
+  )
+}
+
 function WorksPage({ onBack }: { onBack: () => void }) {
   const [loadedWorks, setLoadedWorks] = useState<Record<string, boolean>>({})
 
@@ -949,6 +1028,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
               创作现场与阶段成果
             </h1>
           </div>
+          <RecordPlayer />
           <button
             type="button"
             onClick={onBack}
