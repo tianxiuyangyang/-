@@ -11,15 +11,19 @@ import {
   Clapperboard,
   Clock3,
   Disc3,
+  Download,
+  FileDown,
   Globe2,
   Images,
   Leaf,
+  Lock,
   Mail,
   MapPin,
   MessageCircle,
   QrCode,
   Pause,
   Play,
+  PackageOpen,
   Star,
   Send,
   Sparkles,
@@ -48,6 +52,16 @@ type Message = {
   content: string
   created_at: string
 }
+
+type WarehouseItem = {
+  name: string
+  file: string
+  description?: string
+  size?: string
+  restricted?: boolean
+}
+
+const warehouseManifestUrl = assetPath('/warehouse/manifest.json')
 
 const deletedMessagesKey = 'prisma-deleted-message-ids'
 
@@ -305,7 +319,7 @@ function Hero() {
   )
 }
 
-function About({ onOpenSecret }: { onOpenSecret: () => void }) {
+function About({ onOpenSecret, onOpenWarehouse }: { onOpenSecret: () => void; onOpenWarehouse: () => void }) {
   const [isSupportOpen, setIsSupportOpen] = useState(false)
 
   return (
@@ -338,6 +352,15 @@ function About({ onOpenSecret }: { onOpenSecret: () => void }) {
             秘境空间
           </button>
         </div>
+        <button
+          type="button"
+          onClick={onOpenWarehouse}
+          className="group absolute bottom-4 right-4 z-10 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-[#DECDB6] bg-[#FFF7EA]/90 text-[#2B221A] shadow-[0_16px_38px_rgba(92,70,43,0.14)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white sm:bottom-6 sm:right-6"
+          aria-label="打开仓库"
+          title="仓库"
+        >
+          <PackageOpen className="h-6 w-6 transition-transform group-hover:scale-110" />
+        </button>
         <p className="mb-6 text-[10px] uppercase tracking-[0.3em] text-[#9A6B3F] sm:text-xs">视觉创作</p>
         <WordsPullUpMultiStyle
           className="mx-auto max-w-3xl text-3xl leading-[0.95] text-[#2B221A] sm:text-4xl sm:leading-[0.9] md:text-5xl lg:text-6xl xl:text-7xl"
@@ -414,6 +437,206 @@ function SupportPaymentDialog({ onClose }: { onClose: () => void }) {
         </p>
       </motion.div>
     </div>
+  )
+}
+
+function WarehousePage({ onBack }: { onBack: () => void }) {
+  const [items, setItems] = useState<WarehouseItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isAdminMode, setIsAdminMode] = useState(false)
+  const [isAdminPromptOpen, setIsAdminPromptOpen] = useState(false)
+  const [adminPassword, setAdminPassword] = useState('')
+  const [adminError, setAdminError] = useState('')
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadWarehouse = async () => {
+      try {
+        const response = await fetch(warehouseManifestUrl, { cache: 'no-cache' })
+        if (!response.ok) throw new Error('warehouse manifest missing')
+        const data = (await response.json()) as unknown
+        const nextItems = Array.isArray(data)
+          ? data.filter((item): item is WarehouseItem => {
+              if (!item || typeof item !== 'object') return false
+              const record = item as Record<string, unknown>
+              return (
+                typeof record.name === 'string' &&
+                typeof record.file === 'string' &&
+                (record.restricted === undefined || typeof record.restricted === 'boolean')
+              )
+            })
+          : []
+
+        if (isMounted) {
+          setItems(nextItems)
+        }
+      } catch {
+        if (isMounted) {
+          setItems([])
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void loadWarehouse()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const submitAdminPassword = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (adminPassword.trim() !== '3180') {
+      setAdminError('密码不正确。')
+      return
+    }
+
+    setIsAdminMode(true)
+    setAdminPassword('')
+    setAdminError('')
+    setIsAdminPromptOpen(false)
+  }
+
+  return (
+    <main className="min-h-screen bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
+      <section className="mx-auto max-w-6xl rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] p-5 shadow-[0_24px_80px_rgba(112,88,58,0.10)] sm:p-8 md:p-10">
+        <button
+          type="button"
+          onClick={onBack}
+          className="mb-8 inline-flex items-center gap-2 rounded-full bg-[#2B221A] py-1 pl-5 pr-1 text-sm font-bold text-[#FFF7E8] transition hover:gap-3"
+        >
+          返回首页
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FFF7E8]">
+            <ArrowRight className="h-4 w-4 rotate-180 text-[#2B221A]" />
+          </span>
+        </button>
+        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2B221A] text-[#FFF7E8] shadow-[0_14px_35px_rgba(92,70,43,0.16)]">
+              <PackageOpen className="h-6 w-6" />
+            </div>
+            <p className="text-xs uppercase tracking-[0.26em] text-[#9A6B3F]">Download warehouse</p>
+            <h2 className="mt-3 text-4xl font-bold leading-tight text-[#2B221A] sm:text-5xl">仓库</h2>
+          </div>
+          <p className="max-w-md text-sm leading-relaxed text-[#6B5A49]">
+            我会把可公开分享的文件放在这里，访问者可以直接下载资料、作品附件和阶段性整理文件。
+          </p>
+        </div>
+        <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs leading-relaxed text-[#6B5A49]">
+            {isAdminMode ? '管理员模式已开启，专属文件已显示。' : '部分文件需要管理员权限才能访问。'}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              if (isAdminMode) {
+                setIsAdminMode(false)
+                setIsAdminPromptOpen(false)
+                setAdminPassword('')
+                setAdminError('')
+                return
+              }
+              setIsAdminPromptOpen((current) => !current)
+            }}
+            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[#D7C4AA] bg-white px-4 py-2 text-xs font-bold text-[#5F5144] transition hover:bg-[#F4E9D8]"
+          >
+            <Lock className="h-3.5 w-3.5" />
+            {isAdminMode ? '退出管理员' : '管理员访问'}
+          </button>
+        </div>
+        {isAdminPromptOpen ? (
+          <form
+            onSubmit={submitAdminPassword}
+            className="mb-6 flex flex-col gap-2 rounded-2xl border border-[#B9D5EE] bg-[#EEF8FF] p-4 sm:flex-row"
+          >
+            <input
+              value={adminPassword}
+              onChange={(event) => {
+                setAdminPassword(event.target.value)
+                setAdminError('')
+              }}
+              className="h-11 flex-1 rounded-2xl border border-[#B9D5EE] bg-white px-4 text-sm text-[#2B221A] outline-none transition placeholder:text-[#91A8BB] focus:border-[#5680A6]"
+              placeholder="输入管理员密码"
+              type="password"
+            />
+            <button type="submit" className="h-11 rounded-2xl bg-[#315D86] px-5 text-sm font-bold text-white transition hover:bg-[#254A6D]">
+              解锁
+            </button>
+            {adminError ? <p className="self-center text-xs text-red-600">{adminError}</p> : null}
+          </form>
+        ) : null}
+
+        {isLoading ? (
+          <div className="rounded-2xl border border-dashed border-[#D8C4A8] bg-[#FFF7EA] p-6 text-sm text-[#6B5A49]">
+            正在读取仓库清单...
+          </div>
+        ) : items.length > 0 ? (
+          <div className="grid gap-3 md:grid-cols-2">
+            {items.map((item) => {
+              const href = assetPath(`/warehouse/${item.file}`)
+              const isLocked = item.restricted && !isAdminMode
+              return (
+                <article
+                  key={`${item.file}-${item.name}`}
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-4 shadow-[0_12px_32px_rgba(112,88,58,0.07)]"
+                >
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#8C633F]">
+                      <FileDown className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="flex items-center gap-2 truncate text-sm font-bold text-[#2B221A]">
+                        <span className="truncate">{item.name}</span>
+                        {item.restricted ? (
+                          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#E8F3FF] px-2 py-0.5 text-[10px] text-[#315D86]">
+                            <Lock className="h-3 w-3" />
+                            管理员
+                          </span>
+                        ) : null}
+                      </h3>
+                      {item.description ? (
+                        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#6B5A49]">{item.description}</p>
+                      ) : null}
+                      {item.size ? <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[#9B8A78]">{item.size}</p> : null}
+                    </div>
+                  </div>
+                  {isLocked ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsAdminPromptOpen(true)}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8F3FF] text-[#315D86] transition hover:-translate-y-0.5 hover:bg-[#D5E9FA]"
+                      aria-label={`${item.name} 需要管理员权限`}
+                      title="需要管理员权限"
+                    >
+                      <Lock className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <a
+                      href={href}
+                      download
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2B221A] text-[#FFF7E8] transition hover:-translate-y-0.5 hover:bg-[#443326]"
+                      aria-label={`下载 ${item.name}`}
+                    >
+                      <Download className="h-4 w-4" />
+                    </a>
+                  )}
+                </article>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-[#D8C4A8] bg-[#FFF7EA] p-6 text-sm leading-relaxed text-[#6B5A49]">
+            仓库暂时是空的。把文件放到 <span className="font-bold text-[#2B221A]">public/warehouse</span>，再在{' '}
+            <span className="font-bold text-[#2B221A]">manifest.json</span> 里添加名称和文件名，部署后访客就能下载。
+          </div>
+        )}
+      </section>
+    </main>
   )
 }
 
@@ -1283,6 +1506,11 @@ const MEASURED_FRONT_VIDEO =
 const MEASURED_OVERLAY_IMAGE = 'https://soft-zoom-63098134.figma.site/_assets/v11/3f10f1876e118f72a396e05a6c2d099569478272.png'
 const CINEMATIC_SECRET_VIDEO =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_094145_4a271a6c-3869-4f1c-8aa7-aeb0cb227994.mp4'
+const LITHOS_BG_IMAGE_1 =
+  'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_195923_b0ba8ace-1d1d-4f2c-9a28-1ab84b330680.png&w=1280&q=85'
+const LITHOS_BG_IMAGE_2 =
+  'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260609_201152_bba90a12-bf12-459f-91f0-51f237dbaf3b.png&w=1280&q=85'
+const SPOTLIGHT_R = 260
 
 function CinematicSecretScene() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -1477,6 +1705,109 @@ function MeasuredSecretScene() {
   )
 }
 
+function RevealLayer({ image, cursorX, cursorY }: { image: string; cursorX: number; cursorY: number }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const revealRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return undefined
+
+    const resize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+
+    resize()
+    window.addEventListener('resize', resize)
+
+    return () => window.removeEventListener('resize', resize)
+  }, [])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const reveal = revealRef.current
+    if (!canvas || !reveal) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    const gradient = ctx.createRadialGradient(cursorX, cursorY, 0, cursorX, cursorY, SPOTLIGHT_R)
+    gradient.addColorStop(0, 'rgba(255,255,255,1)')
+    gradient.addColorStop(0.4, 'rgba(255,255,255,1)')
+    gradient.addColorStop(0.6, 'rgba(255,255,255,0.75)')
+    gradient.addColorStop(0.75, 'rgba(255,255,255,0.4)')
+    gradient.addColorStop(0.88, 'rgba(255,255,255,0.12)')
+    gradient.addColorStop(1, 'rgba(255,255,255,0)')
+    ctx.fillStyle = gradient
+    ctx.beginPath()
+    ctx.arc(cursorX, cursorY, SPOTLIGHT_R, 0, Math.PI * 2)
+    ctx.fill()
+
+    const maskImage = `url(${canvas.toDataURL()})`
+    reveal.style.maskImage = maskImage
+    reveal.style.webkitMaskImage = maskImage
+  })
+
+  return (
+    <>
+      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" style={{ display: 'none' }} aria-hidden="true" />
+      <div
+        ref={revealRef}
+        className="absolute inset-0 bg-center bg-cover bg-no-repeat z-30 pointer-events-none"
+        style={{
+          backgroundImage: `url(${image})`,
+          maskSize: '100% 100%',
+          WebkitMaskSize: '100% 100%',
+        }}
+        aria-hidden="true"
+      />
+    </>
+  )
+}
+
+function LithosSecretScene() {
+  const mouse = useRef({ x: -999, y: -999 })
+  const smooth = useRef({ x: -999, y: -999 })
+  const rafRef = useRef(0)
+  const [cursorPos, setCursorPos] = useState({ x: -999, y: -999 })
+
+  useEffect(() => {
+    const onMouseMove = (event: MouseEvent) => {
+      mouse.current = { x: event.clientX, y: event.clientY }
+    }
+
+    const tick = () => {
+      smooth.current.x += (mouse.current.x - smooth.current.x) * 0.1
+      smooth.current.y += (mouse.current.y - smooth.current.y) * 0.1
+      setCursorPos({ x: smooth.current.x, y: smooth.current.y })
+      rafRef.current = window.requestAnimationFrame(tick)
+    }
+
+    window.addEventListener('mousemove', onMouseMove)
+    rafRef.current = window.requestAnimationFrame(tick)
+
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  return (
+    <div className="min-h-screen bg-black tracking-[-0.02em]" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <section className="relative w-full overflow-hidden h-screen bg-black" style={{ height: '100dvh' }}>
+        <div
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat z-10 hero-zoom"
+          style={{ backgroundImage: `url(${LITHOS_BG_IMAGE_1})` }}
+          aria-hidden="true"
+        />
+        <RevealLayer image={LITHOS_BG_IMAGE_2} cursorX={cursorPos.x} cursorY={cursorPos.y} />
+      </section>
+    </div>
+  )
+}
+
 function SecretSpacePage({ onBack }: { onBack: () => void }) {
   const [secretScene, setSecretScene] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -1650,10 +1981,13 @@ function SecretSpacePage({ onBack }: { onBack: () => void }) {
       {secretScene === 2 ? (
         <CinematicSecretScene />
       ) : null}
+      {secretScene === 3 ? (
+        <LithosSecretScene />
+      ) : null}
 
       <button
         type="button"
-        onClick={() => setSecretScene((current) => (current + 1) % 3)}
+        onClick={() => setSecretScene((current) => (current + 1) % 4)}
         className="fixed right-[22px] top-1/2 z-[9999] flex h-12 -translate-y-1/2 items-center gap-2 rounded-full border border-white/45 bg-black/55 px-4 text-sm font-bold text-white shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-md transition-all duration-200 hover:scale-105 hover:bg-black/75 active:scale-95 sm:right-[32px] sm:h-14 sm:px-5"
         aria-label="切换秘境空间场景"
       >
@@ -1675,7 +2009,7 @@ function SecretSpacePage({ onBack }: { onBack: () => void }) {
 }
 
 function App() {
-  const [page, setPage] = useState<'home' | 'works' | 'details' | 'secret'>('home')
+  const [page, setPage] = useState<'home' | 'works' | 'details' | 'secret' | 'warehouse'>('home')
 
   if (page === 'works') {
     return <WorksPage onBack={() => setPage('home')} />
@@ -1689,10 +2023,14 @@ function App() {
     return <SecretSpacePage onBack={() => setPage('home')} />
   }
 
+  if (page === 'warehouse') {
+    return <WarehousePage onBack={() => setPage('home')} />
+  }
+
   return (
     <main className="min-h-screen bg-[#F8F1E6] text-[#2B221A]">
       <Hero />
-      <About onOpenSecret={() => setPage('secret')} />
+      <About onOpenSecret={() => setPage('secret')} onOpenWarehouse={() => setPage('warehouse')} />
       <PersonalInfo onOpenDetails={() => setPage('details')} />
       <Features onOpenWorks={() => setPage('works')} />
       <MessageBoard />

@@ -1,0 +1,63 @@
+[
+  {
+    "name": "Shotgun King",
+    "file": "Shotgun_King.zip",
+    "description": "Shotgun King game archive for visitors to download.",
+    "size": "39.5 MB"
+  },
+  {
+    "name": "PVZ",
+    "file": "pvz.zip",
+    "description": "PVZ archive for visitors to download.",
+    "size": "534 MB"
+  },
+  {
+    "name": "PCL 正式版 2.13.0.1",
+    "file": "PCL 正式版 2.13.0.1.zip",
+    "description": "PCL launcher archive for visitors to download.",
+    "size": "2.4 MB"
+  },
+  {
+    "name": "Steam",
+    "file": "Steam.zip",
+    "description": "Steam archive for visitors to download.",
+    "size": "2.2 MB"
+  },
+  {
+    "name": "Node v24.19.0 x64",
+    "file": "node-v24.19.0-x64.zip",
+    "description": "Node.js v24.19.0 x64 archive for visitors to download.",
+    "size": "30.3 MB"
+  },
+  {
+    "name": "起床·星海决（最新测试版）",
+    "file": "起床·星海决（最新测试版）.zip",
+    "description": "起床·星海决 latest test build archive for visitors to download.",
+    "size": "718 KB"
+  },
+  {
+    "name": "Codex",
+    "file": "codex.zip",
+    "description": "Codex archive for visitors to download.",
+    "size": "89.3 MB",
+    "restricted": true
+  },
+  {
+    "name": "Codex Skills",
+    "file": "codex-skills.zip",
+    "description": "Codex skills archive for visitors to download.",
+    "size": "162 KB"
+  },
+  {
+    "name": "3D 工具",
+    "file": "3d工具.zip",
+    "description": "3D tools archive for visitors to download.",
+    "size": "434 MB"
+  },
+  {
+    "name": "动效代码",
+    "file": "动效代码.zip",
+    "description": "Animation code archive for visitors to download.",
+    "size": "7.9 MB"
+  }
+]
