@@ -1,96 +1,18 @@
 [
-  {
-    "name": "Shotgun King",
-    "file": "Shotgun_King.zip",
-    "description": "Shotgun King game archive for visitors to download.",
-    "size": "39.5 MB"
-  },
-  {
-    "name": "PVZ",
-    "file": "pvz.zip",
-    "description": "PVZ archive for visitors to download.",
-    "size": "534 MB"
-  },
-  {
-    "name": "PCL 正式版 2.13.0.1",
-    "file": "PCL 正式版 2.13.0.1.zip",
-    "description": "PCL launcher archive for visitors to download.",
-    "size": "2.4 MB"
-  },
-  {
-    "name": "Steam",
-    "file": "Steam.zip",
-    "description": "Steam archive for visitors to download.",
-    "size": "2.2 MB"
-  },
-  {
-    "name": "Node v24.19.0 x64",
-    "file": "node-v24.19.0-x64.zip",
-    "description": "Node.js v24.19.0 x64 archive for visitors to download.",
-    "size": "30.3 MB"
-  },
-  {
-    "name": "起床·星海决（最新测试版）",
-    "file": "起床·星海决（最新测试版）.zip",
-    "description": "起床·星海决 latest test build archive for visitors to download.",
-    "size": "718 KB"
-  },
-  {
-    "name": "Codex",
-    "file": "codex.zip",
-    "description": "Codex archive for visitors to download.",
-    "size": "89.3 MB",
-    "restricted": true
-  },
-  {
-    "name": "Codex Skills",
-    "file": "codex-skills.zip",
-    "description": "Codex skills archive for visitors to download.",
-    "size": "162 KB"
-  },
-  {
-    "name": "3D 工具",
-    "file": "3d工具.zip",
-    "description": "3D tools archive for visitors to download.",
-    "size": "434 MB"
-  },
-  {
-    "name": "动效代码",
-    "file": "动效代码.zip",
-    "description": "Animation code archive for visitors to download.",
-    "size": "7.9 MB"
-  },
-  {
-    "name": "CC Switch v3.19.1",
-    "file": "CC-Switch-v3.19.1-Windows-Portable.zip",
-    "description": "CC Switch v3.19.1 Windows portable archive.",
-    "size": "12.5 MB"
-  },
-  {
-    "name": "GitHub Desktop",
-    "file": "GitHubDesktopSetup-x64.zip",
-    "description": "GitHub Desktop x64 installer archive.",
-    "size": "294 MB"
-  },
-  {
-    "name": "个人网站源代码（分卷 1/3）",
-    "file": "个人网站源代码.part1.zip",
-    "description": "管理员文件。请下载全部三个分卷，按顺序合并后解压。",
-    "size": "1.86 GB",
-    "restricted": true
-  },
-  {
-    "name": "个人网站源代码（分卷 2/3）",
-    "file": "个人网站源代码.part2.zip",
-    "description": "管理员文件。请下载全部三个分卷，按顺序合并后解压。",
-    "size": "1.86 GB",
-    "restricted": true
-  },
-  {
-    "name": "个人网站源代码（分卷 3/3）",
-    "file": "个人网站源代码.part3.zip",
-    "description": "管理员文件。请下载全部三个分卷，按顺序合并后解压。",
-    "size": "272 MB",
-    "restricted": true
-  }
+  {"name":"Shotgun King","file":"Shotgun_King.zip","description":"Shotgun King game archive for visitors to download.","size":"39.5 MB"},
+  {"name":"PVZ","file":"pvz.zip","description":"PVZ archive for visitors to download.","size":"534 MB"},
+  {"name":"PCL \u6b63\u5f0f\u7248 2.13.0.1","file":"PCL \u6b63\u5f0f\u7248 2.13.0.1.zip","description":"PCL launcher archive for visitors to download.","size":"2.4 MB"},
+  {"name":"Steam","file":"Steam.zip","description":"Steam archive for visitors to download.","size":"2.2 MB"},
+  {"name":"Node v24.19.0 x64","file":"node-v24.19.0-x64.zip","description":"Node.js v24.19.0 x64 archive for visitors to download.","size":"30.3 MB"},
+  {"name":"\u8d77\u5e8a\u00b7\u661f\u6d77\u51b3\uff08\u6700\u65b0\u6d4b\u8bd5\u7248\uff09","file":"\u8d77\u5e8a\u00b7\u661f\u6d77\u51b3\uff08\u6700\u65b0\u6d4b\u8bd5\u7248\uff09.zip","description":"Latest test build archive for visitors to download.","size":"718 KB"},
+  {"name":"Codex","file":"codex.zip","description":"Codex archive for visitors to download.","size":"89.3 MB","restricted":true},
+  {"name":"Codex Skills","file":"codex-skills.zip","description":"Codex skills archive for visitors to download.","size":"162 KB"},
+  {"name":"3D \u5de5\u5177","file":"3d\u5de5\u5177.zip","description":"3D tools archive for visitors to download.","size":"434 MB"},
+  {"name":"\u52a8\u6548\u4ee3\u7801","file":"\u52a8\u6548\u4ee3\u7801.zip","description":"Animation code archive for visitors to download.","size":"7.9 MB"},
+  {"name":"CC Switch v3.19.1","file":"CC-Switch-v3.19.1-Windows-Portable.zip","description":"CC Switch v3.19.1 Windows portable archive.","size":"12.5 MB"},
+  {"name":"GitHub Desktop","file":"GitHubDesktopSetup-x64.zip","description":"GitHub Desktop x64 installer archive.","size":"294 MB"},
+  {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\uff08\u5206\u5377 1/3\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801.part1.zip","description":"Administrator file. Download all three volumes and extract after merging.","size":"1.86 GB","restricted":true},
+  {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\uff08\u5206\u5377 2/3\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801.part2.zip","description":"Administrator file. Download all three volumes and extract after merging.","size":"1.86 GB","restricted":true},
+  {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\uff08\u5206\u5377 3/3\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801.part3.zip","description":"Administrator file. Download all three volumes and extract after merging.","size":"272 MB","restricted":true},
+  {"name":"\u5f00\u53d1\u5de5\u5177\u5b89\u88c5\u5305","file":"\u5f00\u53d1\u5de5\u5177\u5b89\u88c5\u5305.zip","description":"Development tools installer package for visitors to download.","size":"585.3 MB"}
 ]
