@@ -10,6 +10,7 @@ import {
   Check,
   Clapperboard,
   Clock3,
+  Copy,
   Disc3,
   Download,
   FileDown,
@@ -36,6 +37,7 @@ import { loadStoredMessages, mergeMessages, messageStorageKey, saveStoredMessage
 
 const ink = '#2B221A'
 const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
+const portfolioUrl = 'https://hdjajbx.github.io/guanyifei-portfolio/'
 const heroVideo =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4'
 const cardVideo =
@@ -61,7 +63,18 @@ type WarehouseItem = {
   restricted?: boolean
 }
 
+type GeneratedImage = {
+  src: string
+  prompt: string
+  model: string
+  size: string
+  createdAt: string
+  revisedPrompt?: string
+}
+
 const warehouseManifestUrl = assetPath('/warehouse/manifest.json')
+const imageApiModels = ['gpt-image-2-auto', 'gpt-image-2', 'gpt-image-2-eco'] as const
+const imageApiSizes = ['1024x1024', '1536x1024', '1024x1536'] as const
 
 const deletedMessagesKey = 'prisma-deleted-message-ids'
 
@@ -222,11 +235,13 @@ function AnimatedLetter({
 
 function Hero() {
   const heroVideoRef = useRef<HTMLVideoElement>(null)
+  const [heroVideoReady, setHeroVideoReady] = useState(false)
   const navItems = [
     { label: '我的故事', href: '#our-story' },
     { label: '个人信息', href: '#collective' },
     { label: '创作能力', href: '#workshops' },
     { label: '项目方向', href: '#programs' },
+    { label: 'AI 生图', href: '#image-lab' },
     { label: '留言联系', href: '#inquiries' },
   ]
 
@@ -254,15 +269,26 @@ function Hero() {
   return (
     <section className="h-screen bg-[#F8F1E6] p-4 md:p-6">
       <div className="relative h-full overflow-hidden rounded-2xl border border-[#E8DCCB] bg-[#FDF8EE] shadow-[0_30px_90px_rgba(112,88,58,0.18)] md:rounded-[2rem]">
+        <img
+          src={assetPath('works/work-2.jpg')}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+          aria-hidden="true"
+        />
         <video
           ref={heroVideoRef}
-          className="hero-video absolute inset-0 h-full w-full object-cover"
+          className={`hero-video absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${heroVideoReady ? 'opacity-100' : 'opacity-0'}`}
           src={heroVideo}
           autoPlay
           loop
           muted
           playsInline
           preload="auto"
+          onCanPlayThrough={() => setHeroVideoReady(true)}
+          onError={() => setHeroVideoReady(false)}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-[#F8F1E6]/10" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#F8F1E6]/25 to-transparent" />
@@ -801,6 +827,269 @@ function Features({ onOpenWorks }: { onOpenWorks: () => void }) {
   )
 }
 
+function getImageApiConfig() {
+  return {
+    baseUrl: import.meta.env.VITE_IMAGE_API_BASE_URL as string | undefined,
+    key: import.meta.env.VITE_IMAGE_API_KEY as string | undefined,
+  }
+}
+
+function normalizeImageSource(url?: string, base64?: string) {
+  if (url) return url
+  if (base64) return `data:image/png;base64,${base64}`
+  return ''
+}
+
+function ImageLab() {
+  const config = useMemo(getImageApiConfig, [])
+  const [prompt, setPrompt] = useState('暖白色电影感个人网站首页，清晨光线，极简排版，细腻质感')
+  const [model, setModel] = useState<(typeof imageApiModels)[number]>('gpt-image-2-auto')
+  const [size, setSize] = useState<(typeof imageApiSizes)[number]>('1024x1024')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [error, setError] = useState('')
+  const [status, setStatus] = useState('渠道已接入，填写提示词就可以直接出图。')
+  const [gallery, setGallery] = useState<GeneratedImage[]>([])
+
+  const hasImageApi = Boolean(config.baseUrl && config.key)
+  const latestImage = gallery[0]
+
+  const submitGenerate = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const trimmedPrompt = prompt.trim()
+    if (!trimmedPrompt) {
+      setError('先写一点你想生成的画面描述。')
+      return
+    }
+    if (!hasImageApi || !config.baseUrl || !config.key) {
+      setError('当前没有检测到生图渠道配置。')
+      return
+    }
+
+    setIsGenerating(true)
+    setError('')
+    setStatus('正在生成图片，通常需要十几秒。')
+
+    try {
+      const response = await fetch(`${config.baseUrl.replace(/\/+$/, '')}/v1/images/generations`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${config.key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          prompt: trimmedPrompt,
+          size,
+        }),
+      })
+
+      const payload = (await response.json().catch(() => null)) as
+        | {
+            data?: Array<{ url?: string; b64_json?: string; revised_prompt?: string }>
+            error?: { message?: string }
+          }
+        | null
+
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || '图片生成失败，请稍后再试。')
+      }
+
+      const item = payload?.data?.[0]
+      const src = normalizeImageSource(item?.url, item?.b64_json)
+      if (!src) {
+        throw new Error('接口已返回成功，但没有拿到图片地址。')
+      }
+
+      const nextImage: GeneratedImage = {
+        src,
+        prompt: trimmedPrompt,
+        model,
+        size,
+        createdAt: new Date().toISOString(),
+        revisedPrompt: item?.revised_prompt,
+      }
+
+      setGallery((current) => [nextImage, ...current].slice(0, 6))
+      setStatus('图片生成完成，可以继续修改提示词再出新版本。')
+    } catch (generationError) {
+      const message = generationError instanceof Error ? generationError.message : '图片生成失败，请稍后再试。'
+      setError(message)
+      setStatus('这次请求没有成功，调整提示词或稍后重试即可。')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
+  return (
+    <section id="image-lab" className="relative overflow-hidden bg-[#F8F1E6] px-4 py-20 sm:px-6 md:py-28">
+      <div className="pointer-events-none absolute inset-0 opacity-[0.14]">
+        <div className="absolute -left-16 top-10 h-40 w-40 rounded-full bg-[#F0D7B5] blur-3xl" />
+        <div className="absolute right-0 top-1/3 h-56 w-56 rounded-full bg-[#E6D8FF]/40 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-52 w-52 rounded-full bg-[#D4E8D1]/45 blur-3xl" />
+      </div>
+      <div className="relative mx-auto grid max-w-7xl gap-4 lg:grid-cols-[0.92fr_1.08fr]">
+        <article className="overflow-hidden rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] p-6 shadow-[0_24px_80px_rgba(112,88,58,0.12)] sm:p-8 md:p-10">
+          <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-full bg-[#2B221A] text-[#FFF7E8]">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <p className="mb-4 text-xs uppercase tracking-[0.28em] text-[#9B8A78]">AI Image Lab</p>
+          <h2 className="max-w-xl text-4xl leading-[0.95] text-[#2B221A] sm:text-5xl md:text-6xl">
+            把灵感直接生成为画面。
+          </h2>
+          <p className="mt-6 max-w-lg text-sm leading-relaxed text-[#5F5144] sm:text-base">
+            这里已经接上你的生图渠道。输入一句提示词，选择尺寸和模型，就能直接调用 `gpt-image-2` 系列生成图片。
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3 text-xs text-[#8C633F]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">
+              <Sparkles className="h-3.5 w-3.5" /> OpenAI 兼容
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">
+              <Images className="h-3.5 w-3.5" /> 返回原图链接
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">
+              <Clock3 className="h-3.5 w-3.5" /> 前端直连
+            </span>
+          </div>
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {[
+              '电影感人物肖像，暖金色逆光，浅景深，细腻皮肤质感',
+              '极简产品海报，米白背景，真实阴影，杂志版式',
+              '未来感房间场景，玻璃与金属材质，体积光，高清',
+            ].map((idea) => (
+              <button
+                key={idea}
+                type="button"
+                onClick={() => setPrompt(idea)}
+                className="rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-4 text-left text-sm leading-relaxed text-[#5F5144] transition hover:-translate-y-0.5 hover:bg-white"
+              >
+                {idea}
+              </button>
+            ))}
+          </div>
+          <p className="mt-6 text-sm leading-relaxed text-[#7B6B59]">{status}</p>
+          {!hasImageApi ? <p className="mt-2 text-sm text-red-600">未检测到 `VITE_IMAGE_API_BASE_URL` 或 `VITE_IMAGE_API_KEY`。</p> : null}
+        </article>
+
+        <article className="overflow-hidden rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF7EA] p-4 shadow-[0_24px_80px_rgba(112,88,58,0.10)] sm:p-5 md:p-6">
+          <form onSubmit={submitGenerate} className="grid gap-3">
+            <textarea
+              value={prompt}
+              onChange={(event) => setPrompt(event.target.value)}
+              className="min-h-[128px] rounded-[1.5rem] border border-[#E0CFB8] bg-white/80 px-4 py-4 text-sm leading-relaxed text-[#2B221A] outline-none transition placeholder:text-[#AA9984] focus:border-[#9A6B3F]"
+              placeholder="例如：一张带有电影感的个人主页首屏，暖白背景，立体排版，微风吹动纱帘。"
+              maxLength={600}
+            />
+            <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+              <label className="grid gap-2 text-sm text-[#5F5144]">
+                <span className="font-bold text-[#2B221A]">模型</span>
+                <select
+                  value={model}
+                  onChange={(event) => setModel(event.target.value as (typeof imageApiModels)[number])}
+                  className="h-12 rounded-2xl border border-[#E0CFB8] bg-white/80 px-4 text-sm text-[#2B221A] outline-none transition focus:border-[#9A6B3F]"
+                >
+                  {imageApiModels.map((modelOption) => (
+                    <option key={modelOption} value={modelOption}>
+                      {modelOption}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="grid gap-2 text-sm text-[#5F5144]">
+                <span className="font-bold text-[#2B221A]">尺寸</span>
+                <select
+                  value={size}
+                  onChange={(event) => setSize(event.target.value as (typeof imageApiSizes)[number])}
+                  className="h-12 rounded-2xl border border-[#E0CFB8] bg-white/80 px-4 text-sm text-[#2B221A] outline-none transition focus:border-[#9A6B3F]"
+                >
+                  {imageApiSizes.map((sizeOption) => (
+                    <option key={sizeOption} value={sizeOption}>
+                      {sizeOption}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="submit"
+                disabled={isGenerating}
+                className="inline-flex h-12 items-center justify-center gap-2 self-end rounded-2xl bg-[#2B221A] px-5 text-sm font-bold text-[#FFF7E8] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Sparkles className="h-4 w-4" />
+                {isGenerating ? '生成中' : '立即生图'}
+              </button>
+            </div>
+            <div className="flex items-center justify-between gap-3 text-xs text-[#8C633F]">
+              <span>提示词上限 600 字，建议描述主体、光线、镜头和材质。</span>
+              <span>{prompt.trim().length}/600</span>
+            </div>
+            {error ? <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p> : null}
+          </form>
+
+          <div className="mt-5 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+            <div className="overflow-hidden rounded-[1.5rem] border border-[#E0CFB8] bg-[#F4E9D8]">
+              <div className="relative aspect-square bg-[#E9DCCB]">
+                {latestImage ? (
+                  <img className="h-full w-full object-cover" src={latestImage.src} alt={latestImage.prompt} loading="eager" decoding="async" />
+                ) : (
+                  <div className="flex h-full items-center justify-center p-8 text-center text-sm leading-relaxed text-[#6B5A48]">
+                    <span className="rounded-2xl border border-dashed border-[#CDB99F] bg-[#FFF7EA]/90 p-4">
+                      生成后的图片会显示在这里。
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="grid gap-3 border-t border-[#E0CFB8] bg-[#FFF9EF] p-4">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-[#8C633F]">
+                  <span className="rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-1.5">{latestImage?.model || '等待生成'}</span>
+                  <span className="rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-1.5">{latestImage?.size || '1024x1024'}</span>
+                </div>
+                <p className="text-sm leading-relaxed text-[#5F5144]">{latestImage?.prompt || '写一个足够具体的提示词，图片会更稳定。'}</p>
+                {latestImage?.revisedPrompt ? (
+                  <p className="text-xs leading-relaxed text-[#8C633F]">接口优化后的提示词：{latestImage.revisedPrompt}</p>
+                ) : null}
+                {latestImage ? (
+                  <div className="flex flex-wrap gap-3">
+                    <a
+                      href={latestImage.src}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#2B221A] px-4 py-2 text-sm font-bold text-[#FFF7E8] transition hover:scale-[1.02]"
+                    >
+                      <Download className="h-4 w-4" />
+                      打开原图
+                    </a>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="grid gap-3">
+              {gallery.length > 0 ? (
+                gallery.slice(0, 3).map((image) => (
+                  <article key={`${image.createdAt}-${image.src}`} className="grid grid-cols-[92px_1fr] gap-3 rounded-[1.5rem] border border-[#E0CFB8] bg-[#FFF9EF] p-3 shadow-[0_10px_28px_rgba(112,88,58,0.06)]">
+                    <img className="h-[92px] w-[92px] rounded-2xl object-cover" src={image.src} alt={image.prompt} loading="lazy" decoding="async" />
+                    <div className="min-w-0">
+                      <p className="text-xs uppercase tracking-[0.18em] text-[#9B8A78]">{image.model}</p>
+                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-[#5F5144]">{image.prompt}</p>
+                      <a href={image.src} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[#8C633F]">
+                        查看图片
+                        <ArrowRight className="h-4 w-4 -rotate-45" />
+                      </a>
+                    </div>
+                  </article>
+                ))
+              ) : (
+                <div className="rounded-[1.5rem] border border-dashed border-[#CDB99F] bg-[#FFF9EF] p-5 text-sm leading-relaxed text-[#6B5A48]">
+                  这里会保留最近生成的几张图，方便你快速比较版本。
+                </div>
+              )}
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  )
+}
+
 function getSupabaseConfig() {
   return {
     url: import.meta.env.VITE_SUPABASE_URL as string | undefined,
@@ -1141,29 +1430,25 @@ function MessageBoard() {
 const works = [
   {
     title: '作品一：视觉练习',
-    description: '把你的第一张作品图片放到 public/works/work-1.jpg，它会显示在这里。',
     src: assetPath('/works/work-1.jpg'),
     type: 'image',
   },
   {
     title: '作品二：趣味网站',
-    description: '把你的第二张作品图片放到 public/works/work-2.jpg，用来展示网页或界面截图。',
-    src: assetPath('/works/work-2.jpg'),
-    type: 'image',
+    src: portfolioUrl,
+    type: 'link',
   },
   {
     title: '作品三：影像片段',
-    description: '把视频作品放到 public/works/work-3.mp4，这张卡会自动以视频形式播放。',
     src: assetPath('/works/work-3.mp4'),
     type: 'video',
   },
   {
     title: '作品四：游戏开发',
-    description: '把游戏截图放到 public/works/work-4.jpg，用来展示你的玩法、画面或关卡。',
     src: assetPath('/works/work-4.jpg'),
     type: 'image',
   },
-] satisfies Array<{ title: string; description: string; src: string; type: 'image' | 'video' }>
+] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link' }>
 
 const worksMusicSrc = assetPath('/music/works-player.mp3')
 
@@ -1240,6 +1525,7 @@ function RecordPlayer() {
 
 function WorksPage({ onBack }: { onBack: () => void }) {
   const [loadedWorks, setLoadedWorks] = useState<Record<string, boolean>>({})
+  const [copiedWork, setCopiedWork] = useState(false)
 
   return (
     <main className="min-h-screen bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
@@ -1276,7 +1562,30 @@ function WorksPage({ onBack }: { onBack: () => void }) {
               transition={{ duration: 0.55, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="relative aspect-[4/3] bg-[#E9DCCB]">
-                {work.type === 'video' ? (
+                {work.type === 'link' ? (
+                  <div className="flex h-full flex-col items-center justify-center gap-5 bg-[#E8F3FF] p-6 text-center">
+                    <a
+                      href={portfolioUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="break-all text-lg font-semibold leading-relaxed text-[#315D86] underline decoration-[#8CB8DC] underline-offset-4 transition hover:text-[#1F4668] sm:text-xl"
+                    >
+                      {portfolioUrl}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void navigator.clipboard?.writeText(portfolioUrl)
+                        setCopiedWork(true)
+                        window.setTimeout(() => setCopiedWork(false), 1600)
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#315D86] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244A6B]"
+                    >
+                      <Copy className="h-4 w-4" aria-hidden="true" />
+                      {copiedWork ? '已复制' : '复制网址'}
+                    </button>
+                  </div>
+                ) : work.type === 'video' ? (
                   <video
                     className="h-full w-full object-cover"
                     src={work.src}
@@ -1302,7 +1611,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                     }}
                   />
                 )}
-                {!loadedWorks[work.src] ? (
+                {work.type !== 'link' && !loadedWorks[work.src] ? (
                   <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm leading-relaxed text-[#6B5A48]">
                     <span className="rounded-2xl border border-dashed border-[#CDB99F] bg-[#FFF7EA]/90 p-4">
                       加载中
@@ -1313,7 +1622,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
               <div className="p-5 sm:p-6">
                 <p className="mb-2 text-xs text-[#9A6B3F]">{String(index + 1).padStart(2, '0')}</p>
                 <h2 className="text-2xl font-bold leading-tight text-[#2B221A]">{work.title}</h2>
-                <p className="mt-3 text-sm leading-relaxed text-[#5F5144]">{work.description}</p>
+                {'description' in work && typeof work.description === 'string' ? <p className="mt-3 text-sm leading-relaxed text-[#5F5144]">{work.description}</p> : null}
               </div>
             </motion.article>
           ))}
@@ -2033,6 +2342,7 @@ function App() {
       <About onOpenSecret={() => setPage('secret')} onOpenWarehouse={() => setPage('warehouse')} />
       <PersonalInfo onOpenDetails={() => setPage('details')} />
       <Features onOpenWorks={() => setPage('works')} />
+      <ImageLab />
       <MessageBoard />
     </main>
   )
