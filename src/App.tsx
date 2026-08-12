@@ -38,6 +38,10 @@ import { loadStoredMessages, mergeMessages, messageStorageKey, saveStoredMessage
 const ink = '#2B221A'
 const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
 const portfolioUrl = 'https://hdjajbx.github.io/guanyifei-portfolio/'
+const funWebsites = [
+  { name: '个人作品集', url: portfolioUrl },
+  { name: '宝石矿场', url: 'https://tianxiuyangyang.github.io/gem-mine/' },
+]
 const heroVideo =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4'
 const cardVideo =
@@ -1525,7 +1529,7 @@ function RecordPlayer() {
 
 function WorksPage({ onBack }: { onBack: () => void }) {
   const [loadedWorks, setLoadedWorks] = useState<Record<string, boolean>>({})
-  const [copiedWork, setCopiedWork] = useState(false)
+  const [copiedWork, setCopiedWork] = useState<string | null>(null)
 
   return (
     <main className="min-h-screen bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
@@ -1563,27 +1567,45 @@ function WorksPage({ onBack }: { onBack: () => void }) {
             >
               <div className="relative aspect-[4/3] bg-[#E9DCCB]">
                 {work.type === 'link' ? (
-                  <div className="flex h-full flex-col items-center justify-center gap-5 bg-[#E8F3FF] p-6 text-center">
-                    <a
-                      href={portfolioUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="break-all text-lg font-semibold leading-relaxed text-[#315D86] underline decoration-[#8CB8DC] underline-offset-4 transition hover:text-[#1F4668] sm:text-xl"
-                    >
-                      {portfolioUrl}
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        void navigator.clipboard?.writeText(portfolioUrl)
-                        setCopiedWork(true)
-                        window.setTimeout(() => setCopiedWork(false), 1600)
-                      }}
-                      className="inline-flex items-center gap-2 rounded-full bg-[#315D86] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#244A6B]"
-                    >
-                      <Copy className="h-4 w-4" aria-hidden="true" />
-                      {copiedWork ? '已复制' : '复制网址'}
-                    </button>
+                  <div className="flex h-full flex-col justify-center gap-3 bg-[#E8F3FF] p-4 sm:p-5">
+                    {funWebsites.map((website) => (
+                      <div
+                        key={website.url}
+                        className="flex min-w-0 items-center gap-3 rounded-2xl border border-[#BCD5E9] bg-white/70 p-3 text-left shadow-sm"
+                      >
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#D5E9F8] text-[#315D86]">
+                          <Globe2 className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                        <a
+                          href={website.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="min-w-0 flex-1 text-[#315D86] transition hover:text-[#1F4668]"
+                        >
+                          <span className="block text-sm font-bold sm:text-base">{website.name}</span>
+                          <span className="mt-0.5 block truncate text-xs underline decoration-[#8CB8DC] underline-offset-2 sm:text-sm">
+                            {website.url}
+                          </span>
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            void navigator.clipboard?.writeText(website.url)
+                            setCopiedWork(website.url)
+                            window.setTimeout(() => setCopiedWork(null), 1600)
+                          }}
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#315D86] text-white transition hover:bg-[#244A6B]"
+                          aria-label={`复制${website.name}网址`}
+                          title={copiedWork === website.url ? '已复制' : '复制网址'}
+                        >
+                          {copiedWork === website.url ? (
+                            <Check className="h-4 w-4" aria-hidden="true" />
+                          ) : (
+                            <Copy className="h-4 w-4" aria-hidden="true" />
+                          )}
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 ) : work.type === 'video' ? (
                   <video
