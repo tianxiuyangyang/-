@@ -16,5 +16,5 @@
   {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\uff08\u5206\u5377 3/3\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801.part3.zip","description":"Administrator file. Download all three volumes and extract after merging.","size":"272 MB","restricted":true},
   {"name":"\u5f00\u53d1\u5de5\u5177\u5b89\u88c5\u5305","file":"\u5f00\u53d1\u5de5\u5177\u5b89\u88c5\u5305.zip","description":"Development tools installer package for visitors to download.","size":"585.3 MB"},
   {"name":"\u8d77\u5e8a\u00b7\u661f\u6d77\u51b3\uff08\u65b0\u7248\uff09","file":"\u8d77\u5e8a\u00b7\u661f\u6d77\u51b3\uff08\u65b0\u7248\uff09.zip","description":"New version of the game archive for visitors to download.","size":"159.2 MB"},
-  {"name":"\u5b9d\u77f3\u77ff\u4e95\u6e90\u4ee3\u7801","file":"\u5b9d\u77f3\u77ff\u4e95\u6e90\u4ee3\u7801.zip","description":"Gem Mine source code archive for visitors to download.","size":"1.2 MB"}
+  {"name":"\u5b9d\u77f3\u77ff\u4e95\u6e90\u4ee3\u7801","file":"\u5b9d\u77f3\u77ff\u4e95\u6e90\u4ee3\u7801.zip","description":"Administrator-only Gem Mine source code archive.","size":"1.2 MB","restricted":true}
 ]
