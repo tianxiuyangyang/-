@@ -851,14 +851,24 @@ function ImageLab() {
   const [size, setSize] = useState<(typeof imageApiSizes)[number]>('1024x1024')
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState('')
-  const [status, setStatus] = useState('渠道已接入，填写提示词就可以直接出图。')
+  const [status, setStatus] = useState('AI 生图仅限管理员使用。')
   const [gallery, setGallery] = useState<GeneratedImage[]>([])
+  const [isAdminMode, setIsAdminMode] = useState(false)
+  const [isAdminPromptOpen, setIsAdminPromptOpen] = useState(false)
+  const [adminPassword, setAdminPassword] = useState('')
+  const [adminError, setAdminError] = useState('')
 
   const hasImageApi = Boolean(config.baseUrl && config.key)
   const latestImage = gallery[0]
 
   const submitGenerate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (!isAdminMode) {
+      setError('需要管理员权限才能使用 AI 生图。')
+      setIsAdminPromptOpen(true)
+      return
+    }
+
     const trimmedPrompt = prompt.trim()
     if (!trimmedPrompt) {
       setError('先写一点你想生成的画面描述。')
@@ -924,6 +934,30 @@ function ImageLab() {
     }
   }
 
+  const submitAdminPassword = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (adminPassword.trim() !== '3180') {
+      setAdminError('密码不正确。')
+      return
+    }
+
+    setIsAdminMode(true)
+    setIsAdminPromptOpen(false)
+    setAdminPassword('')
+    setAdminError('')
+    setError('')
+    setStatus('管理员模式已开启，可以使用 AI 生图。')
+  }
+
+  const exitAdminMode = () => {
+    setIsAdminMode(false)
+    setIsAdminPromptOpen(false)
+    setAdminPassword('')
+    setAdminError('')
+    setError('')
+    setStatus('AI 生图仅限管理员使用。')
+  }
+
   return (
     <section id="image-lab" className="relative overflow-hidden bg-[#F8F1E6] px-4 py-20 sm:px-6 md:py-28">
       <div className="pointer-events-none absolute inset-0 opacity-[0.14]">
@@ -951,8 +985,48 @@ function ImageLab() {
               <Images className="h-3.5 w-3.5" /> 返回原图链接
             </span>
             <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">
-              <Clock3 className="h-3.5 w-3.5" /> 前端直连
+              <Lock className="h-3.5 w-3.5" /> 仅限管理员
             </span>
+          </div>
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => {
+                if (isAdminMode) {
+                  exitAdminMode()
+                  return
+                }
+                setIsAdminPromptOpen((current) => !current)
+                setAdminError('')
+              }}
+              className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition hover:-translate-y-0.5 ${
+                isAdminMode ? 'bg-[#DCEEFF] text-[#315D86]' : 'bg-[#2B221A] text-[#FFF7E8]'
+              }`}
+            >
+              <Lock className="h-4 w-4" />
+              {isAdminMode ? '退出管理员模式' : '管理员解锁'}
+            </button>
+            {isAdminPromptOpen && !isAdminMode ? (
+              <form
+                onSubmit={submitAdminPassword}
+                className="mt-3 grid max-w-sm gap-3 rounded-2xl border border-[#B9D5EE] bg-white/75 p-4 shadow-[0_12px_30px_rgba(70,118,160,0.12)]"
+              >
+                <input
+                  type="password"
+                  value={adminPassword}
+                  onChange={(event) => setAdminPassword(event.target.value)}
+                  className="h-11 rounded-xl border border-[#B9D5EE] bg-white px-4 text-sm text-[#2B221A] outline-none focus:border-[#5680A6]"
+                  placeholder="输入管理员密码"
+                  autoFocus
+                />
+                <div className="flex items-center justify-between gap-3">
+                  {adminError ? <p className="text-xs text-red-600">{adminError}</p> : <span />}
+                  <button type="submit" className="rounded-full bg-[#315D86] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#244A6B]">
+                    验证
+                  </button>
+                </div>
+              </form>
+            ) : null}
           </div>
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
             {[
@@ -964,7 +1038,8 @@ function ImageLab() {
                 key={idea}
                 type="button"
                 onClick={() => setPrompt(idea)}
-                className="rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-4 text-left text-sm leading-relaxed text-[#5F5144] transition hover:-translate-y-0.5 hover:bg-white"
+                disabled={!isAdminMode}
+                className="rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-4 text-left text-sm leading-relaxed text-[#5F5144] transition hover:-translate-y-0.5 hover:bg-white disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:translate-y-0"
               >
                 {idea}
               </button>
@@ -979,6 +1054,7 @@ function ImageLab() {
             <textarea
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
+              disabled={!isAdminMode}
               className="min-h-[128px] rounded-[1.5rem] border border-[#E0CFB8] bg-white/80 px-4 py-4 text-sm leading-relaxed text-[#2B221A] outline-none transition placeholder:text-[#AA9984] focus:border-[#9A6B3F]"
               placeholder="例如：一张带有电影感的个人主页首屏，暖白背景，立体排版，微风吹动纱帘。"
               maxLength={600}
@@ -989,6 +1065,7 @@ function ImageLab() {
                 <select
                   value={model}
                   onChange={(event) => setModel(event.target.value as (typeof imageApiModels)[number])}
+                  disabled={!isAdminMode}
                   className="h-12 rounded-2xl border border-[#E0CFB8] bg-white/80 px-4 text-sm text-[#2B221A] outline-none transition focus:border-[#9A6B3F]"
                 >
                   {imageApiModels.map((modelOption) => (
@@ -1003,6 +1080,7 @@ function ImageLab() {
                 <select
                   value={size}
                   onChange={(event) => setSize(event.target.value as (typeof imageApiSizes)[number])}
+                  disabled={!isAdminMode}
                   className="h-12 rounded-2xl border border-[#E0CFB8] bg-white/80 px-4 text-sm text-[#2B221A] outline-none transition focus:border-[#9A6B3F]"
                 >
                   {imageApiSizes.map((sizeOption) => (
@@ -1014,11 +1092,11 @@ function ImageLab() {
               </label>
               <button
                 type="submit"
-                disabled={isGenerating}
+                disabled={isGenerating || !isAdminMode}
                 className="inline-flex h-12 items-center justify-center gap-2 self-end rounded-2xl bg-[#2B221A] px-5 text-sm font-bold text-[#FFF7E8] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <Sparkles className="h-4 w-4" />
-                {isGenerating ? '生成中' : '立即生图'}
+                {isAdminMode ? <Sparkles className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                {isGenerating ? '生成中' : isAdminMode ? '立即生图' : '需要管理员权限'}
               </button>
             </div>
             <div className="flex items-center justify-between gap-3 text-xs text-[#8C633F]">
