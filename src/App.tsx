@@ -1808,6 +1808,13 @@ function DetailInfoPage({ onBack }: { onBack: () => void }) {
                     <p className="break-all text-sm font-bold text-[#2B221A]">2467548120@qq.com</p>
                   </div>
                 </div>
+                <div className="flex items-center gap-3 rounded-xl bg-white/55 px-3 py-2">
+                  <Clapperboard className="h-4 w-4 shrink-0 text-[#8C633F]" />
+                  <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-[#9B8A78]">抖音号</p>
+                    <p className="break-all text-sm font-bold text-[#2B221A]">tianxiuyangy24</p>
+                  </div>
+                </div>
               </div>
             </article>
           </div>
