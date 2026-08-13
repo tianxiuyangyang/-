@@ -1511,8 +1511,8 @@ function MessageBoard() {
 
 const works = [
   {
-    title: '作品一：视觉练习',
-    src: assetPath('/works/work-1.jpg'),
+    title: '作品一：游戏开发',
+    src: assetPath('/works/work-1.png'),
     type: 'image',
   },
   {
@@ -1526,7 +1526,7 @@ const works = [
     type: 'video',
   },
   {
-    title: '作品四：游戏开发',
+    title: '作品四：游戏设计',
     src: assetPath('/works/work-4.jpg'),
     type: 'image',
   },
