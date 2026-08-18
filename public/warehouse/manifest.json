@@ -11,10 +11,11 @@
   {"name":"\u52a8\u6548\u4ee3\u7801","file":"\u52a8\u6548\u4ee3\u7801.zip","description":"Animation code archive for visitors to download.","size":"7.9 MB"},
   {"name":"CC Switch v3.19.1","file":"CC-Switch-v3.19.1-Windows-Portable.zip","description":"CC Switch v3.19.1 Windows portable archive.","size":"12.5 MB"},
   {"name":"GitHub Desktop","file":"GitHubDesktopSetup-x64.zip","description":"GitHub Desktop x64 installer archive.","size":"294 MB"},
-  {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\uff08\u5206\u5377 1/3\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801.part1.zip","description":"Administrator file. Download all three volumes and extract after merging.","size":"1.86 GB","restricted":true},
-  {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\uff08\u5206\u5377 2/3\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801.part2.zip","description":"Administrator file. Download all three volumes and extract after merging.","size":"1.86 GB","restricted":true},
-  {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\uff08\u5206\u5377 3/3\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801.part3.zip","description":"Administrator file. Download all three volumes and extract after merging.","size":"272 MB","restricted":true},
   {"name":"\u5f00\u53d1\u5de5\u5177\u5b89\u88c5\u5305","file":"\u5f00\u53d1\u5de5\u5177\u5b89\u88c5\u5305.zip","description":"Development tools installer package for visitors to download.","size":"585.3 MB"},
-  {"name":"\u8d77\u5e8a\u00b7\u661f\u6d77\u51b3\uff08\u65b0\u7248\uff09","file":"\u8d77\u5e8a\u00b7\u661f\u6d77\u51b3\uff08\u65b0\u7248\uff09.zip","description":"New version of the game archive for visitors to download.","size":"159.8 MB"},
-  {"name":"\u5b9d\u77f3\u77ff\u4e95\u6e90\u4ee3\u7801","file":"\u5b9d\u77f3\u77ff\u4e95\u6e90\u4ee3\u7801.zip","description":"Administrator-only Gem Mine source code archive.","size":"1.2 MB","restricted":true}
+  {"name":"\u8d77\u5e8a\u00b7\u661f\u6d77\u51b3\uff08\u65b0\u7248\uff09","file":"\u8d77\u5e8a\u00b7\u661f\u6d77\u51b3\uff08\u65b0\u7248\uff09.zip","description":"Latest version of the game archive for visitors to download.","size":"208.8 MB"},
+  {"name":"\u5b9d\u77f3\u77ff\u4e95","file":"\u5b9d\u77f3\u77ff\u4e95.zip","description":"Administrator-only latest Gem Mine archive.","size":"1.2 MB","restricted":true},
+  {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\u6700\u521d\uff08\u5206\u5377 1/2\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\u6700\u521d.part1.zip","description":"Administrator file. Download both volumes and merge them in order before extracting.","size":"1.86 GB","restricted":true},
+  {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\u6700\u521d\uff08\u5206\u5377 2/2\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\u6700\u521d.part2.zip","description":"Administrator file. Download both volumes and merge them in order before extracting.","size":"1.01 GB","restricted":true},
+  {"name":"Codex \u7b2c\u4e8c\u5927\u8111","file":"codex\u7b2c\u4e8c\u5927\u8111.zip","description":"Administrator-only Codex second brain archive.","size":"39 KB","restricted":true},
+  {"name":"ComfyUI","file":"comfyui.zip","description":"ComfyUI archive for visitors to download.","size":"320.3 MB"}
 ]
