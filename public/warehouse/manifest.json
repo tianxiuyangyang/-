@@ -17,5 +17,5 @@
   {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\u6700\u521d\uff08\u5206\u5377 1/2\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\u6700\u521d.part1.zip","description":"Administrator file. Download both volumes and merge them in order before extracting.","size":"1.86 GB","restricted":true},
   {"name":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\u6700\u521d\uff08\u5206\u5377 2/2\uff09","file":"\u4e2a\u4eba\u7f51\u7ad9\u6e90\u4ee3\u7801\u6700\u521d.part2.zip","description":"Administrator file. Download both volumes and merge them in order before extracting.","size":"1.01 GB","restricted":true},
   {"name":"Codex \u7b2c\u4e8c\u5927\u8111","file":"codex\u7b2c\u4e8c\u5927\u8111.zip","description":"Administrator-only Codex second brain archive.","size":"39 KB","restricted":true},
-  {"name":"ComfyUI","file":"comfyui.zip","description":"ComfyUI archive for visitors to download.","size":"320.3 MB"}
+  {"name":"ComfyUI","file":"comfyui.zip","description":"Administrator-only ComfyUI archive.","size":"320.3 MB","restricted":true}
 ]
