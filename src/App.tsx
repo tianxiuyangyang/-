@@ -1539,6 +1539,8 @@ const works = [
 ] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link' }>
 
 const worksMusicSrc = assetPath('/music/works-player.mp3')
+const mistCityMovieSrc = assetPath('/warehouse/迷雾都城 · 上部-暗黑传说.zip')
+const mistCityPosterSrc = assetPath('/works/mist-city-poster.jpg')
 
 function RecordPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -1733,6 +1735,43 @@ function WorksPage({ onBack }: { onBack: () => void }) {
             </motion.article>
           ))}
         </div>
+        <motion.article
+          className="mt-6 overflow-hidden rounded-3xl border border-[#2F302F] bg-[#1E2222] shadow-[0_22px_70px_rgba(25,27,26,0.22)]"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: works.length * 0.08, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="grid gap-0 md:grid-cols-[minmax(220px,0.38fr)_minmax(0,0.62fr)]">
+            <div className="relative min-h-[360px] bg-[#303535] md:min-h-[430px]">
+              <img
+                src={mistCityPosterSrc}
+                alt="迷雾都城 · 上部-暗黑传说电影海报"
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div className="flex flex-col justify-center p-6 text-[#F9EBC1] sm:p-8 md:p-10">
+              <p className="mb-3 text-xs uppercase tracking-[0.28em] text-[#D7B66B]">AI 原创仿真人微电影作品</p>
+              <h2 className="max-w-2xl text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
+                《迷雾都城 · 上部-暗黑传说》
+              </h2>
+              <p className="mt-5 max-w-2xl text-sm leading-relaxed text-[#D7D4C8] sm:text-base">
+                一部以迷雾、古城与暗黑传说为核心意象的 AI 原创仿真人微电影作品。下载原片，完整观看这段发生在雾起之夜的故事。
+              </p>
+              <div className="mt-8">
+                <a
+                  href={mistCityMovieSrc}
+                  download
+                  className="inline-flex items-center gap-2 rounded-full bg-[#E6B85C] px-6 py-3 text-sm font-bold text-[#27231B] transition hover:-translate-y-0.5 hover:bg-[#F2CB7A]"
+                >
+                  <Download className="h-4 w-4" aria-hidden="true" />
+                  下载电影原片
+                </a>
+              </div>
+            </div>
+          </div>
+        </motion.article>
       </section>
     </main>
   )
