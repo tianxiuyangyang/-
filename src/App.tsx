@@ -1618,8 +1618,8 @@ function WorksPage({ onBack }: { onBack: () => void }) {
   const [copiedWork, setCopiedWork] = useState<string | null>(null)
 
   return (
-    <main className="min-h-screen bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
-      <section className="mx-auto max-w-7xl rounded-[2rem] border border-[#E6D8C6] bg-[#FFF9EF] p-5 shadow-[0_30px_90px_rgba(112,88,58,0.14)] sm:p-8 md:p-10">
+    <main className="works-page min-h-screen overflow-y-auto overflow-x-hidden bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
+      <section className="mx-auto max-w-7xl overflow-visible rounded-[2rem] border border-[#E6D8C6] bg-[#FFF9EF] p-5 pb-10 shadow-[0_30px_90px_rgba(112,88,58,0.14)] sm:p-8 sm:pb-12 md:p-10 md:pb-14">
         <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-4 text-xs uppercase tracking-[0.28em] text-[#9A6B3F]">我的作品</p>
