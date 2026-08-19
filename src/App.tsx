@@ -132,17 +132,21 @@ function WordsPullUp({
   text,
   className = '',
   showAsterisk = false,
+  color = ink,
+  textShadow,
 }: {
   text: string
   className?: string
   showAsterisk?: boolean
+  color?: string
+  textShadow?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-40px' })
   const words = text.split(' ')
 
   return (
-    <div ref={ref} className={`inline-flex flex-wrap ${className}`} style={{ color: ink }}>
+    <div ref={ref} className={`inline-flex flex-wrap ${className}`} style={{ color, textShadow }}>
       {words.map((word, index) => {
         const isFinal = index === words.length - 1
         return (
@@ -317,7 +321,9 @@ function Hero() {
               <WordsPullUp
                 text="睿 琛"
                 showAsterisk
-                className="text-[26vw] font-medium leading-[0.85] tracking-[-0.07em] sm:text-[24vw] md:text-[22vw] lg:text-[20vw] xl:text-[19vw] 2xl:text-[20vw]"
+                color="#FFB347"
+                textShadow="0 3px 18px rgba(43, 34, 26, 0.78)"
+                className="translate-x-[2vw] -translate-y-[2vh] text-[19.5vw] font-medium leading-[0.85] tracking-[-0.07em] sm:text-[18vw] md:text-[16.5vw] lg:text-[15vw] xl:text-[14.25vw] 2xl:text-[15vw]"
               />
             </div>
             <div className="flex max-w-xl flex-col items-start gap-5 pb-3 lg:col-span-4 lg:pb-8">
