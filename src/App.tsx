@@ -325,8 +325,8 @@ function Hero({ onOpenResume }: { onOpenResume: () => void }) {
           loop
           muted
           playsInline
-          preload="auto"
-          onCanPlayThrough={() => setHeroVideoReady(true)}
+          preload="metadata"
+          onCanPlay={() => setHeroVideoReady(true)}
           onError={() => setHeroVideoReady(false)}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-[#F8F1E6]/10" />
@@ -816,19 +816,19 @@ function Features({ onOpenWorks, onOpenResume }: { onOpenWorks: () => void; onOp
     {
       title: '项目叙事板。',
       number: '01',
-      icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171918_4a5edc79-d78f-4637-ac8b-53c43c220606.png&w=1280&q=85',
+      icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171918_4a5edc79-d78f-4637-ac8b-53c43c220606.png&w=256&q=80',
       items: ['梳理每个作品的核心想法', '记录灵感来源与视觉参考', '沉淀可复用的创作流程', '持续归档阶段性成果'],
     },
     {
       title: '灵感复盘。',
       number: '02',
-      icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171741_ed9845ab-f5b2-4018-8ce7-07cc01823522.png&w=1280&q=85',
+      icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171741_ed9845ab-f5b2-4018-8ce7-07cc01823522.png&w=256&q=80',
       items: ['用文字复盘项目得失', '保留创作过程中的关键笔记', '整理工具、资料与学习路径'],
     },
     {
       title: '沉浸空间。',
       number: '03',
-      icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171809_f56666dc-c099-4778-ad82-9ad4f209567b.png&w=1280&q=85',
+      icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171809_f56666dc-c099-4778-ad82-9ad4f209567b.png&w=256&q=80',
       items: ['用安静的界面承载内容', '让访问体验更像一段短片', '为后续作品展示预留空间'],
     },
   ]
@@ -1561,7 +1561,7 @@ function MessageBoard() {
 const works = [
   {
     title: '作品一：游戏开发',
-    src: assetPath('/works/work-1.png'),
+    src: assetPath('/works/work-1.webp'),
     type: 'image',
   },
   {
@@ -1589,14 +1589,16 @@ const worksPlaylist = [
 ] as const
 const mistCityMovieSrc = githubMediaPath('/warehouse/迷雾都城 · 上部-暗黑传说.zip')
 const mistCityPosterSrc = assetPath('/works/mist-city-poster.jpg')
-const knowledgeSkillImageSrc = assetPath('/works/personal-knowledge-skill.png')
+const knowledgeSkillImageSrc = assetPath('/works/personal-knowledge-skill.webp')
 const knowledgeSkillGithubUrl = 'https://github.com/tianxiuyangyang/personal-knowledge-base-organizer'
 const knowledgeSkillDownloadSrc = assetPath('/downloads/personal-knowledge-base-organizer-skill.zip')
 
 function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const resumeAfterTrackChangeRef = useRef(false)
+  const wantsPlaybackRef = useRef(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isAudioLoading, setIsAudioLoading] = useState(false)
   const [hasAudioError, setHasAudioError] = useState(false)
   const [trackIndex, setTrackIndex] = useState(0)
   const currentTrack = worksPlaylist[trackIndex]
@@ -1605,12 +1607,17 @@ function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) 
     const audio = audioRef.current
     if (!audio) return
 
-    audio.load()
-    if (!resumeAfterTrackChangeRef.current) return
-
+    const shouldResume = resumeAfterTrackChangeRef.current
     resumeAfterTrackChangeRef.current = false
+    setHasAudioError(false)
+    setIsAudioLoading(shouldResume)
+    audio.load()
+    if (!shouldResume) return
+
     void audio.play().catch(() => {
+      wantsPlaybackRef.current = false
       setIsPlaying(false)
+      setIsAudioLoading(false)
       setHasAudioError(true)
     })
   }, [trackIndex])
@@ -1622,23 +1629,32 @@ function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) 
     setHasAudioError(false)
 
     if (isPlaying) {
+      wantsPlaybackRef.current = false
       audio.pause()
       setIsPlaying(false)
+      setIsAudioLoading(false)
       return
     }
 
+    wantsPlaybackRef.current = true
+    setIsAudioLoading(true)
     try {
       await audio.play()
       setIsPlaying(true)
+      setIsAudioLoading(false)
     } catch {
+      wantsPlaybackRef.current = false
       setIsPlaying(false)
+      setIsAudioLoading(false)
       setHasAudioError(true)
     }
   }
 
   const switchTrack = (keepPlaying = isPlaying) => {
+    wantsPlaybackRef.current = keepPlaying
     resumeAfterTrackChangeRef.current = keepPlaying
     setHasAudioError(false)
+    setIsAudioLoading(keepPlaying)
     setTrackIndex((currentIndex) => (currentIndex + 1) % worksPlaylist.length)
   }
 
@@ -1688,18 +1704,38 @@ function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) 
       </div>
       {hasAudioError ? (
         <p className="max-w-[13rem] text-xs leading-relaxed text-[#8C633F] sm:text-right">
-          当前歌曲加载失败，请检查 public/music 中的音乐文件。
+          当前歌曲暂时无法加载，请稍后重试。
         </p>
+      ) : isAudioLoading ? (
+        <p className="max-w-[13rem] animate-pulse text-xs leading-relaxed text-[#8C633F] sm:text-right">歌曲加载中，请稍候…</p>
       ) : null}
       <audio
         ref={audioRef}
         src={currentTrack.src}
         preload="metadata"
-        onPause={() => setIsPlaying(false)}
-        onPlay={() => setIsPlaying(true)}
+        onPause={() => {
+          setIsPlaying(false)
+          if (!wantsPlaybackRef.current) setIsAudioLoading(false)
+        }}
+        onPlaying={() => {
+          setIsPlaying(true)
+          setIsAudioLoading(false)
+          setHasAudioError(false)
+        }}
+        onCanPlay={() => {
+          if (wantsPlaybackRef.current) setIsAudioLoading(false)
+        }}
+        onWaiting={() => {
+          if (wantsPlaybackRef.current) setIsAudioLoading(true)
+        }}
+        onStalled={() => {
+          if (wantsPlaybackRef.current) setIsAudioLoading(true)
+        }}
         onEnded={() => switchTrack(true)}
         onError={() => {
+          wantsPlaybackRef.current = false
           setIsPlaying(false)
+          setIsAudioLoading(false)
           setHasAudioError(true)
         }}
       />
@@ -1925,48 +1961,56 @@ function WorksPage({ onBack }: { onBack: () => void }) {
 const awards = [
   {
     src: assetPath('/awards/honor-1.jpg'),
+    thumbnailSrc: assetPath('/awards/thumbs/honor-1.webp'),
     year: '2019',
     title: '第十一届蓝桥杯全国软件和信息技术专业人才大赛',
     result: '青少年硬件搭建高级组 · 三等奖',
   },
   {
     src: assetPath('/awards/honor-2.jpg'),
+    thumbnailSrc: assetPath('/awards/thumbs/honor-2.webp'),
     year: '2019',
     title: '“我和我的祖国”主题征文活动',
     result: '优秀奖',
   },
   {
     src: assetPath('/awards/honor-3.jpg'),
+    thumbnailSrc: assetPath('/awards/thumbs/honor-3.webp'),
     year: '2019',
     title: '淄博市第三届智力运动会',
     result: 'Scratch 个人赛小学组 · 三等奖',
   },
   {
     src: assetPath('/awards/honor-4.jpg'),
+    thumbnailSrc: assetPath('/awards/thumbs/honor-4.webp'),
     year: '2020',
     title: '全国青少年信息学奥林匹克联赛',
     result: '小学组 · 三等奖',
   },
   {
     src: assetPath('/awards/honor-5.jpg'),
+    thumbnailSrc: assetPath('/awards/thumbs/honor-5.webp'),
     year: '2020',
     title: '淄博市第四届智力运动会',
     result: 'C++ 编程赛小学组 · 三等奖',
   },
   {
     src: assetPath('/awards/honor-6.jpg'),
+    thumbnailSrc: assetPath('/awards/thumbs/honor-6.webp'),
     year: '2022',
     title: '第四届山东省中小学生人工智能与编程展示活动',
     result: '编程考核竞赛初中组 · 二等奖',
   },
   {
     src: assetPath('/awards/honor-7.jpg'),
+    thumbnailSrc: assetPath('/awards/thumbs/honor-7.webp'),
     year: '2026',
     title: '美达菲双语高级中学',
     result: '三好学生',
   },
   {
     src: assetPath('/awards/honor-8.jpg'),
+    thumbnailSrc: assetPath('/awards/thumbs/honor-8.webp'),
     year: '等级认证',
     title: '青少年机器人技术等级考试证书',
     result: '机器人技术学习与实践认证',
@@ -2132,7 +2176,13 @@ function ResumeSection({ age }: { age: number }) {
             >
               <a href={award.src} target="_blank" rel="noreferrer" aria-label={`查看${award.title}证书原图`}>
                 <div className="aspect-[3/4] border-b border-[#E0CFB8] bg-[#EEE4D6] p-3">
-                  <img className="h-full w-full object-contain" src={award.src} alt={`${award.title} ${award.result}`} loading="lazy" decoding="async" />
+                  <img
+                    className="h-full w-full object-contain"
+                    src={award.thumbnailSrc}
+                    alt={`${award.title} ${award.result}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
               </a>
               <div className="p-4">
@@ -2255,7 +2305,7 @@ function DetailInfoPage({ onBack, initialTarget }: { onBack: () => void; initial
               <div className="relative mx-auto w-full max-w-[360px]">
                 <a href={currentAward.src} target="_blank" rel="noreferrer" aria-label={`查看${currentAward.title}证书原图`}>
                   <DetailImage
-                    src={currentAward.src}
+                    src={currentAward.thumbnailSrc}
                     label={`${currentAward.title} ${currentAward.result}`}
                     className="aspect-[3/4] rounded-2xl bg-[#EEE4D6]"
                     imageClassName="object-contain p-3 sm:p-4"
