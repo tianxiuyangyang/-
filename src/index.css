@@ -438,6 +438,41 @@ button {
   animation: record-spin 1.25s linear infinite;
 }
 
+.music-switch-button {
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  background: rgba(222, 241, 249, 0.82);
+  box-shadow:
+    0 14px 32px rgba(65, 126, 153, 0.2),
+    inset 0 0 0 7px rgba(255, 255, 255, 0.38),
+    inset 0 -8px 16px rgba(85, 173, 207, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.music-switch-button::before {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 2px rgba(121, 199, 228, 0.22),
+    inset 0 0 16px rgba(255, 255, 255, 0.9);
+}
+
+.music-switch-button__inner {
+  position: relative;
+  display: flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(205, 235, 247, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 5px 14px rgba(73, 148, 178, 0.18);
+}
+
 @keyframes record-spin {
   to {
     transform: rotate(360deg);

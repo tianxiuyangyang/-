@@ -6,6 +6,7 @@ import {
   ArrowRight,
   Award,
   Bird,
+  BookOpen,
   CalendarDays,
   Check,
   Clapperboard,
@@ -21,10 +22,12 @@ import {
   Mail,
   MapPin,
   MessageCircle,
+  Music2,
   QrCode,
   Pause,
   Play,
   PackageOpen,
+  SkipForward,
   Star,
   Send,
   Sparkles,
@@ -241,7 +244,25 @@ function AnimatedLetter({
   return <motion.span style={{ opacity }}>{letter}</motion.span>
 }
 
-function Hero() {
+function ResumeShortcutButton({ onClick, className = '' }: { onClick: () => void; className?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group z-30 inline-flex h-14 items-stretch overflow-hidden rounded-lg border border-[#C8AE8E] bg-[#FFF7EA]/95 text-[#2B221A] shadow-[0_16px_38px_rgba(43,34,26,0.2)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white ${className}`}
+      aria-label="打开个人简历"
+      title="个人简历"
+    >
+      <span className="w-2 bg-[#8C633F] transition-colors group-hover:bg-[#D97824]" aria-hidden="true" />
+      <span className="inline-flex items-center gap-2 px-4 text-sm font-bold">
+        <BookOpen className="h-5 w-5 transition-transform group-hover:scale-110" />
+        个人简历
+      </span>
+    </button>
+  )
+}
+
+function Hero({ onOpenResume }: { onOpenResume: () => void }) {
   const heroVideoRef = useRef<HTMLVideoElement>(null)
   const [heroVideoReady, setHeroVideoReady] = useState(false)
   const navItems = [
@@ -315,6 +336,11 @@ function Hero() {
           </div>
         </nav>
 
+        <ResumeShortcutButton
+          onClick={onOpenResume}
+          className="absolute right-4 top-14 sm:right-6 sm:top-16 lg:top-6"
+        />
+
         <div className="absolute bottom-0 left-0 right-0 z-10 p-4 sm:p-6 md:p-8 lg:p-10">
           <div className="grid items-end gap-6 lg:grid-cols-12">
             <div className="lg:col-span-8">
@@ -355,7 +381,13 @@ function Hero() {
   )
 }
 
-function About({ onOpenSecret, onOpenWarehouse }: { onOpenSecret: () => void; onOpenWarehouse: () => void }) {
+function About({
+  onOpenSecret,
+  onOpenWarehouse,
+}: {
+  onOpenSecret: () => void
+  onOpenWarehouse: () => void
+}) {
   const [isSupportOpen, setIsSupportOpen] = useState(false)
 
   return (
@@ -769,7 +801,7 @@ function FeatureCard({
   )
 }
 
-function Features({ onOpenWorks }: { onOpenWorks: () => void }) {
+function Features({ onOpenWorks, onOpenResume }: { onOpenWorks: () => void; onOpenResume: () => void }) {
   const cards = [
     {
       title: '项目叙事板。',
@@ -805,8 +837,9 @@ function Features({ onOpenWorks }: { onOpenWorks: () => void }) {
             ]}
           />
         </div>
-        <div className="mb-6 flex justify-center lg:justify-end">
-          <RecordPlayer />
+        <div className="mb-6 flex flex-wrap items-center justify-center gap-3 sm:justify-end">
+          <RecordPlayer showSkipButton />
+          <ResumeShortcutButton onClick={onOpenResume} />
         </div>
         <div className="grid gap-3 sm:gap-2 md:grid-cols-2 md:gap-2 lg:h-[480px] lg:grid-cols-4">
           <motion.button
@@ -1538,14 +1571,39 @@ const works = [
   },
 ] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link' }>
 
-const worksMusicSrc = assetPath('/music/works-player.mp3')
+const worksPlaylist = [
+  { title: '默认主题', artist: '作品页音乐', src: assetPath('/music/works-player.mp3') },
+  { title: '九万字', artist: '黄诗扶', src: assetPath('/music/jiu-wan-zi.mp3') },
+  { title: '不死之身', artist: '林俊杰', src: assetPath('/music/bu-si-zhi-shen.mp3') },
+  { title: '着魔', artist: '张杰', src: assetPath('/music/zhao-mo.mp3') },
+] as const
 const mistCityMovieSrc = assetPath('/warehouse/迷雾都城 · 上部-暗黑传说.zip')
 const mistCityPosterSrc = assetPath('/works/mist-city-poster.jpg')
+const knowledgeSkillImageSrc = assetPath('/works/personal-knowledge-skill.png')
+const knowledgeSkillGithubUrl = 'https://github.com/tianxiuyangyang/personal-knowledge-base-organizer'
+const knowledgeSkillDownloadSrc = assetPath('/downloads/personal-knowledge-base-organizer-skill.zip')
 
-function RecordPlayer() {
+function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null)
+  const resumeAfterTrackChangeRef = useRef(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [hasAudioError, setHasAudioError] = useState(false)
+  const [trackIndex, setTrackIndex] = useState(0)
+  const currentTrack = worksPlaylist[trackIndex]
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    audio.load()
+    if (!resumeAfterTrackChangeRef.current) return
+
+    resumeAfterTrackChangeRef.current = false
+    void audio.play().catch(() => {
+      setIsPlaying(false)
+      setHasAudioError(true)
+    })
+  }, [trackIndex])
 
   const togglePlayback = async () => {
     const audio = audioRef.current
@@ -1568,42 +1626,68 @@ function RecordPlayer() {
     }
   }
 
+  const switchTrack = (keepPlaying = isPlaying) => {
+    resumeAfterTrackChangeRef.current = keepPlaying
+    setHasAudioError(false)
+    setTrackIndex((currentIndex) => (currentIndex + 1) % worksPlaylist.length)
+  }
+
   return (
     <div className="flex flex-col items-start gap-2 sm:items-end">
-      <button
-        type="button"
-        onClick={togglePlayback}
-        className={`record-player group relative inline-flex items-center gap-3 rounded-full border border-[#D8C2A8] bg-[#FFF7EA] py-2 pl-2 pr-4 text-left text-[#2B221A] shadow-[0_16px_38px_rgba(112,88,58,0.12)] transition hover:-translate-y-0.5 hover:bg-white ${isPlaying ? 'is-playing' : ''}`}
-        aria-label={isPlaying ? '暂停作品页音乐' : '播放作品页音乐'}
-        aria-pressed={isPlaying}
-      >
-        <span className="record-player__turntable flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#2B221A] shadow-inner">
-          <span className="record-player__disc relative flex h-12 w-12 items-center justify-center rounded-full border border-[#8C633F] bg-[#17110C]">
-            <span className="absolute h-8 w-8 rounded-full border border-[#4A3526]" />
-            <span className="absolute h-4 w-4 rounded-full bg-[#C79B63]" />
-            <Disc3 className="relative h-7 w-7 text-[#FFF7E8]/80" aria-hidden="true" />
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={togglePlayback}
+          className={`record-player group relative inline-flex items-center gap-3 rounded-full border border-[#D8C2A8] bg-[#FFF7EA] py-2 pl-2 pr-4 text-left text-[#2B221A] shadow-[0_16px_38px_rgba(112,88,58,0.12)] transition hover:-translate-y-0.5 hover:bg-white ${isPlaying ? 'is-playing' : ''}`}
+          aria-label={isPlaying ? `暂停 ${currentTrack.artist}《${currentTrack.title}》` : `播放 ${currentTrack.artist}《${currentTrack.title}》`}
+          aria-pressed={isPlaying}
+        >
+          <span className="record-player__turntable flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#2B221A] shadow-inner">
+            <span className="record-player__disc relative flex h-12 w-12 items-center justify-center rounded-full border border-[#8C633F] bg-[#17110C]">
+              <span className="absolute h-8 w-8 rounded-full border border-[#4A3526]" />
+              <span className="absolute h-4 w-4 rounded-full bg-[#C79B63]" />
+              <Disc3 className="relative h-7 w-7 text-[#FFF7E8]/80" aria-hidden="true" />
+            </span>
           </span>
-        </span>
-        <span className="min-w-0">
-          <span className="block text-xs uppercase tracking-[0.22em] text-[#9A6B3F]">Music</span>
-          <span className="mt-1 flex items-center gap-2 text-sm font-bold text-[#2B221A]">
-            {isPlaying ? <Pause className="h-4 w-4" aria-hidden="true" /> : <Play className="h-4 w-4" aria-hidden="true" />}
-            {isPlaying ? '正在播放' : '播放音乐'}
+          <span className="min-w-0">
+            <span className="block text-xs uppercase tracking-[0.18em] text-[#9A6B3F]">
+              Music {String(trackIndex + 1).padStart(2, '0')} / {String(worksPlaylist.length).padStart(2, '0')}
+            </span>
+            <span className="mt-1 flex items-center gap-2 text-sm font-bold text-[#2B221A]">
+              {isPlaying ? <Pause className="h-4 w-4" aria-hidden="true" /> : <Play className="h-4 w-4" aria-hidden="true" />}
+              <span className="max-w-[7rem] truncate">{currentTrack.title}</span>
+            </span>
           </span>
-        </span>
-      </button>
+        </button>
+        {showSkipButton ? (
+          <button
+            type="button"
+            onClick={() => switchTrack()}
+            className="music-switch-button group relative flex h-20 w-20 shrink-0 items-center justify-center rounded-full text-[#3A6B82] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#72BBD8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F8F1E6]"
+            aria-label={`切换音乐，下一首是${worksPlaylist[(trackIndex + 1) % worksPlaylist.length].artist}《${worksPlaylist[(trackIndex + 1) % worksPlaylist.length].title}》`}
+            title="切换到下一首"
+          >
+            <span className="music-switch-button__inner" aria-hidden="true">
+              <Music2 className="h-8 w-8 transition-transform group-hover:scale-110" />
+            </span>
+            <span className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded-full border border-white/90 bg-white/85 shadow-sm" aria-hidden="true">
+              <SkipForward className="h-3.5 w-3.5" />
+            </span>
+          </button>
+        ) : null}
+      </div>
       {hasAudioError ? (
         <p className="max-w-[13rem] text-xs leading-relaxed text-[#8C633F] sm:text-right">
-          请将音乐文件放到 public/music/works-player.mp3
+          当前歌曲加载失败，请检查 public/music 中的音乐文件。
         </p>
       ) : null}
       <audio
         ref={audioRef}
-        src={worksMusicSrc}
+        src={currentTrack.src}
         preload="metadata"
         onPause={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => switchTrack(true)}
         onError={() => {
           setIsPlaying(false)
           setHasAudioError(true)
@@ -1772,16 +1856,111 @@ function WorksPage({ onBack }: { onBack: () => void }) {
             </div>
           </div>
         </motion.article>
+        <motion.article
+          id="personal-knowledge-skill"
+          className="mt-6 overflow-hidden rounded-3xl border border-[#C9D4CB] bg-[#EAF0EA] shadow-[0_22px_70px_rgba(63,82,67,0.14)]"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: (works.length + 1) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="grid gap-0 md:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)]">
+            <div className="relative aspect-[16/10] bg-[#F5F7F2] p-3 sm:p-5 md:aspect-auto md:min-h-[430px]">
+              <img
+                src={knowledgeSkillImageSrc}
+                alt="个人知识库整理 Skill GitHub 仓库页面截图"
+                className="h-full w-full rounded-2xl border border-[#D5DFD5] object-contain shadow-[0_12px_32px_rgba(63,82,67,0.10)]"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div className="flex flex-col justify-center p-6 text-[#26352B] sm:p-8 md:p-10">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.28em] text-[#66806B]">GitHub 开源作品</p>
+              <h2 className="max-w-xl text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">个人知识库整理 Skill</h2>
+              <p className="mt-5 max-w-xl text-sm leading-relaxed text-[#506257] sm:text-base">
+                一个可复用的 Codex Skill，用于快速搭建高级感、中文优先、可编辑的个人知识库网站。它把知识整理方法、网站交互规范与一键生成脚本组合在一起，让 AI 可以为不同用户生成独立的个人知识库空间。
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-[#526A58]">
+                <span className="rounded-full border border-[#B8CBB9] bg-white/65 px-3 py-2">PARA 知识整理</span>
+                <span className="rounded-full border border-[#B8CBB9] bg-white/65 px-3 py-2">无限知识网络</span>
+                <span className="rounded-full border border-[#B8CBB9] bg-white/65 px-3 py-2">全屏工作台</span>
+              </div>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a
+                  href={knowledgeSkillGithubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#26352B] px-6 py-3 text-sm font-bold text-[#F4F8F2] transition hover:-translate-y-0.5 hover:bg-[#3E5545]"
+                >
+                  <Globe2 className="h-4 w-4" aria-hidden="true" />
+                  查看 GitHub 源码
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </a>
+                <a
+                  href={knowledgeSkillDownloadSrc}
+                  download="个人知识库整理skill.zip"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#8FA793] bg-white/70 px-6 py-3 text-sm font-bold text-[#26352B] transition hover:-translate-y-0.5 hover:border-[#66806B] hover:bg-white"
+                >
+                  <Download className="h-4 w-4" aria-hidden="true" />
+                  下载 Skill
+                </a>
+              </div>
+            </div>
+          </div>
+        </motion.article>
       </section>
     </main>
   )
 }
 
-const awardImages = [
-  assetPath('/awards/honor-1.jpg'),
-  assetPath('/awards/honor-2.jpg'),
-  assetPath('/awards/honor-3.jpg'),
-  assetPath('/awards/honor-4.jpg'),
+const awards = [
+  {
+    src: assetPath('/awards/honor-1.jpg'),
+    year: '2019',
+    title: '第十一届蓝桥杯全国软件和信息技术专业人才大赛',
+    result: '青少年硬件搭建高级组 · 三等奖',
+  },
+  {
+    src: assetPath('/awards/honor-2.jpg'),
+    year: '2019',
+    title: '“我和我的祖国”主题征文活动',
+    result: '优秀奖',
+  },
+  {
+    src: assetPath('/awards/honor-3.jpg'),
+    year: '2019',
+    title: '淄博市第三届智力运动会',
+    result: 'Scratch 个人赛小学组 · 三等奖',
+  },
+  {
+    src: assetPath('/awards/honor-4.jpg'),
+    year: '2020',
+    title: '全国青少年信息学奥林匹克联赛',
+    result: '小学组 · 三等奖',
+  },
+  {
+    src: assetPath('/awards/honor-5.jpg'),
+    year: '2020',
+    title: '淄博市第四届智力运动会',
+    result: 'C++ 编程赛小学组 · 三等奖',
+  },
+  {
+    src: assetPath('/awards/honor-6.jpg'),
+    year: '2022',
+    title: '第四届山东省中小学生人工智能与编程展示活动',
+    result: '编程考核竞赛初中组 · 二等奖',
+  },
+  {
+    src: assetPath('/awards/honor-7.jpg'),
+    year: '2026',
+    title: '美达菲双语高级中学',
+    result: '三好学生',
+  },
+  {
+    src: assetPath('/awards/honor-8.jpg'),
+    year: '等级认证',
+    title: '青少年机器人技术等级考试证书',
+    result: '机器人技术学习与实践认证',
+  },
 ]
 const featuredPhoto = assetPath('/photos/featured-photo.jpg')
 
@@ -1800,20 +1979,31 @@ function calculateAge(birthday: string) {
   return age
 }
 
-function DetailImage({ src, label, className = '' }: { src: string; label: string; className?: string }) {
-  const [isLoaded, setIsLoaded] = useState(false)
+function DetailImage({
+  src,
+  label,
+  className = '',
+  imageClassName = 'object-cover',
+}: {
+  src: string
+  label: string
+  className?: string
+  imageClassName?: string
+}) {
+  const [loadedSrc, setLoadedSrc] = useState('')
+  const isLoaded = loadedSrc === src
 
   return (
     <div className={`relative overflow-hidden rounded-3xl border border-[#E0CFB8] bg-[#F4E9D8] ${className}`}>
       <img
-        className="h-full w-full object-cover"
+        className={`h-full w-full ${imageClassName}`}
         src={src}
         alt={label}
         loading="lazy"
         decoding="async"
-        onLoad={() => setIsLoaded(true)}
+        onLoad={() => setLoadedSrc(src)}
         onError={(event) => {
-          setIsLoaded(false)
+          setLoadedSrc('')
           event.currentTarget.style.display = 'none'
         }}
       />
@@ -1826,20 +2016,164 @@ function DetailImage({ src, label, className = '' }: { src: string; label: strin
   )
 }
 
-function DetailInfoPage({ onBack }: { onBack: () => void }) {
+function ResumeSection({ age }: { age: number }) {
+  const focusAreas = ['游戏开发与设计', '趣味网站开发', 'AI 影像创作', '视觉与交互设计']
+  const skills = [
+    'C++',
+    'AI 影像工作流',
+    '游戏策划与设计',
+    '网站开发',
+    'AI 模型训练',
+    '智能体开发',
+    '动效设计',
+    '平面设计',
+    '软件开发',
+    'Unity',
+    '电影短视频设计与开发',
+  ]
+
+  return (
+    <section
+      id="personal-resume"
+      className="mx-auto mt-6 max-w-6xl scroll-mt-6 overflow-hidden rounded-[1.5rem] border border-[#DCC9AE] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.12)]"
+    >
+      <div className="relative overflow-hidden bg-[#2B221A] px-5 py-8 text-[#FFF7E8] sm:px-8 sm:py-10 md:px-10">
+        <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full border border-[#C39A68]/35" />
+        <div className="pointer-events-none absolute right-24 top-14 h-16 w-16 rounded-full border border-[#E4C18D]/25" />
+        <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[#D7B98D]">Personal resume</p>
+            <h2 className="mt-3 text-4xl font-bold leading-none sm:text-5xl">张睿琛 · 个人简历</h2>
+          </div>
+          <div className="flex flex-wrap gap-2 text-xs font-medium text-[#F3DEC0]">
+            <span className="rounded-full border border-white/20 px-3 py-1.5">{age} 岁</span>
+            <span className="rounded-full border border-white/20 px-3 py-1.5">山东淄博</span>
+            <span className="rounded-full border border-white/20 px-3 py-1.5">创意开发者</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-8 border-b border-[#E4D4BF] px-5 py-8 sm:px-8 md:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14 lg:py-10">
+        <div>
+          <p className="text-xs uppercase tracking-[0.24em] text-[#9B8A78]">Profile</p>
+          <h3 className="mt-2 text-2xl font-bold text-[#2B221A]">个人概述</h3>
+          <p className="mt-4 text-sm leading-7 text-[#625344] sm:text-base">
+            关注技术、视觉与叙事的结合，持续尝试把编程、游戏设计、趣味网站和 AI 影像做成真正可以体验的作品。从青少年编程与机器人实践出发，逐步拓展到完整项目的策划、制作与发布。
+          </p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            {[
+              { label: '学校', value: '美达菲双语高级中学' },
+              { label: '状态', value: '在读 / 持续创作' },
+              { label: 'QQ', value: '2467548120' },
+              { label: '抖音号', value: 'tianxiuyangy24' },
+            ].map((item) => (
+              <div key={item.label} className="border-l-2 border-[#C79B67] pl-3">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#9B8A78]">{item.label}</p>
+                <p className="mt-1 break-all text-sm font-bold text-[#2B221A]">{item.value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid content-start gap-7">
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[#9B8A78]">Creative direction</p>
+            <h3 className="mt-2 text-2xl font-bold text-[#2B221A]">创作方向</h3>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              {focusAreas.map((area, index) => (
+                <div key={area} className="flex items-center gap-3 border-b border-[#E5D6C4] py-3 text-sm font-bold text-[#44362B]">
+                  <span className="text-xs text-[#B07B48]">0{index + 1}</span>
+                  {area}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="mb-3 text-xs uppercase tracking-[0.24em] text-[#9B8A78]">Skills</p>
+            <div className="flex flex-wrap gap-2">
+              {skills.map((skill) => (
+                <span key={skill} className="rounded-full border border-[#D8C2A8] bg-[#F4E9D8] px-3 py-1.5 text-sm font-medium text-[#5F5144]">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-5 py-8 sm:px-8 md:px-10 lg:py-10">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.24em] text-[#9B8A78]">Awards timeline</p>
+            <h3 className="mt-2 text-3xl font-bold text-[#2B221A]">荣誉履历</h3>
+          </div>
+          <p className="text-sm text-[#7A6857]">8 项荣誉与认证 · 2019—2026</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {awards.map((award, index) => (
+            <motion.article
+              key={`${award.year}-${award.title}`}
+              className="overflow-hidden rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA]"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.55, delay: (index % 4) * 0.06, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <a href={award.src} target="_blank" rel="noreferrer" aria-label={`查看${award.title}证书原图`}>
+                <div className="aspect-[3/4] border-b border-[#E0CFB8] bg-[#EEE4D6] p-3">
+                  <img className="h-full w-full object-contain" src={award.src} alt={`${award.title} ${award.result}`} loading="lazy" decoding="async" />
+                </div>
+              </a>
+              <div className="p-4">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#A06F42]">{award.year}</p>
+                <h4 className="mt-2 text-sm font-bold leading-6 text-[#2B221A]">{award.title}</h4>
+                <p className="mt-2 text-xs leading-5 text-[#756454]">{award.result}</p>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function DetailInfoPage({ onBack, initialTarget }: { onBack: () => void; initialTarget: 'top' | 'resume' }) {
   const [awardIndex, setAwardIndex] = useState(0)
   const age = calculateAge('2008-11-24')
+  const currentAward = awards[awardIndex]
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      if (initialTarget === 'resume') {
+        document.getElementById('personal-resume')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        return
+      }
+
+      window.scrollTo({ top: 0, behavior: 'auto' })
+    })
+
+    return () => window.cancelAnimationFrame(frameId)
+  }, [initialTarget])
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setAwardIndex((current) => (current + 1) % awardImages.length)
-    }, 3200)
+      setAwardIndex((current) => (current + 1) % awards.length)
+    }, 4200)
 
     return () => window.clearInterval(timer)
   }, [])
 
+  const showPreviousAward = () => {
+    setAwardIndex((current) => (current - 1 + awards.length) % awards.length)
+  }
+
+  const showNextAward = () => {
+    setAwardIndex((current) => (current + 1) % awards.length)
+  }
+
   return (
-    <main className="min-h-screen overflow-hidden bg-[#F8F1E6] px-4 py-5 text-[#2B221A] sm:px-6 md:py-6">
+    <main className="min-h-screen overflow-x-hidden bg-[#F8F1E6] px-4 py-5 pb-12 text-[#2B221A] sm:px-6 md:py-6 md:pb-16">
       <section className="relative mx-auto max-w-6xl overflow-hidden rounded-[1.5rem] border border-[#E6D8C6] bg-[#FFF9EF] p-4 shadow-[0_24px_70px_rgba(112,88,58,0.12)] sm:p-6 md:p-7">
         <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full border border-[#D8B98E] opacity-50" />
         <div className="pointer-events-none absolute right-16 top-20 h-14 w-14 rotate-12 rounded-[1.25rem] border border-[#E4CDAF] opacity-60" />
@@ -1902,13 +2236,49 @@ function DetailInfoPage({ onBack }: { onBack: () => void }) {
                   <p className="text-xs uppercase tracking-[0.24em] text-[#9B8A78]">Awards</p>
                   <h2 className="mt-1 text-xl font-bold text-[#2B221A]">荣誉图片集</h2>
                 </div>
-                <Award className="h-6 w-6 text-[#8C633F]" />
+                <div className="flex items-center gap-2 text-[#8C633F]">
+                  <span className="text-xs font-bold tabular-nums">{String(awardIndex + 1).padStart(2, '0')} / {String(awards.length).padStart(2, '0')}</span>
+                  <Award className="h-6 w-6" />
+                </div>
               </div>
-              <DetailImage src={awardImages[awardIndex]} label="荣誉图片" className="aspect-[16/10] rounded-2xl" />
-              <div className="mt-3 flex justify-center gap-2">
-                {awardImages.map((item, index) => (
+
+              <div className="relative mx-auto w-full max-w-[360px]">
+                <a href={currentAward.src} target="_blank" rel="noreferrer" aria-label={`查看${currentAward.title}证书原图`}>
+                  <DetailImage
+                    src={currentAward.src}
+                    label={`${currentAward.title} ${currentAward.result}`}
+                    className="aspect-[3/4] rounded-2xl bg-[#EEE4D6]"
+                    imageClassName="object-contain p-3 sm:p-4"
+                  />
+                </a>
+                <button
+                  type="button"
+                  onClick={showPreviousAward}
+                  className="absolute left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-[#2B221A]/85 text-white shadow-lg backdrop-blur-sm transition hover:bg-[#2B221A]"
+                  aria-label="查看上一张荣誉证书"
+                >
+                  <ArrowRight className="h-4 w-4 rotate-180" />
+                </button>
+                <button
+                  type="button"
+                  onClick={showNextAward}
+                  className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-[#2B221A]/85 text-white shadow-lg backdrop-blur-sm transition hover:bg-[#2B221A]"
+                  aria-label="查看下一张荣誉证书"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="mt-4 min-h-[72px] text-center" aria-live="polite">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#A06F42]">{currentAward.year}</p>
+                <h3 className="mt-1 text-sm font-bold leading-5 text-[#2B221A]">{currentAward.title}</h3>
+                <p className="mt-1 text-xs leading-5 text-[#756454]">{currentAward.result}</p>
+              </div>
+
+              <div className="mt-3 flex flex-wrap justify-center gap-2">
+                {awards.map((award, index) => (
                   <button
-                    key={item}
+                    key={`${award.year}-${award.title}`}
                     type="button"
                     onClick={() => setAwardIndex(index)}
                     className={`h-2.5 rounded-full transition-all ${index === awardIndex ? 'w-8 bg-[#2B221A]' : 'w-2.5 bg-[#CDB99F]'}`}
@@ -1954,6 +2324,7 @@ function DetailInfoPage({ onBack }: { onBack: () => void }) {
           </article>
         </div>
       </section>
+      <ResumeSection age={age} />
     </main>
   )
 }
@@ -2471,13 +2842,14 @@ function SecretSpacePage({ onBack }: { onBack: () => void }) {
 
 function App() {
   const [page, setPage] = useState<'home' | 'works' | 'details' | 'secret' | 'warehouse'>('home')
+  const [detailsTarget, setDetailsTarget] = useState<'top' | 'resume'>('top')
 
   if (page === 'works') {
     return <WorksPage onBack={() => setPage('home')} />
   }
 
   if (page === 'details') {
-    return <DetailInfoPage onBack={() => setPage('home')} />
+    return <DetailInfoPage onBack={() => setPage('home')} initialTarget={detailsTarget} />
   }
 
   if (page === 'secret') {
@@ -2490,10 +2862,29 @@ function App() {
 
   return (
     <main className="min-h-screen bg-[#F8F1E6] text-[#2B221A]">
-      <Hero />
-      <About onOpenSecret={() => setPage('secret')} onOpenWarehouse={() => setPage('warehouse')} />
-      <PersonalInfo onOpenDetails={() => setPage('details')} />
-      <Features onOpenWorks={() => setPage('works')} />
+      <Hero
+        onOpenResume={() => {
+          setDetailsTarget('resume')
+          setPage('details')
+        }}
+      />
+      <About
+        onOpenSecret={() => setPage('secret')}
+        onOpenWarehouse={() => setPage('warehouse')}
+      />
+      <PersonalInfo
+        onOpenDetails={() => {
+          setDetailsTarget('top')
+          setPage('details')
+        }}
+      />
+      <Features
+        onOpenWorks={() => setPage('works')}
+        onOpenResume={() => {
+          setDetailsTarget('resume')
+          setPage('details')
+        }}
+      />
       <ImageLab />
       <MessageBoard />
     </main>
