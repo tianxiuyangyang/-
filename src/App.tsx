@@ -40,6 +40,16 @@ import { loadStoredMessages, mergeMessages, messageStorageKey, saveStoredMessage
 
 const ink = '#2B221A'
 const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
+const githubMediaBase = 'https://media.githubusercontent.com/media/tianxiuyangyang/-/main/public'
+const githubMediaPath = (path: string) => {
+  const encodedPath = path
+    .replace(/^\//, '')
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/')
+
+  return `${githubMediaBase}/${encodedPath}`
+}
 const portfolioUrl = 'https://hdjajbx.github.io/guanyifei-portfolio/'
 const funWebsites = [
   { name: '个人作品集', url: portfolioUrl },
@@ -646,7 +656,7 @@ function WarehousePage({ onBack }: { onBack: () => void }) {
         ) : items.length > 0 ? (
           <div className="grid gap-3 md:grid-cols-2">
             {items.map((item) => {
-              const href = assetPath(`/warehouse/${item.file}`)
+              const href = githubMediaPath(`/warehouse/${item.file}`)
               const isLocked = item.restricted && !isAdminMode
               return (
                 <article
@@ -1561,7 +1571,7 @@ const works = [
   },
   {
     title: '作品三：影像片段',
-    src: assetPath('/works/work-3.mp4'),
+    src: githubMediaPath('/works/work-3.mp4'),
     type: 'video',
   },
   {
@@ -1577,7 +1587,7 @@ const worksPlaylist = [
   { title: '不死之身', artist: '林俊杰', src: assetPath('/music/bu-si-zhi-shen.mp3') },
   { title: '着魔', artist: '张杰', src: assetPath('/music/zhao-mo.mp3') },
 ] as const
-const mistCityMovieSrc = assetPath('/warehouse/迷雾都城 · 上部-暗黑传说.zip')
+const mistCityMovieSrc = githubMediaPath('/warehouse/迷雾都城 · 上部-暗黑传说.zip')
 const mistCityPosterSrc = assetPath('/works/mist-city-poster.jpg')
 const knowledgeSkillImageSrc = assetPath('/works/personal-knowledge-skill.png')
 const knowledgeSkillGithubUrl = 'https://github.com/tianxiuyangyang/personal-knowledge-base-organizer'

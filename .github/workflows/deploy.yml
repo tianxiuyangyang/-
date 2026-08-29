@@ -20,8 +20,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          lfs: true
+
+      - name: Remove LFS pointers from Pages artifact
+        run: |
+          find public/warehouse -maxdepth 1 -type f -name '*.zip' -delete
+          rm -f public/works/work-3.mp4
 
       - name: Setup Node
         uses: actions/setup-node@v4
