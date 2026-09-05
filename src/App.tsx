@@ -5,7 +5,6 @@ import gsap from 'gsap'
 import {
   ArrowRight,
   Award,
-  Bird,
   BookOpen,
   CalendarDays,
   Check,
@@ -29,14 +28,11 @@ import {
   PackageOpen,
   SkipForward,
   Star,
-  Send,
   Sparkles,
-  Trash2,
   UserRound,
   X,
 } from 'lucide-react'
 import './App.css'
-import { loadStoredMessages, mergeMessages, messageStorageKey, saveStoredMessages } from './messageStorage'
 
 const ink = '#2B221A'
 const assetPath = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`
@@ -65,13 +61,6 @@ type Segment = {
   className?: string
 }
 
-type Message = {
-  id: string
-  name: string
-  content: string
-  created_at: string
-}
-
 type WarehouseItem = {
   name: string
   file: string
@@ -92,54 +81,6 @@ type GeneratedImage = {
 const warehouseManifestUrl = assetPath('/warehouse/manifest.json')
 const imageApiModels = ['gpt-image-2-auto', 'gpt-image-2', 'gpt-image-2-eco'] as const
 const imageApiSizes = ['1024x1024', '1536x1024', '1024x1536'] as const
-
-const deletedMessagesKey = 'prisma-deleted-message-ids'
-
-const getDeletedMessageIds = () => {
-  if (typeof window === 'undefined') return new Set<string>()
-  try {
-    const savedIds = window.localStorage.getItem(deletedMessagesKey)
-    const parsed: unknown = savedIds ? JSON.parse(savedIds) : []
-    return new Set(Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [])
-  } catch {
-    return new Set<string>()
-  }
-}
-
-const rememberDeletedMessage = (messageId: string) => {
-  const deletedIds = getDeletedMessageIds()
-  deletedIds.add(messageId)
-  window.localStorage.setItem(deletedMessagesKey, JSON.stringify(Array.from(deletedIds)))
-}
-
-const removeDeletedMessages = (messages: Message[]) => {
-  const deletedIds = getDeletedMessageIds()
-  return messages.filter((message) => !deletedIds.has(message.id))
-}
-
-const getBrowserMessages = () => {
-  if (typeof window === 'undefined') return demoMessages
-  const savedMessages = loadStoredMessages(window.localStorage)
-  if (window.localStorage.getItem(messageStorageKey) !== null) {
-    return removeDeletedMessages(savedMessages)
-  }
-  return removeDeletedMessages(demoMessages)
-}
-
-const demoMessages: Message[] = [
-  {
-    id: 'demo-1',
-    name: '访客',
-    content: '这个网站明亮了很多，像一本可以翻开的个人作品册。',
-    created_at: new Date('2026-07-15T11:00:00+08:00').toISOString(),
-  },
-  {
-    id: 'demo-2',
-    name: '创作伙伴',
-    content: '暖白背景、深色文字和细腻动效搭在一起，很清爽。',
-    created_at: new Date('2026-07-16T15:30:00+08:00').toISOString(),
-  },
-]
 
 function WordsPullUp({
   text,
@@ -281,7 +222,6 @@ function Hero({ onOpenResume }: { onOpenResume: () => void }) {
     { label: '创作能力', href: '#workshops' },
     { label: '项目方向', href: '#programs' },
     { label: 'AI 生图', href: '#image-lab' },
-    { label: '留言联系', href: '#inquiries' },
   ]
 
   useEffect(() => {
@@ -371,18 +311,6 @@ function Hero({ onOpenResume }: { onOpenResume: () => void }) {
               >
                 这里是张睿琛的个人主页：用明亮、温暖、清爽的视觉语言，展示经历、作品、想法和每一次值得记录的成长。
               </motion.p>
-              <motion.a
-                href="#inquiries"
-                className="group flex items-center gap-2 rounded-full bg-[#2B221A] py-1 pl-5 pr-1 text-sm font-medium text-[#FFF7E8] transition-all hover:gap-3 sm:text-base"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.9, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              >
-                给我留言
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FFF7E8] transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
-                  <ArrowRight className="h-4 w-4 text-[#2B221A]" />
-                </span>
-              </motion.a>
             </div>
           </div>
         </div>
@@ -723,7 +651,7 @@ function PersonalInfo({ onOpenDetails }: { onOpenDetails: () => void }) {
     { icon: UserRound, label: '姓名', value: '张睿琛' },
     { icon: MapPin, label: '位置', value: '中国 / 支持远程协作' },
     { icon: Clapperboard, label: '方向', value: '趣味网站、视觉设计、影像表达、游戏开发、创意项目' },
-    { icon: Mail, label: '联系', value: '请在下方留言板联系我' },
+    { icon: Mail, label: '联系', value: 'QQ：2467548120' },
   ]
 
   return (
@@ -802,11 +730,11 @@ function FeatureCard({
             </li>
           ))}
         </ul>
+        <a href="#collective" className="mt-10 inline-flex items-center gap-2 text-sm text-[#8C633F]">
+          了解更多
+          <ArrowRight className="h-4 w-4 -rotate-45" />
+        </a>
       </div>
-      <a href="#inquiries" className="mt-10 inline-flex items-center gap-2 text-sm text-[#8C633F]">
-        了解更多
-        <ArrowRight className="h-4 w-4 -rotate-45" />
-      </a>
     </motion.article>
   )
 }
@@ -1216,343 +1144,6 @@ function ImageLab() {
             </div>
           </div>
         </article>
-      </div>
-    </section>
-  )
-}
-
-function getSupabaseConfig() {
-  return {
-    url: import.meta.env.VITE_SUPABASE_URL as string | undefined,
-    key: import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined,
-  }
-}
-
-function useMessages() {
-  const [messages, setMessages] = useState<Message[]>(getBrowserMessages)
-  const [isLoading, setIsLoading] = useState(false)
-  const [status, setStatus] = useState('')
-  const config = useMemo(getSupabaseConfig, [])
-  const hasSupabase = Boolean(config.url && config.key)
-
-  useEffect(() => {
-    const savedMessages = removeDeletedMessages(loadStoredMessages(window.localStorage))
-    if (!hasSupabase || !config.url || !config.key) {
-      if (savedMessages.length > 0) {
-        setMessages(savedMessages)
-        setStatus('已加载本机保存的留言。')
-      }
-      return
-    }
-
-    const supabaseUrl = config.url
-    const supabaseKey = config.key
-
-    const loadMessages = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch(`${supabaseUrl}/rest/v1/messages?select=*&order=created_at.desc&limit=50`, {
-          headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-          },
-        })
-        if (!response.ok) {
-          throw new Error('无法加载留言')
-        }
-        const data = (await response.json()) as Message[]
-        const mergedMessages = removeDeletedMessages(mergeMessages(data, savedMessages))
-        setMessages(mergedMessages)
-        saveStoredMessages(window.localStorage, mergedMessages)
-        setStatus('公开留言板已连接。')
-      } catch {
-        if (savedMessages.length > 0) {
-          setMessages(savedMessages)
-          setStatus('暂时无法连接 Supabase，已显示本机保存的留言。')
-        } else {
-          setStatus('暂时无法连接 Supabase，当前显示本地演示留言。')
-        }
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    void loadMessages()
-  }, [config.key, config.url, hasSupabase])
-
-  const addMessage = async (name: string, content: string) => {
-    const nextMessage: Message = {
-      id: crypto.randomUUID(),
-      name,
-      content,
-      created_at: new Date().toISOString(),
-    }
-
-    if (!hasSupabase || !config.url || !config.key) {
-      const nextMessages = mergeMessages([nextMessage], messages)
-      setMessages(nextMessages)
-      saveStoredMessages(window.localStorage, nextMessages)
-      setStatus('已保存到本机。部署前添加 Supabase 配置后，留言会变成公开共享。')
-      return
-    }
-
-    const supabaseUrl = config.url
-    const supabaseKey = config.key
-
-    const optimisticMessages = mergeMessages([nextMessage], messages)
-    setMessages(optimisticMessages)
-    saveStoredMessages(window.localStorage, optimisticMessages)
-
-    try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/messages`, {
-        method: 'POST',
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json',
-          Prefer: 'return=representation',
-        },
-        body: JSON.stringify({ name, content }),
-      })
-
-      if (!response.ok) {
-        throw new Error('留言发送失败')
-      }
-
-      const [savedMessage] = (await response.json()) as Message[]
-      const syncedMessages = mergeMessages([savedMessage], optimisticMessages)
-      setMessages(syncedMessages)
-      saveStoredMessages(window.localStorage, syncedMessages)
-      setStatus('留言已发布，所有访客都可以看到。')
-    } catch {
-      setStatus('网络暂时不可用，留言已先保存到本机。')
-    }
-  }
-
-  const deleteMessage = (messageId: string) => {
-    rememberDeletedMessage(messageId)
-    setMessages((currentMessages) => {
-      const nextMessages = currentMessages.filter((message) => message.id !== messageId)
-      if (typeof window !== 'undefined') {
-        saveStoredMessages(window.localStorage, nextMessages)
-      }
-      return nextMessages
-    })
-    setStatus('管理员模式：留言已删除。')
-  }
-
-  return { messages, addMessage, deleteMessage, isLoading, status }
-}
-
-function MessageBoard() {
-  const { messages, addMessage, deleteMessage, isLoading, status } = useMessages()
-  const [name, setName] = useState('')
-  const [content, setContent] = useState('')
-  const [isPosting, setIsPosting] = useState(false)
-  const [error, setError] = useState('')
-  const [isAdminPromptOpen, setIsAdminPromptOpen] = useState(false)
-  const [adminPassword, setAdminPassword] = useState('')
-  const [adminError, setAdminError] = useState('')
-  const [isAdminMode, setIsAdminMode] = useState(false)
-
-  useEffect(() => {
-    window.localStorage.removeItem('prisma-admin-mode')
-  }, [])
-
-  const submitMessage = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setError('')
-    const trimmedName = name.trim()
-    const trimmedContent = content.trim()
-    if (!trimmedName || !trimmedContent) {
-      setError('请填写你的名字和留言内容。')
-      return
-    }
-
-    setIsPosting(true)
-    try {
-      await addMessage(trimmedName.slice(0, 40), trimmedContent.slice(0, 280))
-      setName('')
-      setContent('')
-    } catch {
-      setError('留言暂时发送失败，请稍后再试。')
-    } finally {
-      setIsPosting(false)
-    }
-  }
-
-  const submitAdminPassword = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (adminPassword.trim() !== '3180') {
-      setAdminError('密码不正确。')
-      return
-    }
-
-    setIsAdminMode(true)
-    setAdminPassword('')
-    setAdminError('')
-    setIsAdminPromptOpen(false)
-  }
-
-  return (
-    <section
-      id="inquiries"
-      className={`px-4 py-20 transition-colors duration-500 sm:px-6 md:py-28 ${isAdminMode ? 'bg-[#DCEEFF]' : 'bg-[#F8F1E6]'}`}
-    >
-      <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[0.85fr_1.15fr]">
-        <div
-          className={`rounded-[1.75rem] border p-6 shadow-[0_24px_80px_rgba(112,88,58,0.12)] transition-colors duration-500 sm:p-8 md:p-10 ${
-            isAdminMode ? 'border-[#9CC9F2] bg-[#F3FAFF]' : 'border-[#E6D8C6] bg-[#FFF9EF]'
-          }`}
-        >
-          <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-full bg-[#2B221A] text-[#FFF7E8]">
-            <MessageCircle className="h-5 w-5" />
-          </div>
-          <p className="mb-4 text-xs uppercase tracking-[0.28em] text-[#9B8A78]">公开留言板</p>
-          <h2 className="text-4xl leading-[0.95] text-[#2B221A] sm:text-5xl md:text-6xl">
-            在这里留下你的想法。
-          </h2>
-          <p className="mt-6 max-w-md text-sm leading-relaxed text-[#5F5144] sm:text-base">
-            每个人都可以在这里留言。部署前连接 Supabase 后，这个留言板就会成为真正公开共享的访客墙。
-          </p>
-          <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-4 py-2 text-sm font-bold text-[#2B221A] shadow-[0_10px_26px_rgba(112,88,58,0.08)]">
-            <MessageCircle className="h-4 w-4 text-[#8C633F]" />
-            QQ：2467548120，请加 QQ 联系
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3 text-xs text-[#8C633F]">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">
-              <Globe2 className="h-3.5 w-3.5" /> 公开可见
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">
-              <Clock3 className="h-3.5 w-3.5" /> 可上线
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">
-              <Sparkles className="h-3.5 w-3.5" /> 易维护
-            </span>
-          </div>
-        </div>
-
-        <div
-          className={`rounded-[1.75rem] border p-4 shadow-[0_24px_80px_rgba(112,88,58,0.10)] transition-colors duration-500 sm:p-5 md:p-6 ${
-            isAdminMode ? 'border-[#9CC9F2] bg-[#EEF8FF]' : 'border-[#E6D8C6] bg-[#FFF7EA]'
-          }`}
-        >
-          <form onSubmit={submitMessage} className="grid gap-3 md:grid-cols-[0.8fr_1.2fr_auto]">
-            <input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              className="h-12 rounded-2xl border border-[#E0CFB8] bg-white/70 px-4 text-sm text-[#2B221A] outline-none transition placeholder:text-[#AA9984] focus:border-[#9A6B3F]"
-              placeholder="你的名字"
-              maxLength={40}
-            />
-            <input
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              className="h-12 rounded-2xl border border-[#E0CFB8] bg-white/70 px-4 text-sm text-[#2B221A] outline-none transition placeholder:text-[#AA9984] focus:border-[#9A6B3F]"
-              placeholder="写一句留言"
-              maxLength={280}
-            />
-            <div className="relative flex flex-col items-stretch">
-              <button
-                type="button"
-                onClick={() => {
-                  if (isAdminMode) {
-                    setIsAdminMode(false)
-                    setIsAdminPromptOpen(false)
-                    setAdminPassword('')
-                    setAdminError('')
-                    return
-                  }
-                  setIsAdminPromptOpen(true)
-                }}
-                className="admin-bird-button absolute -top-10 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-[#D5E5F4] bg-white/45 text-[#5680A6] opacity-35 shadow-[0_8px_18px_rgba(68,110,150,0.16)] transition hover:scale-110 hover:bg-white hover:opacity-100"
-                aria-label="管理员入口"
-              >
-                <Bird className="h-4 w-4" />
-              </button>
-              <button
-                type="submit"
-                disabled={isPosting}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#2B221A] px-5 text-sm font-bold text-[#FFF7E8] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <Send className="h-4 w-4" />
-                {isPosting ? '发送中' : '发送'}
-              </button>
-            </div>
-          </form>
-          {isAdminPromptOpen ? (
-            <form
-              onSubmit={submitAdminPassword}
-              className="mt-4 rounded-2xl border border-[#B9D5EE] bg-white/75 p-4 shadow-[0_12px_30px_rgba(70,118,160,0.12)]"
-            >
-              <div className="mb-3 flex items-center justify-between gap-4">
-                <p className="text-sm font-bold text-[#315D86]">密码</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsAdminPromptOpen(false)
-                    setAdminPassword('')
-                    setAdminError('')
-                  }}
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E8F3FF] text-[#315D86] transition hover:bg-[#D5E9FA]"
-                  aria-label="关闭管理员密码输入"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </div>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <input
-                  value={adminPassword}
-                  onChange={(event) => {
-                    setAdminPassword(event.target.value)
-                    setAdminError('')
-                  }}
-                  className="h-11 flex-1 rounded-2xl border border-[#B9D5EE] bg-white px-4 text-sm text-[#2B221A] outline-none transition placeholder:text-[#91A8BB] focus:border-[#5680A6]"
-                  placeholder="输入密码"
-                  type="password"
-                />
-                <button type="submit" className="h-11 rounded-2xl bg-[#315D86] px-5 text-sm font-bold text-white transition hover:bg-[#244C70]">
-                  进入
-                </button>
-              </div>
-              {adminError ? <p className="mt-2 text-xs text-red-600">{adminError}</p> : null}
-            </form>
-          ) : null}
-          {isAdminMode ? (
-            <p className="mt-3 rounded-2xl border border-[#B9D5EE] bg-[#E8F3FF] px-4 py-2 text-xs font-bold text-[#315D86]">
-              管理员模式已开启，可以删除留言。
-            </p>
-          ) : null}
-          {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
-          {isLoading || status ? <p className="mt-3 text-xs text-[#8F7E69]">{isLoading ? '正在加载留言...' : status}</p> : null}
-          <div className="message-scrollbar mt-6 max-h-[430px] space-y-3 overflow-y-auto pr-2">
-            {messages.map((message) => (
-              <article key={message.id} className="rounded-2xl border border-[#E0CFB8] bg-white/55 p-4">
-                <div className="mb-2 flex items-center justify-between gap-4">
-                  <h3 className="text-sm font-bold text-[#8C633F]">{message.name}</h3>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <time className="text-[11px] text-[#9B8A78]">
-                      {new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric' }).format(
-                        new Date(message.created_at),
-                      )}
-                    </time>
-                    {isAdminMode ? (
-                      <button
-                        type="button"
-                        onClick={() => deleteMessage(message.id)}
-                        className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E8F3FF] text-[#315D86] transition hover:bg-red-50 hover:text-red-600"
-                        aria-label={`删除 ${message.name} 的留言`}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    ) : null}
-                  </div>
-                </div>
-                <p className="text-sm leading-relaxed text-[#5F5144]">{message.content}</p>
-              </article>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   )
@@ -2946,7 +2537,6 @@ function App() {
         }}
       />
       <ImageLab />
-      <MessageBoard />
     </main>
   )
 }

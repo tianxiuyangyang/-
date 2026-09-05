@@ -394,14 +394,6 @@ button {
   animation-name: butterfly-wing-right;
 }
 
-.admin-bird-button {
-  animation: admin-bird-float 3.2s ease-in-out infinite;
-}
-
-.admin-bird-button svg {
-  transform-origin: center;
-  animation: admin-bird-wing 0.72s ease-in-out infinite alternate;
-}
 
 .record-player__turntable {
   position: relative;
@@ -476,24 +468,6 @@ button {
   }
 }
 
-@keyframes admin-bird-float {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) rotate(-8deg);
-  }
-  50% {
-    transform: translate3d(-8px, -5px, 0) rotate(7deg);
-  }
-}
-
-@keyframes admin-bird-wing {
-  from {
-    transform: rotate(-8deg) scale(1);
-  }
-  to {
-    transform: rotate(8deg) scale(1.08);
-  }
-}
 
 @keyframes butterfly-float {
   0% {
