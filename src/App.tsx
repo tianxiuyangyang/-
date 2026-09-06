@@ -1149,6 +1149,64 @@ function ImageLab() {
   )
 }
 
+
+function DesktopWallpaperShowcase() {
+  return (
+    <section id="desktop-wallpaper" className="bg-[#F8F1E6] px-4 pb-20 sm:px-6 md:pb-28">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_80px_rgba(112,88,58,0.12)]">
+        <div className="grid lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="flex flex-col justify-between p-7 sm:p-10 md:p-12">
+            <div>
+              <div className="mb-7 flex h-12 w-12 items-center justify-center rounded-full bg-[#2B221A] text-[#FFF7E8]">
+                <Clapperboard className="h-5 w-5" />
+              </div>
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#9B8A78]">Motion Wallpaper</p>
+              <h2 className="mt-4 text-4xl leading-[0.95] text-[#2B221A] sm:text-5xl md:text-6xl">自制4K<br />桌面动态壁纸</h2>
+              <div className="mt-6 max-w-md space-y-1 text-sm leading-relaxed text-[#5F5144] sm:text-base">
+                <p>🌌我的世界｜浮空末地幽灵船</p>
+                <p>紫晶幽光漫过方块船身，残破巨舰浮游于深海夜空</p>
+                <p>远处哥特末地古堡静静伫立</p>
+                <p>暗紫与冰蓝交织，像素构筑的暗黑奇幻史诗</p>
+                <p>4K 动态壁纸，把末地的浩瀚装进电脑桌面✨</p>
+              </div>
+            </div>
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-4 py-2 text-sm font-bold text-[#8C633F]">
+                <Sparkles className="h-4 w-4" />
+                自制动态影像作品
+              </span>
+              <a
+                href={assetPath('/works/end-ship-wallpaper.zip')}
+                download
+                className="inline-flex items-center gap-2 rounded-full bg-[#2B221A] px-4 py-2 text-sm font-bold text-[#FFF7E8] transition hover:scale-[1.02] hover:bg-[#44382D]"
+              >
+                <Download className="h-4 w-4" />
+                下载动态壁纸
+              </a>
+            </div>
+          </div>
+          <div className="border-t border-[#E6D8C6] bg-[#E9DCCB] p-3 sm:p-5 lg:border-l lg:border-t-0">
+            <div className="overflow-hidden rounded-[1.25rem] bg-[#17120F] shadow-[0_20px_45px_rgba(43,34,26,0.24)]">
+              <video
+                className="aspect-video h-full w-full object-cover"
+                src={assetPath('/works/end-ship-wallpaper-web.mp4')}
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls
+                preload="metadata"
+              >
+                你的浏览器暂不支持播放此视频。
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 const works = [
   {
     title: '作品一：游戏开发',
@@ -2537,6 +2595,7 @@ function App() {
         }}
       />
       <ImageLab />
+      <DesktopWallpaperShowcase />
     </main>
   )
 }
