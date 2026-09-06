@@ -1187,18 +1187,12 @@ function DesktopWallpaperShowcase() {
           </div>
           <div className="border-t border-[#E6D8C6] bg-[#E9DCCB] p-3 sm:p-5 lg:border-l lg:border-t-0">
             <div className="overflow-hidden rounded-[1.25rem] bg-[#17120F] shadow-[0_20px_45px_rgba(43,34,26,0.24)]">
-              <video
+              <img
                 className="aspect-video h-full w-full object-cover"
-                src={assetPath('/works/end-ship-wallpaper-web.mp4')}
-                autoPlay
-                loop
-                muted
-                playsInline
-                controls
-                preload="metadata"
-              >
-                你的浏览器暂不支持播放此视频。
-              </video>
+                src={assetPath('/works/end-ship-wallpaper.webp')}
+                alt="浮空末地幽灵船动态壁纸画面"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
