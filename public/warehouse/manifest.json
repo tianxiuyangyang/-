@@ -20,5 +20,6 @@
   {"name":"ComfyUI","file":"comfyui.zip","description":"Administrator-only ComfyUI archive.","size":"320.3 MB","restricted":true},
   {"name":"\u97f3\u4e50","file":"\u97f3\u4e50.zip","description":"Music archive for visitors to download.","size":"164.2 MB"},
   {"name":"Steam++","file":"Steam++.zip","description":"Steam++ archive for visitors to download.","size":"92.1 MB"},
-  {"name":"迷雾都城 · 上部-暗黑传说","file":"迷雾都城 · 上部-暗黑传说.zip","description":"AI original live-action short film source archive for visitors to download.","size":"1.06 GB"}
+  {"name":"迷雾都城 · 上部-暗黑传说","file":"迷雾都城 · 上部-暗黑传说.zip","description":"AI original live-action short film source archive for visitors to download.","size":"1.06 GB"},
+  {"name":"猎舌师","file":"猎舌师.zip","description":"AI short film archive adapted from Fang Wei's anti-war short story.","size":"364.7 MB"}
 ]

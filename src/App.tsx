@@ -293,7 +293,7 @@ function Hero({ onOpenResume }: { onOpenResume: () => void }) {
           <div className="grid items-end gap-6 lg:grid-cols-12">
             <div className="lg:col-span-8">
               <WordsPullUp
-                text="睿 琛"
+                text="Txiuyy"
                 showAsterisk
                 color="#FFB347"
                 textShadow="0 3px 18px rgba(43, 34, 26, 0.78)"
@@ -1155,6 +1155,53 @@ const worksPlaylist = [
 ] as const
 const mistCityMovieSrc = githubMediaPath('/warehouse/迷雾都城 · 上部-暗黑传说.zip')
 const mistCityPosterSrc = assetPath('/works/mist-city-poster.jpg')
+const hunterTongueMovieSrc = githubMediaPath('/warehouse/猎舌师.zip')
+const hunterTonguePosterSrc = assetPath('/works/hunter-tongue-poster.jpg')
+const hunterTongueExcerpt = [
+  '民国二十七年的南京，春风吹不散阴霾，整座石头城像一口倒扣的闷锅。',
+  '骆宁安又一次在凌晨惊醒。',
+  '窗外是永无止境的黑暗，耳边却回荡着两年前的惨叫。母亲的喉咙被刺刀刺穿，血渗进中华门的青石板缝，怎么洗都洗不掉；兄长被井绳勒死，双手僵硬地指向苍天；三岁侄儿的肠子拖在地上，冻成暗紫色。那些画面日夜啃噬着他，让他每一次呼吸都带着铁锈味。',
+  '他曾是松涛楼最年轻的淮扬菜主厨，一手雕工、刀工、火候，在南京城里数一数二。他读过书，通旧学，能背《随园食单》，懂得“味者，甘也、鲜也、和也”。可战争一来，诗书礼仪、人间烟火，全都碎了。',
+  '为了护住妻女，为了活下去，他做了一个让所有人唾骂的选择——去日本总领事馆，当一名给侵略者做饭的厨子。',
+  '走在街上，熟人朝他吐口水，骂他“汉奸”“软骨头”“忘了祖宗”。',
+  '骆宁安从不辩解。',
+  '他低着头，进了领事馆的后厨，换上白色工作服，拿起那把跟了他十年的厨刀。刀还是那把刀，人却像换了一个。话少，手稳，眼神平静得近乎麻木。',
+  '领事馆的厨师长，叫虎太郎，是个精瘦、严苛、近乎病态痴迷料理的日本人。他不苟言笑，目光锐利，一进后厨，空气都要冷三分。',
+  '第一天见面，虎太郎就用生硬的中文问所有人：“料理的奥义是什么？”有人答：“让人吃饱。”有人答：“让人快乐。”虎太郎都摇头，满脸不屑。',
+  '轮到骆宁安，他抬眼，声音平静：“中国厨圣王小余说，以味媚人者，物之性也。尽物之性，以表其美于人，是为厨之道。”',
+  '虎太郎一愣，随即冷笑：“你们中国料理，不过是奢靡、油腻、讨好口舌的把戏。真正的料理，是征服，是统治，是让舌尖臣服！”',
+  '从那天起，虎太郎总有意无意与骆宁安较量。骆宁安做泥炉烤鸭，色泽枣红，皮酥肉嫩，一鸭三吃，满堂叫好。虎太郎便做冰火炙烤牛肉，薄如蝉翼，热肉裹冰屑，入口冰火两重天，霸道凌厉。',
+  '骆宁安的菜，是平和、包容、烟火气。虎太郎的菜，是冷酷、极致、征服欲。',
+  '后厨所有人都明白，这不是简单的厨艺比试。',
+  '骆宁安默默忍下所有轻蔑。他每天天不亮就备菜，选最嫩的肉、最新鲜的笋、最清鲜的鱼。他的刀工稳得可怕，萝卜丝能穿针，鱼片薄如纸，狮子头浮在清汤上不散，松鼠鳜鱼外酥里嫩。',
+  '他越精湛，日本人越信任他。他越谦卑，心里的火焰越旺。',
+  '机会终于来了。',
+  '日本华中派遣军司令部决定在领事馆举办盛大庆功宴，宴请所有高级军官，炫耀“战果”。虎太郎亲自点名，由骆宁安担任主厨，要求他拿出淮扬菜最高水准，压过所有日本料理。',
+  '这是陷阱，也是死局。',
+  '骆宁安接下任务。',
+  '他选料极严：苏北活鸭、长江活鱼、太湖鲜笋、金华陈年火腿。每一道工序都亲自动手，不容半点差错。',
+  '宴会当晚，领事馆灯火辉煌，军官们西装革履、意气风发。一道道淮扬名菜端上桌：松鼠鳜鱼栩栩如生，清炖狮子头汤清味鲜，水晶肴肉晶莹剔透，三套鸭醇香浓郁。',
+  '全场赞不绝口。司令官连吃三碗，拍着桌子大笑：“骆，你的厨艺，是帝国最好的奖赏！”',
+  '骆宁安垂首而立，面色平静，眼底却一片冰凉。',
+  '他在等。',
+  '一刻钟。两刻钟。',
+  '第一个军官突然捂住喉咙，脸色涨紫，想喊，却只发出“嗬嗬”的破风声。第二个，第三个……军官们接二连三倒地，痛苦地抓着脖子，惊恐地瞪着眼，却发不出任何声音。',
+  '宴会厅瞬间大乱。',
+  '虎太郎猛地回头，死死盯住骆宁安。他终于明白，眼前这个温顺、沉默、手艺绝伦的中国厨子，从一开始就是一把藏在油烟里的刀。他不是厨师。他是猎手。',
+  '虎太郎想嘶吼，却发现自己的喉咙也开始发紧。他看着骆宁安，眼神里有愤怒、震惊，竟还有一丝复杂的敬佩。',
+  '骆宁安缓缓站直身体。他没有逃，没有慌，只是静静地看着眼前这群失声的恶魔。',
+  '“你们用枪炮征服土地，”他轻声说，声音在死寂中格外清晰，“我用料理，收回你们的舌头。”',
+  '这就是猎舌师的复仇。不流血，不持枪，却诛心。',
+  '窗外，夜色如墨，石头城沉默不语。骆宁安拿起那把陪伴多年的厨刀，轻轻擦拭干净。他知道，从此他将踏上流亡之路，妻女不能再相见，家乡再也回不去。',
+  '可他不后悔。',
+  '有些尊严，必须以命相搏。有些抗争，只能在沉默中完成。有些战场，不在硝烟里，而在烟火深处。',
+  '风掠过南京城的屋檐，带着一丝若有若无的菜香，那是淮扬菜的香气……',
+] as const
+const hunterTongueNotes = [
+  ['作品出处', '这是作家房伟创作的抗战题材短篇小说，收录于同名小说集《猎舌师》中。'],
+  ['故事背景', '小说以南京沦陷为背景，讲述了淮扬菜名厨骆宁安为报血海深仇，忍辱负重进入日本领事馆做厨师，最终在庆功宴上以“厨艺”完成复仇的故事。其故事原型来自抗战期间南京日本总领事馆发生的一起真实投毒事件。'],
+  ['创作特色', '评论界认为，这篇小说突破了传统抗战文学的宏大叙事，聚焦于大时代下普通个体的命运与选择，在历史的细节处挖掘被遮蔽的人性与抗争精神。'],
+] as const
 const knowledgeSkillImageSrc = assetPath('/works/personal-knowledge-skill.webp')
 const knowledgeSkillGithubUrl = 'https://github.com/tianxiuyangyang/personal-knowledge-base-organizer'
 const knowledgeSkillDownloadSrc = assetPath('/downloads/personal-knowledge-base-organizer-skill.zip')
@@ -1312,6 +1359,7 @@ function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) 
 function WorksPage({ onBack }: { onBack: () => void }) {
   const [loadedWorks, setLoadedWorks] = useState<Record<string, boolean>>({})
   const [copiedWork, setCopiedWork] = useState<string | null>(null)
+  const [isHunterTongueExcerptOpen, setIsHunterTongueExcerptOpen] = useState(false)
 
   return (
     <main className="works-page min-h-screen overflow-y-auto overflow-x-hidden bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
@@ -1458,11 +1506,59 @@ function WorksPage({ onBack }: { onBack: () => void }) {
           </div>
         </motion.article>
         <motion.article
+          className="mt-6 overflow-hidden rounded-3xl border border-[#352A25] bg-[#201D1B] shadow-[0_22px_70px_rgba(46,30,24,0.25)]"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: (works.length + 1) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="grid gap-0 md:grid-cols-[minmax(220px,0.38fr)_minmax(0,0.62fr)]">
+            <div className="relative min-h-[360px] bg-[#302925] md:min-h-[500px]">
+              <img src={hunterTonguePosterSrc} alt="猎舌师电影海报" className="absolute inset-0 h-full w-full object-cover" loading="lazy" decoding="async" />
+            </div>
+            <div className="relative flex flex-col justify-center p-6 text-[#F8E7C5] sm:p-8 md:p-10">
+              <button
+                type="button"
+                onClick={() => setIsHunterTongueExcerptOpen(true)}
+                className="absolute right-5 top-5 inline-flex items-center gap-2 rounded-full border border-[#8F6D47] bg-[#2D2722]/90 px-4 py-2 text-sm font-bold text-[#F8E7C5] transition hover:-translate-y-0.5 hover:border-[#D79538] hover:bg-[#3A3028]"
+              >
+                <BookOpen className="h-4 w-4" aria-hidden="true" />
+                查看原文
+              </button>
+              <p className="mb-3 text-xs uppercase tracking-[0.28em] text-[#D9A956]">AI 原创仿真人短片作品</p>
+              <h2 className="max-w-2xl text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">《猎舌师》</h2>
+              <p className="mt-5 max-w-2xl text-sm leading-relaxed text-[#D9D2C4] sm:text-base">根据作家房伟抗战题材短篇小说《猎舌师》改编的爱国抗日题材 AI 短片。故事以南京沦陷为背景，讲述淮扬菜名厨骆宁安为报血海深仇，忍辱负重进入日本领事馆做厨师，最终在庆功宴上完成复仇。</p>
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#BEB5A8] sm:text-base">小说收录于同名小说集《猎舌师》，以普通个体在大时代中的命运与选择为切口，在历史细节中呈现被遮蔽的人性与抗争精神；故事原型来自抗战期间南京日本总领事馆发生的一起真实投毒事件。</p>
+              <div className="mt-8"><a href={hunterTongueMovieSrc} download className="inline-flex items-center gap-2 rounded-full bg-[#D79538] px-6 py-3 text-sm font-bold text-[#211C18] transition hover:-translate-y-0.5 hover:bg-[#EDB957]"><Download className="h-4 w-4" aria-hidden="true" />下载电影原片</a></div>
+            </div>
+          </div>
+        </motion.article>
+        {isHunterTongueExcerptOpen ? (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[#171412]/75 p-4 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="hunter-tongue-excerpt-title">
+            <div className="relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-[#B18A5A] bg-[#FFF9EF] shadow-[0_30px_100px_rgba(0,0,0,0.35)]">
+              <div className="flex items-center justify-between gap-4 border-b border-[#E3D2BA] bg-[#2B221A] px-5 py-4 text-[#FFF7E8] sm:px-7">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.26em] text-[#D9A956]">《猎舌师》</p>
+                  <h2 id="hunter-tongue-excerpt-title" className="mt-1 text-xl font-bold sm:text-2xl">📖 文本节选</h2>
+                </div>
+                <button type="button" onClick={() => setIsHunterTongueExcerptOpen(false)} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 text-2xl leading-none transition hover:bg-white/15" aria-label="关闭原文">×</button>
+              </div>
+              <div className="overflow-y-auto px-5 py-6 text-[15px] leading-[1.9] text-[#40362D] sm:px-10 sm:py-8 sm:text-base">
+                <div className="border-l-4 border-[#D79538] pl-4 italic text-[#66503C] sm:pl-6">{hunterTongueExcerpt[0]}</div>
+                <div className="mt-6 space-y-5">{hunterTongueExcerpt.slice(1).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
+                <div className="mt-10 border-t border-[#E3D2BA] pt-7">
+                  <h3 className="text-xl font-bold text-[#2B221A]">✍️ 关于《猎舌师》</h3>
+                  <div className="mt-4 space-y-4">{hunterTongueNotes.map(([title, text]) => <p key={title}><strong className="text-[#8B5A2B]">{title}：</strong>{text}</p>)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        <motion.article
           id="personal-knowledge-skill"
           className="mt-6 overflow-hidden rounded-3xl border border-[#C9D4CB] bg-[#EAF0EA] shadow-[0_22px_70px_rgba(63,82,67,0.14)]"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: (works.length + 1) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.6, delay: (works.length + 2) * 0.08, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="grid gap-0 md:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)]">
             <div className="relative aspect-[16/10] bg-[#F5F7F2] p-3 sm:p-5 md:aspect-auto md:min-h-[430px]">
