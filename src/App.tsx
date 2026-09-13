@@ -22,7 +22,6 @@ import {
   MapPin,
   MessageCircle,
   Music2,
-  QrCode,
   Pause,
   Play,
   PackageOpen,
@@ -30,7 +29,6 @@ import {
   Star,
   Sparkles,
   UserRound,
-  X,
 } from 'lucide-react'
 import './App.css'
 
@@ -326,8 +324,6 @@ function About({
   onOpenSecret: () => void
   onOpenWarehouse: () => void
 }) {
-  const [isSupportOpen, setIsSupportOpen] = useState(false)
-
   return (
     <section id="our-story" className="bg-[#F8F1E6] px-4 py-20 sm:px-6 md:py-28">
       <div className="relative mx-auto max-w-6xl rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] px-6 py-16 text-center shadow-[0_24px_80px_rgba(112,88,58,0.12)] sm:px-10 md:py-24">
@@ -339,22 +335,13 @@ function About({
           <span className="decor-lighthouse__tower" />
           <span className="decor-lighthouse__base" />
         </div>
-        <div className="absolute right-4 top-4 z-10 flex flex-col items-end gap-2 sm:right-6 sm:top-6">
-          <button
-            type="button"
-            onClick={() => setIsSupportOpen(true)}
-            className="inline-flex items-center gap-2 rounded-full border border-[#DECDB6] bg-[#2B221A] px-4 py-2 text-xs font-bold text-[#FFF7E8] shadow-[0_14px_35px_rgba(92,70,43,0.16)] transition hover:-translate-y-0.5 hover:bg-[#443326] sm:text-sm"
-            aria-haspopup="dialog"
-          >
-            <Sparkles className="h-4 w-4" />
-            鼓励支持创作者
-          </button>
+        <div className="absolute right-4 top-3 z-10 sm:right-6 sm:top-4">
           <button
             type="button"
             onClick={onOpenSecret}
-            className="plant-button relative mt-3 inline-flex items-center gap-2 rounded-full border border-[#BFD4A9] bg-[#FFF7EA] px-4 py-2 text-xs font-bold text-[#2B221A] shadow-[0_14px_35px_rgba(92,70,43,0.12)] transition hover:-translate-y-0.5 hover:bg-white sm:text-sm"
+            className="plant-button relative inline-flex items-center gap-2 rounded-full border border-[#BFD4A9] bg-[#FFF7EA] px-5 py-2.5 text-sm font-bold text-[#2B221A] shadow-[0_14px_35px_rgba(92,70,43,0.12)] transition hover:-translate-y-0.5 hover:bg-white sm:px-6 sm:py-3 sm:text-base"
           >
-            <Leaf className="h-4 w-4 text-[#6F9B5C]" />
+            <Leaf className="h-5 w-5 text-[#6F9B5C]" />
             秘境空间
           </button>
         </div>
@@ -372,77 +359,13 @@ function About({
           className="mx-auto max-w-3xl text-3xl leading-[0.95] text-[#2B221A] sm:text-4xl sm:leading-[0.9] md:text-5xl lg:text-6xl xl:text-7xl"
           segments={[
             { text: '我是张睿琛，', className: 'font-normal' },
-            { text: '一个持续自学的创作者。', className: 'font-serif italic text-[#8C633F]' },
-            { text: '我关注影像表达、视觉设计、前端作品和叙事体验。', className: 'font-normal' },
+            { text: 'AI智能体开发者，AI仿真人动画与影视作品优质创作者，AI全栈工程研究与开发。', className: 'font-serif italic text-[#8C633F]' },
+            { text: '我关注智能体开发、影像表达、前端作品和游戏设计。', className: 'font-normal' },
           ]}
         />
         <AnimatedParagraph text="我希望这个网站不只是简历，而是一个可以持续生长的个人空间：展示经历、整理作品、记录想法，也让每一个来访的人都能留下自己的声音。未来这里会放入更多项目、文章、照片和阶段性的学习成果。" />
       </div>
-      {isSupportOpen ? <SupportPaymentDialog onClose={() => setIsSupportOpen(false)} /> : null}
     </section>
-  )
-}
-
-function SupportPaymentDialog({ onClose }: { onClose: () => void }) {
-  const [isQrReady, setIsQrReady] = useState(false)
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#2B221A]/35 px-4 py-6 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="support-title"
-      onClick={onClose}
-    >
-      <motion.div
-        className="relative w-full max-w-md rounded-[1.75rem] border border-[#E3D2BA] bg-[#FFF9EF] p-6 text-center shadow-[0_35px_100px_rgba(43,34,26,0.28)] sm:p-8"
-        initial={{ opacity: 0, y: 18, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        onClick={(event) => event.stopPropagation()}
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-[#E0CFB8] bg-white/70 text-[#5F5144] transition hover:bg-[#F4E9D8]"
-          aria-label="关闭支付界面"
-        >
-          <X className="h-4 w-4" />
-        </button>
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#2B221A] text-[#FFF7E8]">
-          <QrCode className="h-6 w-6" />
-        </div>
-        <p className="mb-3 text-xs uppercase tracking-[0.26em] text-[#9A6B3F]">支持创作者</p>
-        <h2 id="support-title" className="text-3xl font-bold leading-tight text-[#2B221A] sm:text-4xl">
-          感谢您的支持
-        </h2>
-        <p className="mt-4 text-sm leading-relaxed text-[#5F5144]">
-          每次支持金额为 <span className="font-bold text-[#2B221A]">6 元</span>，请使用微信扫描下方收款码。
-        </p>
-        <div className="relative mx-auto mt-6 flex aspect-square w-full max-w-[260px] items-center justify-center overflow-hidden rounded-2xl border border-[#E0CFB8] bg-white p-3">
-          <img
-            className="h-full w-full object-contain"
-            src={assetPath('/wechat-pay-qr.jpg')}
-            alt="微信收款码，固定支持金额 6 元"
-            loading="lazy"
-            decoding="async"
-            onLoad={() => setIsQrReady(true)}
-            onError={(event) => {
-              setIsQrReady(false)
-              event.currentTarget.style.display = 'none'
-            }}
-          />
-          {!isQrReady ? (
-            <div className="absolute max-w-[210px] rounded-2xl border border-dashed border-[#D4BFA5] bg-[#FFF7EA] p-4 text-sm leading-relaxed text-[#5F5144]">
-              请将你的微信收款码图片命名为 <span className="font-bold text-[#2B221A]">wechat-pay-qr.jpg</span> 并放入 public 文件夹。
-            </div>
-          ) : null}
-        </div>
-        <p className="mt-5 text-xs leading-relaxed text-[#8F7E69]">
-          如果需要自动拉起微信支付并校验订单，需要申请微信支付商户号和后端接口；当前静态网站版本使用收款码方式。
-        </p>
-      </motion.div>
-    </div>
   )
 }
 
@@ -1214,8 +1137,8 @@ const works = [
   },
   {
     title: '作品三：影像片段',
-    src: githubMediaPath('/works/work-3.mp4'),
-    type: 'video',
+    src: assetPath('/works/work-3.jpg'),
+    type: 'image',
   },
   {
     title: '作品四：游戏设计',
@@ -1466,17 +1389,6 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                       </div>
                     ))}
                   </div>
-                ) : work.type === 'video' ? (
-                  <video
-                    className="h-full w-full object-cover"
-                    src={work.src}
-                    controls
-                    muted
-                    playsInline
-                    preload="metadata"
-                    onLoadedData={() => setLoadedWorks((current) => ({ ...current, [work.src]: true }))}
-                    onError={() => setLoadedWorks((current) => ({ ...current, [work.src]: false }))}
-                  />
                 ) : (
                   <img
                     className="h-full w-full object-cover"
@@ -1617,25 +1529,11 @@ const awards = [
     result: '优秀奖',
   },
   {
-    src: assetPath('/awards/honor-3.jpg'),
-    thumbnailSrc: assetPath('/awards/thumbs/honor-3.webp'),
-    year: '2019',
-    title: '淄博市第三届智力运动会',
-    result: 'Scratch 个人赛小学组 · 三等奖',
-  },
-  {
     src: assetPath('/awards/honor-4.jpg'),
     thumbnailSrc: assetPath('/awards/thumbs/honor-4.webp'),
     year: '2020',
     title: '全国青少年信息学奥林匹克联赛',
     result: '小学组 · 三等奖',
-  },
-  {
-    src: assetPath('/awards/honor-5.jpg'),
-    thumbnailSrc: assetPath('/awards/thumbs/honor-5.webp'),
-    year: '2020',
-    title: '淄博市第四届智力运动会',
-    result: 'C++ 编程赛小学组 · 三等奖',
   },
   {
     src: assetPath('/awards/honor-6.jpg'),
