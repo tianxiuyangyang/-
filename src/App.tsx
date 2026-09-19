@@ -1124,6 +1124,87 @@ function DesktopWallpaperShowcase() {
   )
 }
 
+function ThreeDSceneShowcase() {
+  const scenes = [
+    {
+      number: '01',
+      title: '熔火王座',
+      eyebrow: 'MOLTEN CITADEL',
+      description: '穿过漂浮于熔岩之上的黑曜石城堡，探索属于火焰与王权的立体场景。',
+      image: assetPath('/works/molten-throne.jpg'),
+      href: 'https://tianxiuyangyang.github.io/molten-realm/?region=citadel',
+      accent: '#FF8D39',
+    },
+    {
+      number: '02',
+      title: '赤境之门',
+      eyebrow: 'SCARLET PORTAL',
+      description: '在赤红菌境与流动熔岩之间，开启一扇通往未知领域的传送门。',
+      image: assetPath('/works/scarlet-gate.jpg'),
+      href: 'https://tianxiuyangyang.github.io/molten-realm/?region=portal',
+      accent: '#D56BFF',
+    },
+  ]
+
+  return (
+    <section id="3d-scenes" className="bg-[#F8F1E6] px-4 pb-20 sm:px-6 md:pb-28">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 flex flex-col gap-5 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#9B8A78]">Interactive 3D Scenes</p>
+            <h2 className="mt-3 text-4xl leading-[0.95] text-[#2B221A] sm:text-5xl md:text-6xl">我的3D场景设计</h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-[#6B5A49] sm:text-right">
+            两个由我设计的沉浸式场景。点击设计图，进入对应的可交互3D世界。
+          </p>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-2">
+          {scenes.map((scene, index) => (
+            <motion.a
+              key={scene.title}
+              href={scene.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group relative block overflow-hidden rounded-[1.5rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.12)] outline-none transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(112,88,58,0.20)] focus-visible:ring-2 focus-visible:ring-[#8C633F] focus-visible:ring-offset-4 focus-visible:ring-offset-[#F8F1E6]"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="relative aspect-[1.6/1] overflow-hidden bg-[#211412]">
+                <img
+                  src={scene.image}
+                  alt={`${scene.title} 3D场景设计图`}
+                  className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.045]"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#120b09]/80 via-transparent to-[#120b09]/5" />
+                <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full border border-white/25 bg-black/30 px-3 py-1.5 text-[10px] font-bold tracking-[0.18em] text-white/90 backdrop-blur-md">
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: scene.accent, boxShadow: `0 0 10px ${scene.accent}` }} />
+                  {scene.eyebrow}
+                </div>
+                <span className="absolute bottom-5 right-5 inline-flex items-center gap-2 rounded-full bg-[#FFF7E8]/95 px-4 py-2 text-xs font-bold text-[#2B221A] shadow-lg transition group-hover:gap-3">
+                  打开3D场景
+                  <ArrowRight className="h-4 w-4 -rotate-45" />
+                </span>
+              </div>
+              <div className="flex items-start justify-between gap-6 p-5 sm:p-6">
+                <div>
+                  <h3 className="text-2xl text-[#2B221A] sm:text-3xl">{scene.title}</h3>
+                  <p className="mt-2 max-w-sm text-sm leading-relaxed text-[#6B5A49]">{scene.description}</p>
+                </div>
+                <span className="pt-1 text-xs font-bold tracking-[0.18em] text-[#B49C84]">{scene.number}</span>
+              </div>
+            </motion.a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 const works = [
   {
     title: '作品一：游戏开发',
@@ -2584,6 +2665,7 @@ function App() {
       />
       <ImageLab />
       <DesktopWallpaperShowcase />
+      <ThreeDSceneShowcase />
     </main>
   )
 }
