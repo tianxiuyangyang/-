@@ -1215,13 +1215,13 @@ const works = [
   },
   {
     title: '作品三：狂行险道',
-    src: assetPath('/works/drive-mad-poster.png'),
+    src: assetPath('/works/drive-mad-poster.jpg'),
     type: 'image',
     href: 'https://tianxiuyangyang.github.io/drive-mad-recreation/',
   },
   {
     title: '作品四：风起大漠',
-    src: assetPath('/works/desert-runner-poster.png'),
+    src: assetPath('/works/desert-runner-poster.jpg'),
     type: 'image',
   },
 ] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link'; href?: string }>
