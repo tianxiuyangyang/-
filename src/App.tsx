@@ -10,7 +10,6 @@ import {
   Check,
   Clapperboard,
   Clock3,
-  Copy,
   Disc3,
   Download,
   FileDown,
@@ -45,10 +44,6 @@ const githubMediaPath = (path: string) => {
   return `${githubMediaBase}/${encodedPath}`
 }
 const portfolioUrl = 'https://hdjajbx.github.io/guanyifei-portfolio/'
-const funWebsites = [
-  { name: '个人作品集', url: portfolioUrl },
-  { name: '宝石矿场', url: 'https://tianxiuyangyang.github.io/gem-mine/' },
-]
 const heroVideo =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4'
 const cardVideo =
@@ -1207,26 +1202,29 @@ function ThreeDSceneShowcase() {
 
 const works = [
   {
-    title: '作品一：游戏开发',
-    src: assetPath('/works/work-1.webp'),
+    title: '作品一：宝石矿井',
+    src: assetPath('/works/gem-mine-poster.jpg'),
     type: 'image',
+    href: 'https://tianxiuyangyang.github.io/gem-mine/',
   },
   {
-    title: '作品二：趣味网站',
-    src: portfolioUrl,
-    type: 'link',
+    title: '作品二：网站设计',
+    src: assetPath('/works/portfolio-poster.jpg'),
+    type: 'image',
+    href: portfolioUrl,
   },
   {
-    title: '作品三：影像片段',
-    src: assetPath('/works/work-3.jpg'),
+    title: '作品三：狂行险道',
+    src: assetPath('/works/drive-mad-poster.png'),
     type: 'image',
+    href: 'https://tianxiuyangyang.github.io/drive-mad-recreation/',
   },
   {
-    title: '作品四：游戏设计',
-    src: assetPath('/works/work-4.jpg'),
+    title: '作品四：风起大漠',
+    src: assetPath('/works/desert-runner-poster.png'),
     type: 'image',
   },
-] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link' }>
+] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link'; href?: string }>
 
 const worksPlaylist = [
   { title: '默认主题', artist: '作品页音乐', src: assetPath('/music/works-player.mp3') },
@@ -1439,7 +1437,6 @@ function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) 
 
 function WorksPage({ onBack }: { onBack: () => void }) {
   const [loadedWorks, setLoadedWorks] = useState<Record<string, boolean>>({})
-  const [copiedWork, setCopiedWork] = useState<string | null>(null)
   const [isHunterTongueExcerptOpen, setIsHunterTongueExcerptOpen] = useState(false)
 
   return (
@@ -1465,7 +1462,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
           </button>
         </div>
         <p className="mb-8 max-w-2xl text-sm leading-relaxed text-[#5F5144] sm:text-base">
-          这里展示你的图片、视频、趣味网站截图和游戏开发成果。把文件放进 public/works 文件夹，并按下方文件名命名，就能替换示例槽位。
+          网站作品集
         </p>
         <div className="grid gap-4 md:grid-cols-2">
           {works.map((work, index) => (
@@ -1477,52 +1474,31 @@ function WorksPage({ onBack }: { onBack: () => void }) {
               transition={{ duration: 0.55, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="relative aspect-[4/3] bg-[#E9DCCB]">
-                {work.type === 'link' ? (
-                  <div className="flex h-full flex-col justify-center gap-3 bg-[#E8F3FF] p-4 sm:p-5">
-                    {funWebsites.map((website) => (
-                      <div
-                        key={website.url}
-                        className="flex min-w-0 items-center gap-3 rounded-2xl border border-[#BCD5E9] bg-white/70 p-3 text-left shadow-sm"
-                      >
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#D5E9F8] text-[#315D86]">
-                          <Globe2 className="h-5 w-5" aria-hidden="true" />
-                        </span>
-                        <a
-                          href={website.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="min-w-0 flex-1 text-[#315D86] transition hover:text-[#1F4668]"
-                        >
-                          <span className="block text-sm font-bold sm:text-base">{website.name}</span>
-                          <span className="mt-0.5 block truncate text-xs underline decoration-[#8CB8DC] underline-offset-2 sm:text-sm">
-                            {website.url}
-                          </span>
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            void navigator.clipboard?.writeText(website.url)
-                            setCopiedWork(website.url)
-                            window.setTimeout(() => setCopiedWork(null), 1600)
-                          }}
-                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#315D86] text-white transition hover:bg-[#244A6B]"
-                          aria-label={`复制${website.name}网址`}
-                          title={copiedWork === website.url ? '已复制' : '复制网址'}
-                        >
-                          {copiedWork === website.url ? (
-                            <Check className="h-4 w-4" aria-hidden="true" />
-                          ) : (
-                            <Copy className="h-4 w-4" aria-hidden="true" />
-                          )}
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                {work.href ? (
+                  <a href={work.href} target="_blank" rel="noreferrer" className="group block h-full outline-none">
+                    <img
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                      src={work.src}
+                      alt={`${work.title}海报`}
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      decoding="async"
+                      fetchPriority={index === 0 ? 'high' : 'auto'}
+                      onLoad={() => setLoadedWorks((current) => ({ ...current, [work.src]: true }))}
+                      onError={(event) => {
+                        setLoadedWorks((current) => ({ ...current, [work.src]: false }))
+                        event.currentTarget.style.display = 'none'
+                      }}
+                    />
+                    <span className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-full bg-[#FFF7E8]/95 px-3 py-2 text-xs font-bold text-[#2B221A] shadow-sm transition group-hover:gap-3">
+                      打开网站
+                      <ArrowRight className="h-4 w-4 -rotate-45" />
+                    </span>
+                  </a>
                 ) : (
                   <img
                     className="h-full w-full object-cover"
                     src={work.src}
-                    alt={work.title}
+                    alt={`${work.title}海报`}
                     loading={index === 0 ? 'eager' : 'lazy'}
                     decoding="async"
                     fetchPriority={index === 0 ? 'high' : 'auto'}
@@ -1533,7 +1509,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                     }}
                   />
                 )}
-                {work.type !== 'link' && !loadedWorks[work.src] ? (
+                {!loadedWorks[work.src] ? (
                   <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm leading-relaxed text-[#6B5A48]">
                     <span className="rounded-2xl border border-dashed border-[#CDB99F] bg-[#FFF7EA]/90 p-4">
                       加载中
@@ -1544,6 +1520,11 @@ function WorksPage({ onBack }: { onBack: () => void }) {
               <div className="p-5 sm:p-6">
                 <p className="mb-2 text-xs text-[#9A6B3F]">{String(index + 1).padStart(2, '0')}</p>
                 <h2 className="text-2xl font-bold leading-tight text-[#2B221A]">{work.title}</h2>
+                {work.href ? (
+                  <a href={work.href} target="_blank" rel="noreferrer" className="mt-2 block truncate text-sm text-[#315D86] underline decoration-[#8CB8DC] underline-offset-2 hover:text-[#1F4668]">
+                    {work.href}
+                  </a>
+                ) : null}
                 {'description' in work && typeof work.description === 'string' ? <p className="mt-3 text-sm leading-relaxed text-[#5F5144]">{work.description}</p> : null}
               </div>
             </motion.article>
