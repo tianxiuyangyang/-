@@ -1,9 +1,9 @@
 把荣誉图片放在这个文件夹，并按下面名字命名：
 
-1. honor-1.jpg
-2. honor-2.jpg
+1. honor-1-optimized.jpg
+2. honor-2-optimized.jpg
 3. honor-3.jpg
-4. honor-4.jpg
+4. honor-4-optimized.jpg
 
 网站“详细信息”页面的荣誉图片集会自动轮播读取这 8 张图片，并在下方个人简历的荣誉履历中展示。
 

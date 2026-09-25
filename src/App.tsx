@@ -1233,7 +1233,7 @@ const worksPlaylist = [
   { title: '着魔', artist: '张杰', src: assetPath('/music/zhao-mo.mp3') },
 ] as const
 const mistCityMovieSrc = githubMediaPath('/warehouse/迷雾都城 · 上部-暗黑传说.zip')
-const mistCityPosterSrc = assetPath('/works/mist-city-poster.jpg')
+const mistCityPosterSrc = assetPath('/works/mist-city-poster-optimized.jpg')
 const hunterTongueMovieSrc = githubMediaPath('/warehouse/猎舌师.zip')
 const hunterTonguePosterSrc = assetPath('/works/hunter-tongue-poster.jpg')
 const hunterTongueExcerpt = [
@@ -1673,21 +1673,21 @@ function WorksPage({ onBack }: { onBack: () => void }) {
 
 const awards = [
   {
-    src: assetPath('/awards/honor-1.jpg'),
+    src: assetPath('/awards/honor-1-optimized.jpg'),
     thumbnailSrc: assetPath('/awards/thumbs/honor-1.webp'),
     year: '2019',
     title: '第十一届蓝桥杯全国软件和信息技术专业人才大赛',
     result: '青少年硬件搭建高级组 · 三等奖',
   },
   {
-    src: assetPath('/awards/honor-2.jpg'),
+    src: assetPath('/awards/honor-2-optimized.jpg'),
     thumbnailSrc: assetPath('/awards/thumbs/honor-2.webp'),
     year: '2019',
     title: '“我和我的祖国”主题征文活动',
     result: '优秀奖',
   },
   {
-    src: assetPath('/awards/honor-4.jpg'),
+    src: assetPath('/awards/honor-4-optimized.jpg'),
     thumbnailSrc: assetPath('/awards/thumbs/honor-4.webp'),
     year: '2020',
     title: '全国青少年信息学奥林匹克联赛',
@@ -1701,14 +1701,14 @@ const awards = [
     result: '编程考核竞赛初中组 · 二等奖',
   },
   {
-    src: assetPath('/awards/honor-7.jpg'),
+    src: assetPath('/awards/honor-7-optimized.jpg'),
     thumbnailSrc: assetPath('/awards/thumbs/honor-7.webp'),
     year: '2026',
     title: '美达菲双语高级中学',
     result: '三好学生',
   },
   {
-    src: assetPath('/awards/honor-8.jpg'),
+    src: assetPath('/awards/honor-8-optimized.jpg'),
     thumbnailSrc: assetPath('/awards/thumbs/honor-8.webp'),
     year: '等级认证',
     title: '青少年机器人技术等级考试证书',
