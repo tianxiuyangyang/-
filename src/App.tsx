@@ -215,6 +215,7 @@ function Hero({ onOpenResume }: { onOpenResume: () => void }) {
     { label: '创作能力', href: '#workshops' },
     { label: '项目方向', href: '#programs' },
     { label: 'AI 生图', href: '#image-lab' },
+    { label: '学术论文', href: '#academic-papers' },
   ]
 
   useEffect(() => {
@@ -1194,6 +1195,96 @@ function ThreeDSceneShowcase() {
               </div>
             </motion.a>
           ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function AcademicPapersShowcase() {
+  const paperDownload = assetPath('/papers/ai-workflow-profitability-paper.docx')
+
+  return (
+    <section id="academic-papers" className="scroll-mt-8 bg-[#F8F1E6] px-4 pb-20 sm:px-6 md:pb-28">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_80px_rgba(112,88,58,0.12)]">
+        <div className="grid lg:grid-cols-[0.72fr_1.28fr]">
+          <div className="relative flex min-h-[440px] flex-col justify-between overflow-hidden bg-[#2B221A] p-7 text-[#FFF7E8] sm:p-10 md:min-h-[500px]">
+            <div className="pointer-events-none absolute inset-5 border border-[#C59B6A]/35 sm:inset-7" aria-hidden="true" />
+            <div className="relative flex items-center justify-between text-[10px] font-bold uppercase tracking-[0.28em] text-[#DAB37C]">
+              <span>Academic Paper</span>
+              <span>01 / 01</span>
+            </div>
+            <div className="relative max-w-md py-12 sm:py-16">
+              <p className="mb-5 text-xs font-bold uppercase tracking-[0.28em] text-[#DAB37C]">研究与复盘</p>
+              <h2 className="text-4xl font-bold leading-[0.95] tracking-[-0.03em] sm:text-5xl md:text-6xl">
+                AI搭建工作流
+                <br />
+                真的更赚钱吗？
+              </h2>
+              <p className="mt-7 max-w-sm text-sm leading-relaxed text-[#E8D8C2] sm:text-base">
+                从金融多Agent协作与短视频生产的两组模拟复盘，看自动化的真实边界。
+              </p>
+            </div>
+            <div className="relative flex items-end justify-between gap-4 border-t border-[#C59B6A]/35 pt-4 text-xs text-[#D7C3A7]">
+              <span>张睿琛 · 2026</span>
+              <span className="text-right">成本 / 时延 / 质量</span>
+            </div>
+          </div>
+
+          <div className="p-7 sm:p-10 md:p-12">
+            <div className="flex flex-col gap-5 border-b border-[#E6D8C6] pb-7 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#9A6B3F]">学术论文发表</p>
+                <p className="mt-3 text-sm text-[#8A7866]">AI workflow economics · simulation review</p>
+              </div>
+              <a
+                href={paperDownload}
+                download="AI搭建工作流真的更赚钱吗？.docx"
+                className="inline-flex w-fit items-center gap-2 rounded-full bg-[#2B221A] px-4 py-2.5 text-sm font-bold text-[#FFF7E8] transition hover:-translate-y-0.5 hover:bg-[#44382D]"
+              >
+                <FileDown className="h-4 w-4" aria-hidden="true" />
+                下载论文
+              </a>
+            </div>
+
+            <div className="pt-7">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#9A6B3F]">摘要</p>
+              <p className="mt-4 text-sm leading-[1.9] text-[#5F5144] sm:text-base">
+                本文把净收益定义为新增收入与节省人工之和，减去模型调用、数据订阅、服务器、人工复核、返工和错误机会成本。通过金融多Agent协作与短视频生产两组模拟复盘，文章比较自动化流程的结果质量、响应速度、可追责性与经营成本，讨论复杂工作流何时会从效率工具变成成本负担。
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <div className="border-l-2 border-[#C59B6A] bg-[#F7EFE3] px-4 py-4">
+                <p className="text-2xl font-bold text-[#2B221A]">8</p>
+                <p className="mt-1 text-xs leading-relaxed text-[#756454]">金融协作 Agent</p>
+              </div>
+              <div className="border-l-2 border-[#C59B6A] bg-[#F7EFE3] px-4 py-4">
+                <p className="text-2xl font-bold text-[#2B221A]">11</p>
+                <p className="mt-1 text-xs leading-relaxed text-[#756454]">短视频流程 Agent</p>
+              </div>
+              <div className="border-l-2 border-[#C59B6A] bg-[#F7EFE3] px-4 py-4">
+                <p className="text-2xl font-bold text-[#2B221A]">31%</p>
+                <p className="mt-1 text-xs leading-relaxed text-[#756454]">最高文意偏差</p>
+              </div>
+            </div>
+
+            <div className="mt-9 border-t border-[#E6D8C6] pt-7">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#9A6B3F]">核心结论</p>
+              <div className="mt-4 grid gap-3 text-sm leading-relaxed text-[#5F5144] sm:grid-cols-2">
+                <p className="border-b border-[#E6D8C6] pb-3">多Agent可以改善监测和风险识别，但不代表经营结果一定盈利。</p>
+                <p className="border-b border-[#E6D8C6] pb-3">流程交接越多，成本、等待和语义偏差越容易叠加。</p>
+                <p className="border-b border-[#E6D8C6] pb-3">规则清楚、任务重复、错误可控的场景更适合自动化。</p>
+                <p className="border-b border-[#E6D8C6] pb-3">判断一个环节是否值得保留，要看删除它后是否产生可量化损失。</p>
+              </div>
+            </div>
+
+            <div className="mt-7 flex flex-wrap items-center gap-2 text-xs font-bold text-[#8C633F]">
+              <span className="rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">金融实验</span>
+              <span className="rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">短视频生产</span>
+              <span className="rounded-full border border-[#DECDB6] bg-[#FFF6E8] px-3 py-2">Agent 成本分析</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -2647,6 +2738,7 @@ function App() {
       <ImageLab />
       <DesktopWallpaperShowcase />
       <ThreeDSceneShowcase />
+      <AcademicPapersShowcase />
     </main>
   )
 }
