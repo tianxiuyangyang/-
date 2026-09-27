@@ -13,7 +13,9 @@ import {
   Disc3,
   Download,
   FileDown,
+  Flame,
   Globe2,
+  Gamepad2,
   Images,
   Leaf,
   Lock,
@@ -24,6 +26,7 @@ import {
   Pause,
   Play,
   PackageOpen,
+  Puzzle,
   SkipForward,
   Star,
   Sparkles,
@@ -649,12 +652,110 @@ function FeatureCard({
             </li>
           ))}
         </ul>
-        <a href="#collective" className="mt-10 inline-flex items-center gap-2 text-sm text-[#8C633F]">
-          了解更多
-          <ArrowRight className="h-4 w-4 -rotate-45" />
-        </a>
       </div>
     </motion.article>
+  )
+}
+
+function IndieGamesShowcase() {
+  const games = [
+    {
+      title: '《渊》',
+      number: '01',
+      engine: 'GODOT',
+      genre: '解密探索',
+      icon: Puzzle,
+      accent: '#496779',
+      pattern: 'abyss',
+      download: 'downloads/games/yuan-godot.zip',
+      description: '一款以环境线索与空间叙事为核心的解密游戏。',
+    },
+    {
+      title: '《魔戒 · 赤境》',
+      number: '02',
+      engine: 'UNITY',
+      genre: '奇幻冒险',
+      icon: Flame,
+      accent: '#A95532',
+      pattern: 'ember',
+      download: 'downloads/games/mogjie-chijingzhimen.zip',
+      description: '一款围绕赤境世界展开的奇幻游戏项目。',
+    },
+  ]
+
+  return (
+    <section
+      id="indie-games"
+      className="mt-12 overflow-hidden rounded-[1.75rem] border border-[#E2D1BA] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.10)]"
+    >
+      <div className="border-b border-[#E6D8C6] px-6 py-8 sm:px-9 sm:py-10">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#9B8A78]">
+              <Gamepad2 className="h-4 w-4 text-[#8C633F]" />
+              Independent Game Works
+            </div>
+            <h2 className="text-3xl leading-none text-[#2B221A] sm:text-4xl">独立游戏作品</h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-[#6F5F50] sm:text-right">
+            沉沦于无尽幽暗，焚寂于猩红绝境。<br />
+            以孤躯破尽虚妄，重塑世界终序。
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-px bg-[#E6D8C6] md:grid-cols-2">
+        {games.map(({ title, number, engine, genre, icon: Icon, accent, pattern, download, description }) => (
+          <article key={title} className="group bg-[#FFF9EF] p-6 sm:p-9">
+            <div
+              className={`relative mb-8 flex min-h-[220px] items-end overflow-hidden rounded-2xl border border-black/5 p-6 ${
+                pattern === 'abyss'
+                  ? 'bg-[#1E2B34] [background-image:radial-gradient(ellipse_at_66%_45%,transparent_0,transparent_18%,rgba(9,17,23,0.7)_19%,rgba(9,17,23,0.7)_20%,transparent_21%,transparent_29%,rgba(9,17,23,0.56)_30%,rgba(9,17,23,0.56)_31%,transparent_32%),linear-gradient(126deg,rgba(95,137,154,0.74),rgba(20,29,36,0.98)_70%)]'
+                  : 'bg-[#351A18] [background-image:radial-gradient(ellipse_at_72%_48%,transparent_0,transparent_16%,rgba(255,198,116,0.85)_17%,rgba(110,34,18,0.95)_19%,rgba(23,15,16,0.92)_21%,transparent_22%,transparent_29%,rgba(255,127,53,0.55)_30%,rgba(73,22,17,0.95)_32%,transparent_34%),linear-gradient(124deg,rgba(163,62,35,0.95),rgba(35,16,17,0.98)_73%)]'
+              }`}
+              style={{ boxShadow: `inset 0 0 0 1px ${accent}55, inset 0 -34px 60px rgba(15, 10, 8, 0.3)` }}
+            >
+              <div
+                className={`absolute inset-0 opacity-35 transition duration-700 group-hover:opacity-55 ${
+                  pattern === 'abyss'
+                    ? '[background-image:linear-gradient(118deg,transparent_0%,transparent_46%,rgba(190,222,220,0.18)_47%,transparent_48%,transparent_58%,rgba(190,222,220,0.12)_59%,transparent_60%),linear-gradient(74deg,transparent_0%,transparent_66%,rgba(160,204,210,0.18)_67%,transparent_68%)]'
+                    : '[background-image:linear-gradient(114deg,transparent_0%,transparent_45%,rgba(255,191,117,0.32)_46%,transparent_48%,transparent_58%,rgba(255,120,55,0.2)_59%,transparent_61%),linear-gradient(72deg,transparent_0%,transparent_68%,rgba(255,210,135,0.2)_69%,transparent_71%)]'
+                }`}
+              />
+              <div
+                className={`absolute right-[-10%] top-[-18%] h-[150%] w-[65%] rotate-[-16deg] rounded-[48%] border ${
+                  pattern === 'abyss' ? 'border-[#B8D7D7]/25 shadow-[inset_0_0_36px_rgba(150,211,219,0.16)]' : 'border-[#FFC77D]/45 shadow-[inset_0_0_42px_rgba(255,112,45,0.26)]'
+                }`}
+              />
+              <div
+                className={`absolute right-[13%] top-[16%] h-[70%] w-[27%] rotate-[-16deg] rounded-[48%] border ${
+                  pattern === 'abyss' ? 'border-[#D5E8E2]/18' : 'border-[#FFDA9C]/55'
+                }`}
+              />
+              <Icon className="absolute right-6 top-6 h-16 w-16 text-[#FFF9EF]/80" strokeWidth={1.2} />
+              <span className="relative text-xs uppercase tracking-[0.25em] text-[#FFF9EF]/75">PROJECT {number}</span>
+            </div>
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <h3 className="text-2xl text-[#2B221A] sm:text-3xl">{title}</h3>
+              <span className="mt-1 shrink-0 text-xs text-[#9B8A78]">{number}</span>
+            </div>
+            <p className="mb-6 max-w-md text-sm leading-relaxed text-[#6F5F50]">{description}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] text-[#6F5F50]">{engine}</span>
+              <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5 text-xs text-[#6F5F50]">{genre}</span>
+              <a
+                href={assetPath(download)}
+                download
+                className="ml-auto inline-flex items-center gap-2 rounded-full border border-[#8C633F] px-3 py-1.5 text-xs font-semibold text-[#8C633F] transition hover:-translate-y-0.5 hover:bg-[#8C633F] hover:text-[#FFF9EF]"
+              >
+                <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                下载游戏
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -722,6 +823,7 @@ function Features({ onOpenWorks, onOpenResume }: { onOpenWorks: () => void; onOp
             <FeatureCard key={card.title} {...card} index={index + 1} />
           ))}
         </div>
+        <IndieGamesShowcase />
       </div>
     </section>
   )
