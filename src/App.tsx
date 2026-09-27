@@ -678,7 +678,7 @@ function IndieGamesShowcase() {
       icon: Flame,
       accent: '#A95532',
       pattern: 'ember',
-      download: 'downloads/games/mogjie-chijingzhimen.zip',
+      download: '',
       description: '一款围绕赤境世界展开的奇幻游戏项目。',
     },
   ]
@@ -744,12 +744,17 @@ function IndieGamesShowcase() {
               <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] text-[#6F5F50]">{engine}</span>
               <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5 text-xs text-[#6F5F50]">{genre}</span>
               <a
-                href={assetPath(download)}
-                download
-                className="ml-auto inline-flex items-center gap-2 rounded-full border border-[#8C633F] px-3 py-1.5 text-xs font-semibold text-[#8C633F] transition hover:-translate-y-0.5 hover:bg-[#8C633F] hover:text-[#FFF9EF]"
+                href={download ? assetPath(download) : undefined}
+                download={Boolean(download)}
+                aria-disabled={!download}
+                className={`ml-auto inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  download
+                    ? 'border-[#8C633F] text-[#8C633F] hover:-translate-y-0.5 hover:bg-[#8C633F] hover:text-[#FFF9EF]'
+                    : 'cursor-not-allowed border-[#D9C8B2] text-[#9B8A78]'
+                }`}
               >
                 <Download className="h-3.5 w-3.5" aria-hidden="true" />
-                下载游戏
+                {download ? '下载游戏' : '下载包待托管'}
               </a>
             </div>
           </article>
