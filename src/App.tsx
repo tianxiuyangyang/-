@@ -17,6 +17,7 @@ import {
   Globe2,
   Gamepad2,
   Images,
+  Info,
   Leaf,
   Lock,
   Mail,
@@ -31,6 +32,7 @@ import {
   Star,
   Sparkles,
   UserRound,
+  X,
 } from 'lucide-react'
 import './App.css'
 
@@ -1227,7 +1229,30 @@ function DesktopWallpaperShowcase() {
   )
 }
 
+type SceneNote = { title: string; creator: string }
+
+function DesignNoteModal({ note, onClose }: { note: SceneNote; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#1F1710]/45 p-4 backdrop-blur-sm" role="presentation" onClick={onClose}>
+      <div role="dialog" aria-modal="true" aria-labelledby="design-note-title" className="w-full max-w-md rounded-[1.5rem] border border-[#E6D8C6] bg-[#FFF9EF] p-6 shadow-[0_30px_90px_rgba(43,34,26,0.28)] sm:p-8" onClick={(event) => event.stopPropagation()}>
+        <div className="flex items-start justify-between gap-5">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#9A6B3F]">Design Note</p>
+            <h3 id="design-note-title" className="mt-2 text-2xl text-[#2B221A]">{note.title}</h3>
+          </div>
+          <button type="button" aria-label="关闭设计说明" onClick={onClose} className="rounded-full p-2 text-[#8C633F] transition hover:bg-[#F4E9D8]">
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
+        <h4 className="mt-6 text-sm font-semibold text-[#2B221A]">场景设计说明</h4>
+        <p className="mt-3 text-sm leading-[1.9] text-[#5F5144]">本场景使用{note.creator}制作，以电影级写实质感、规整构图与细腻光影，完成一体化高品质场景创作。</p>
+      </div>
+    </div>
+  )
+}
+
 function ThreeDSceneShowcase() {
+  const [selectedNote, setSelectedNote] = useState<SceneNote | null>(null)
   const scenes = [
     {
       number: '01',
@@ -1237,6 +1262,7 @@ function ThreeDSceneShowcase() {
       image: assetPath('/works/molten-throne.jpg'),
       href: 'https://tianxiuyangyang.github.io/molten-realm/?region=citadel',
       accent: '#FF8D39',
+      creator: 'chat GTP 6-Astra',
     },
     {
       number: '02',
@@ -1246,6 +1272,7 @@ function ThreeDSceneShowcase() {
       image: assetPath('/works/scarlet-gate.jpg'),
       href: 'https://tianxiuyangyang.github.io/molten-realm/?region=portal',
       accent: '#D56BFF',
+      creator: 'chat GTP 6-Astra',
     },
   ]
 
@@ -1298,26 +1325,42 @@ function ThreeDSceneShowcase() {
                   <h3 className="text-2xl text-[#2B221A] sm:text-3xl">{scene.title}</h3>
                   <p className="mt-2 max-w-sm text-sm leading-relaxed text-[#6B5A49]">{scene.description}</p>
                 </div>
-                <span className="pt-1 text-xs font-bold tracking-[0.18em] text-[#B49C84]">{scene.number}</span>
+                <span className="flex shrink-0 flex-col items-end gap-3 pt-1">
+                  <span className="text-xs font-bold tracking-[0.18em] text-[#B49C84]">{scene.number}</span>
+                  <button
+                    type="button"
+                    aria-label={`${scene.title}设计说明`}
+                    title="设计说明"
+                    onClick={(event) => { event.preventDefault(); event.stopPropagation(); setSelectedNote(scene) }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[#D9C8B2] px-2.5 py-1.5 text-[11px] font-semibold text-[#8C633F] transition hover:border-[#8C633F] hover:bg-[#F4E9D8]"
+                  >
+                    <Info className="h-3.5 w-3.5" aria-hidden="true" />
+                    设计说明
+                  </button>
+                </span>
               </div>
             </motion.a>
           ))}
         </div>
       </div>
+      {selectedNote && <DesignNoteModal note={selectedNote} onClose={() => setSelectedNote(null)} />}
     </section>
   )
 }
 
 function SunkenCrystalTempleShowcase() {
+  const [selectedNote, setSelectedNote] = useState<SceneNote | null>(null)
+
   return (
     <section id="sunken-crystal-temple" aria-labelledby="crystal-temple-title" className="bg-[#F8F1E6] px-4 pb-20 sm:px-6 md:pb-28">
-      <a
-        href="https://tianxiuyangyang.github.io/sunken-crystal-temple/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group mx-auto block max-w-6xl overflow-hidden rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.12)] transition duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8C633F]"
-      >
-        <div className="relative overflow-hidden bg-[#0A1C29]">
+      <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-2">
+        <a
+          href="https://tianxiuyangyang.github.io/sunken-crystal-temple/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group block overflow-hidden rounded-[1.5rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.12)] transition duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8C633F]"
+        >
+        <div className="relative aspect-[1.45/1] overflow-hidden bg-[#0A1C29]">
           <img
             src={assetPath('/works/sunken-crystal-temple.jpg')}
             alt="沉没的水晶神殿：蓝紫水晶悬于洞顶，石拱环绕水中的发光祭坛"
@@ -1325,20 +1368,34 @@ function SunkenCrystalTempleShowcase() {
             height={1079}
             loading="lazy"
             decoding="async"
-            className="h-auto w-full transition duration-700 group-hover:scale-[1.025]"
+            className="h-full w-full scale-[1.09] object-cover object-center transition duration-700 group-hover:scale-[1.14]"
           />
           <span className="absolute left-4 top-4 rounded-full border border-white/25 bg-[#091D2B]/80 px-3 py-2 text-[10px] font-bold tracking-[0.18em] text-[#D4F3FA] sm:left-6 sm:top-6">SUNKEN CRYSTAL TEMPLE</span>
-        </div>
-        <div className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
-          <div>
-            <h2 id="crystal-temple-title" className="text-3xl text-[#2B221A] sm:text-4xl">沉没的水晶神殿</h2>
-            <p className="mt-3 text-sm leading-relaxed text-[#6B5A49]">循着水晶微光，探访沉入幽深水域的古老神殿。</p>
-          </div>
-          <span className="inline-flex w-fit shrink-0 items-center gap-3 rounded-full bg-[#193B48] px-5 py-3 text-sm font-bold text-[#EEF9FA] transition group-hover:bg-[#285365]">
+          <span className="absolute bottom-5 right-5 inline-flex items-center gap-2 rounded-full bg-[#193B48]/95 px-4 py-2 text-xs font-bold text-[#EEF9FA] shadow-lg backdrop-blur-sm transition group-hover:bg-[#285365]">
             打开3D场景<ArrowRight className="h-4 w-4 -rotate-45" aria-hidden="true" />
           </span>
         </div>
-      </a>
+        <div className="flex items-start justify-between gap-6 p-5 sm:p-6">
+          <div>
+            <h2 id="crystal-temple-title" className="text-2xl text-[#2B221A] sm:text-3xl">沉没的水晶神殿</h2>
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-[#6B5A49]">循着水晶微光，探访沉入幽深水域的古老神殿。</p>
+          </div>
+          <span className="flex shrink-0 flex-col items-end gap-3 pt-1">
+            <button
+              type="button"
+              aria-label="沉没的水晶神殿设计说明"
+              title="设计说明"
+              onClick={(event) => { event.preventDefault(); event.stopPropagation(); setSelectedNote({ title: '沉没的水晶神殿', creator: 'deepseek v4-flash' }) }}
+              className="inline-flex items-center gap-1.5 rounded-full border border-[#D9C8B2] px-2.5 py-1.5 text-[11px] font-semibold text-[#8C633F] transition hover:border-[#8C633F] hover:bg-[#F4E9D8]"
+            >
+              <Info className="h-3.5 w-3.5" aria-hidden="true" />
+              设计说明
+            </button>
+          </span>
+        </div>
+        </a>
+      </div>
+      {selectedNote && <DesignNoteModal note={selectedNote} onClose={() => setSelectedNote(null)} />}
     </section>
   )
 }
@@ -1461,7 +1518,7 @@ const works = [
 
 const worksPlaylist = [
   { title: '默认主题', artist: '作品页音乐', src: assetPath('/music/works-player.mp3') },
-  { title: '九万字', artist: '黄诗扶', src: assetPath('/music/jiu-wan-zi.mp3') },
+  { title: '海屿你', artist: '白慕寒 · 破碎版', src: assetPath('/music/hai-yu-ni.ogg') },
   { title: '不死之身', artist: '林俊杰', src: assetPath('/music/bu-si-zhi-shen.mp3') },
   { title: '着魔', artist: '张杰', src: assetPath('/music/zhao-mo.mp3') },
 ] as const
