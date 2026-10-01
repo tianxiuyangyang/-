@@ -1258,7 +1258,7 @@ function ThreeDSceneShowcase() {
             <h2 className="mt-3 text-4xl leading-[0.95] text-[#2B221A] sm:text-5xl md:text-6xl">我的3D场景设计</h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-[#6B5A49] sm:text-right">
-            两个由我设计的沉浸式场景。点击设计图，进入对应的可交互3D世界。
+            由我设计的沉浸式场景。点击设计图，进入对应的可交互3D世界。
           </p>
         </div>
 
@@ -1304,6 +1304,41 @@ function ThreeDSceneShowcase() {
           ))}
         </div>
       </div>
+    </section>
+  )
+}
+
+function SunkenCrystalTempleShowcase() {
+  return (
+    <section id="sunken-crystal-temple" aria-labelledby="crystal-temple-title" className="bg-[#F8F1E6] px-4 pb-20 sm:px-6 md:pb-28">
+      <a
+        href="https://tianxiuyangyang.github.io/sunken-crystal-temple/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group mx-auto block max-w-6xl overflow-hidden rounded-[1.75rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.12)] transition duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8C633F]"
+      >
+        <div className="relative overflow-hidden bg-[#0A1C29]">
+          <img
+            src={assetPath('/works/sunken-crystal-temple.jpg')}
+            alt="沉没的水晶神殿：蓝紫水晶悬于洞顶，石拱环绕水中的发光祭坛"
+            width={1920}
+            height={1079}
+            loading="lazy"
+            decoding="async"
+            className="h-auto w-full transition duration-700 group-hover:scale-[1.025]"
+          />
+          <span className="absolute left-4 top-4 rounded-full border border-white/25 bg-[#091D2B]/80 px-3 py-2 text-[10px] font-bold tracking-[0.18em] text-[#D4F3FA] sm:left-6 sm:top-6">SUNKEN CRYSTAL TEMPLE</span>
+        </div>
+        <div className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div>
+            <h2 id="crystal-temple-title" className="text-3xl text-[#2B221A] sm:text-4xl">沉没的水晶神殿</h2>
+            <p className="mt-3 text-sm leading-relaxed text-[#6B5A49]">循着水晶微光，探访沉入幽深水域的古老神殿。</p>
+          </div>
+          <span className="inline-flex w-fit shrink-0 items-center gap-3 rounded-full bg-[#193B48] px-5 py-3 text-sm font-bold text-[#EEF9FA] transition group-hover:bg-[#285365]">
+            打开3D场景<ArrowRight className="h-4 w-4 -rotate-45" aria-hidden="true" />
+          </span>
+        </div>
+      </a>
     </section>
   )
 }
@@ -2845,6 +2880,7 @@ function App() {
       <ImageLab />
       <DesktopWallpaperShowcase />
       <ThreeDSceneShowcase />
+      <SunkenCrystalTempleShowcase />
       <AcademicPapersShowcase />
     </main>
   )
