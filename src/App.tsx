@@ -1496,6 +1496,7 @@ const works = [
     src: assetPath('/works/gem-mine-poster.jpg'),
     type: 'image',
     href: 'https://tianxiuyangyang.github.io/gem-mine/',
+    promo: assetPath('/works/gem-mine-promo.mp4'),
   },
   {
     title: '作品二：网站设计',
@@ -1514,7 +1515,7 @@ const works = [
     src: assetPath('/works/desert-runner-poster.jpg'),
     type: 'image',
   },
-] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link'; href?: string }>
+] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link'; href?: string; promo?: string }>
 
 const worksPlaylist = [
   { title: '默认主题', artist: '作品页音乐', src: assetPath('/music/works-player.mp3') },
@@ -1728,6 +1729,16 @@ function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) 
 function WorksPage({ onBack }: { onBack: () => void }) {
   const [loadedWorks, setLoadedWorks] = useState<Record<string, boolean>>({})
   const [isHunterTongueExcerptOpen, setIsHunterTongueExcerptOpen] = useState(false)
+  const [promoWork, setPromoWork] = useState<{ title: string; src: string } | null>(null)
+
+  useEffect(() => {
+    if (!promoWork) return undefined
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPromoWork(null)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [promoWork])
 
   return (
     <main className="works-page min-h-screen overflow-y-auto overflow-x-hidden bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
@@ -1799,6 +1810,18 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                     }}
                   />
                 )}
+                {work.promo ? (
+                  <button
+                    type="button"
+                    onClick={() => setPromoWork({ title: work.title, src: work.promo })}
+                    aria-label={'在线播放' + work.title + '宣传片'}
+                    title="在线播放宣传片"
+                    className="absolute right-4 top-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/30 bg-[#2B221A]/85 px-3.5 py-2 text-xs font-bold text-[#FFF7E8] shadow-[0_10px_30px_rgba(20,14,10,0.35)] backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-[#2B221A] sm:right-5 sm:top-5"
+                  >
+                    <Play className="h-3.5 w-3.5" aria-hidden="true" />
+                    宣传片
+                  </button>
+                ) : null}
                 {!loadedWorks[work.src] ? (
                   <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-sm leading-relaxed text-[#6B5A48]">
                     <span className="rounded-2xl border border-dashed border-[#CDB99F] bg-[#FFF7EA]/90 p-4">
@@ -1820,6 +1843,46 @@ function WorksPage({ onBack }: { onBack: () => void }) {
             </motion.article>
           ))}
         </div>
+        {promoWork ? (
+          <div
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-[#171412]/80 p-4 backdrop-blur-sm sm:p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="gem-mine-promo-title"
+            onClick={() => setPromoWork(null)}
+          >
+            <div
+              className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#B18A5A] bg-[#2B221A] shadow-[0_30px_100px_rgba(0,0,0,0.45)]"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4 text-[#FFF7E8] sm:px-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.26em] text-[#D9A956]">Gem Mine · Promo</p>
+                  <h2 id="gem-mine-promo-title" className="mt-1 text-lg font-bold sm:text-xl">{promoWork.title} · 宣传片</h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPromoWork(null)}
+                  aria-label="关闭宣传片"
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 text-2xl leading-none transition hover:bg-white/15"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="bg-black">
+                <video
+                  className="max-h-[70vh] w-full bg-black"
+                  src={promoWork.src}
+                  controls
+                  autoPlay
+                  playsInline
+                  controlsList="nodownload"
+                  preload="metadata"
+                />
+              </div>
+            </div>
+          </div>
+        ) : null}
         <motion.article
           className="mt-6 overflow-hidden rounded-3xl border border-[#2F302F] bg-[#1E2222] shadow-[0_22px_70px_rgba(25,27,26,0.22)]"
           initial={{ opacity: 0, y: 18 }}
