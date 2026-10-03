@@ -22,5 +22,6 @@
   {"name":"Steam++","file":"Steam++.zip","description":"Steam++ archive for visitors to download.","size":"92.1 MB"},
   {"name":"迷雾都城 · 上部-暗黑传说","file":"迷雾都城 · 上部-暗黑传说.zip","description":"AI original live-action short film source archive for visitors to download.","size":"1.06 GB"},
   {"name":"猎舌师","file":"猎舌师.zip","description":"AI short film archive adapted from Fang Wei's anti-war short story.","size":"364.7 MB"},
-  {"name":"Godot v4.7.2 stable win64","file":"Godot_v4.7.2-stable_win64.exe.zip","description":"Godot v4.7.2 stable Windows 64-bit installer package.","size":"82.0 MB"}
+  {"name":"Godot v4.7.2 stable win64","file":"Godot_v4.7.2-stable_win64.exe.zip","description":"Godot v4.7.2 stable Windows 64-bit installer package.","size":"82.0 MB"},
+  {"name":"狂行险道","file":"狂行险道.zip","description":"管理员专属的《狂行险道》游戏工程与构建文件。","size":"436.5 MB","restricted":true}
 ]
