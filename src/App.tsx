@@ -849,11 +849,12 @@ function IndieGamesShowcase() {
     {
       title: '《星海决》',
       number: '03',
-      engine: '待定',
+      engine: 'UNITY',
       genre: '星际远征',
       icon: Orbit,
       pattern: 'star' as GamePattern,
-      download: '',
+      poster: assetPath('/works/xinghaijue-poster.jpg'),
+      download: githubMediaPath('/warehouse/星海决.zip'),
       description: '一款以星海远征与舰队对决为核心的游戏项目，在行星轨道之间展开长线对抗。',
     },
     {
@@ -890,13 +891,26 @@ function IndieGamesShowcase() {
       </div>
 
       <div className="grid gap-5 p-6 sm:p-9 md:grid-cols-2">
-        {games.map(({ title, number, engine, genre, icon: Icon, pattern, download, description }) => (
+        {games.map(({ title, number, engine, genre, icon: Icon, pattern, poster, download, description }) => (
           <article
             key={title}
             className="group flex flex-col overflow-hidden rounded-[1.4rem] border border-[#E2D1BA] bg-[#FFFDF8] p-4 shadow-[0_16px_44px_rgba(112,88,58,0.08)] transition duration-500 hover:-translate-y-1 hover:border-[#CDB99F] hover:shadow-[0_28px_70px_rgba(112,88,58,0.16)] sm:p-5"
           >
-            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
-              <GameKeyArt pattern={pattern} />
+            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-[#0B1226]">
+              {poster ? (
+                <>
+                  <img
+                    className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                    src={poster}
+                    alt="游戏海报"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(to_bottom,rgba(6,10,20,0.55),transparent)]" />
+                </>
+              ) : (
+                <GameKeyArt pattern={pattern} />
+              )}
               <span className="absolute left-4 top-3 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70">
                 PROJECT {number}
               </span>
@@ -924,7 +938,7 @@ function IndieGamesShowcase() {
                 {download ? '已完成，可下载体验' : '开发中，文件待接入'}
               </span>
               <a
-                href={download ? assetPath(download) : undefined}
+                href={download ? (download.startsWith('http') ? download : assetPath(download)) : undefined}
                 download={Boolean(download)}
                 aria-disabled={!download}
                 className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition ${
