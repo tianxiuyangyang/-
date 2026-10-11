@@ -24,6 +24,7 @@ import {
   MapPin,
   MessageCircle,
   Music2,
+  Orbit,
   Pause,
   Play,
   PackageOpen,
@@ -377,6 +378,7 @@ function WarehousePage({ onBack }: { onBack: () => void }) {
   const [isAdminPromptOpen, setIsAdminPromptOpen] = useState(false)
   const [adminPassword, setAdminPassword] = useState('')
   const [adminError, setAdminError] = useState('')
+  const [activeTab, setActiveTab] = useState<'public' | 'private'>('public')
 
   useEffect(() => {
     let isMounted = true
@@ -419,6 +421,10 @@ function WarehousePage({ onBack }: { onBack: () => void }) {
     }
   }, [])
 
+  const publicItems = items.filter((item) => !item.restricted)
+  const privateItems = items.filter((item) => item.restricted)
+  const visibleItems = activeTab === 'public' ? publicItems : privateItems
+
   const submitAdminPassword = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (adminPassword.trim() !== '3180') {
@@ -431,6 +437,68 @@ function WarehousePage({ onBack }: { onBack: () => void }) {
     setAdminError('')
     setIsAdminPromptOpen(false)
   }
+
+  const renderWarehouseGrid = (list: WarehouseItem[], tone: 'public' | 'private') => (
+    <div className="grid gap-3 md:grid-cols-2">
+      {list.map((item) => {
+        const href = githubMediaPath(`/warehouse/${item.file}`)
+        const isLocked = Boolean(item.restricted) && !isAdminMode
+        return (
+          <article
+            key={`${item.file}-${item.name}`}
+            className={`flex items-center justify-between gap-4 rounded-2xl border p-4 shadow-[0_12px_32px_rgba(112,88,58,0.07)] ${
+              tone === 'private' ? 'border-[#C7D8EA] bg-[#F4F9FE]' : 'border-[#E0CFB8] bg-[#FFF7EA]'
+            }`}
+          >
+            <div className="flex min-w-0 items-start gap-3">
+              <div
+                className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white ${
+                  tone === 'private' ? 'text-[#315D86]' : 'text-[#8C633F]'
+                }`}
+              >
+                <FileDown className="h-5 w-5" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="flex items-center gap-2 truncate text-sm font-bold text-[#2B221A]">
+                  <span className="truncate">{item.name}</span>
+                  {item.restricted ? (
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#E8F3FF] px-2 py-0.5 text-[10px] text-[#315D86]">
+                      <Lock className="h-3 w-3" />
+                      私人
+                    </span>
+                  ) : null}
+                </h4>
+                {item.description ? (
+                  <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#6B5A49]">{item.description}</p>
+                ) : null}
+                {item.size ? <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[#9B8A78]">{item.size}</p> : null}
+              </div>
+            </div>
+            {isLocked ? (
+              <button
+                type="button"
+                onClick={() => setIsAdminPromptOpen(true)}
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8F3FF] text-[#315D86] transition hover:-translate-y-0.5 hover:bg-[#D5E9FA]"
+                aria-label={`${item.name} 需要管理员权限`}
+                title="需要管理员权限"
+              >
+                <Lock className="h-4 w-4" />
+              </button>
+            ) : (
+              <a
+                href={href}
+                download
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2B221A] text-[#FFF7E8] transition hover:-translate-y-0.5 hover:bg-[#443326]"
+                aria-label={`下载 ${item.name}`}
+              >
+                <Download className="h-4 w-4" />
+              </a>
+            )}
+          </article>
+        )
+      })}
+    </div>
+  )
 
   return (
     <main className="min-h-screen bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
@@ -445,21 +513,64 @@ function WarehousePage({ onBack }: { onBack: () => void }) {
             <ArrowRight className="h-4 w-4 rotate-180 text-[#2B221A]" />
           </span>
         </button>
-        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+
+        <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
           <div>
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2B221A] text-[#FFF7E8] shadow-[0_14px_35px_rgba(92,70,43,0.16)]">
               <PackageOpen className="h-6 w-6" />
             </div>
             <p className="text-xs uppercase tracking-[0.26em] text-[#9A6B3F]">Download warehouse</p>
             <h2 className="mt-3 text-4xl font-bold leading-tight text-[#2B221A] sm:text-5xl">仓库</h2>
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-[#6B5A49]">
+              仓库分为公开与私人两个区域。公开文件所有访客都能直接下载，私人文件可以查看，输入管理员密码后才能下载。
+            </p>
           </div>
-          <p className="max-w-md text-sm leading-relaxed text-[#6B5A49]">
-            我会把可公开分享的文件放在这里，访问者可以直接下载资料、作品附件和阶段性整理文件。
-          </p>
+
+          <div role="tablist" aria-label="仓库区域" className="inline-flex w-full shrink-0 rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-1 md:w-auto">
+            <button
+              type="button"
+              role="tab"
+              id="warehouse-tab-public"
+              aria-selected={activeTab === 'public'}
+              aria-controls="warehouse-panel"
+              onClick={() => setActiveTab('public')}
+              className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition md:flex-none ${
+                activeTab === 'public'
+                  ? 'bg-[#2B221A] text-[#FFF7E8] shadow-[0_10px_25px_rgba(43,34,26,0.18)]'
+                  : 'text-[#6F5F50] hover:bg-white'
+              }`}
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              公开
+              <span className={`rounded-full px-2 py-0.5 text-[11px] ${activeTab === 'public' ? 'bg-[#FFF7E8]/20 text-[#FFF7E8]' : 'bg-[#F0E4D2] text-[#8C633F]'}`}>
+                {publicItems.length}
+              </span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              id="warehouse-tab-private"
+              aria-selected={activeTab === 'private'}
+              aria-controls="warehouse-panel"
+              onClick={() => setActiveTab('private')}
+              className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition md:flex-none ${
+                activeTab === 'private'
+                  ? 'bg-[#315D86] text-white shadow-[0_10px_25px_rgba(49,93,134,0.24)]'
+                  : 'text-[#6F5F50] hover:bg-white'
+              }`}
+            >
+              <Lock className="h-4 w-4" aria-hidden="true" />
+              私有
+              <span className={`rounded-full px-2 py-0.5 text-[11px] ${activeTab === 'private' ? 'bg-white/20 text-white' : 'bg-[#E8F3FF] text-[#315D86]'}`}>
+                {privateItems.length}
+              </span>
+            </button>
+          </div>
         </div>
+
         <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs leading-relaxed text-[#6B5A49]">
-            {isAdminMode ? '管理员模式已开启，专属文件已显示。' : '部分文件需要管理员权限才能访问。'}
+            {isAdminMode ? '管理员模式已开启，私人文件可以直接下载。' : '私人文件已锁定，输入管理员密码后即可下载。'}
           </p>
           <button
             type="button"
@@ -479,6 +590,7 @@ function WarehousePage({ onBack }: { onBack: () => void }) {
             {isAdminMode ? '退出管理员' : '管理员访问'}
           </button>
         </div>
+
         {isAdminPromptOpen ? (
           <form
             onSubmit={submitAdminPassword}
@@ -505,65 +617,55 @@ function WarehousePage({ onBack }: { onBack: () => void }) {
           <div className="rounded-2xl border border-dashed border-[#D8C4A8] bg-[#FFF7EA] p-6 text-sm text-[#6B5A49]">
             正在读取仓库清单...
           </div>
-        ) : items.length > 0 ? (
-          <div className="grid gap-3 md:grid-cols-2">
-            {items.map((item) => {
-              const href = githubMediaPath(`/warehouse/${item.file}`)
-              const isLocked = item.restricted && !isAdminMode
-              return (
-                <article
-                  key={`${item.file}-${item.name}`}
-                  className="flex items-center justify-between gap-4 rounded-2xl border border-[#E0CFB8] bg-[#FFF7EA] p-4 shadow-[0_12px_32px_rgba(112,88,58,0.07)]"
-                >
-                  <div className="flex min-w-0 items-start gap-3">
-                    <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-[#8C633F]">
-                      <FileDown className="h-5 w-5" />
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="flex items-center gap-2 truncate text-sm font-bold text-[#2B221A]">
-                        <span className="truncate">{item.name}</span>
-                        {item.restricted ? (
-                          <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#E8F3FF] px-2 py-0.5 text-[10px] text-[#315D86]">
-                            <Lock className="h-3 w-3" />
-                            管理员
-                          </span>
-                        ) : null}
-                      </h3>
-                      {item.description ? (
-                        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#6B5A49]">{item.description}</p>
-                      ) : null}
-                      {item.size ? <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[#9B8A78]">{item.size}</p> : null}
-                    </div>
-                  </div>
-                  {isLocked ? (
-                    <button
-                      type="button"
-                      onClick={() => setIsAdminPromptOpen(true)}
-                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8F3FF] text-[#315D86] transition hover:-translate-y-0.5 hover:bg-[#D5E9FA]"
-                      aria-label={`${item.name} 需要管理员权限`}
-                      title="需要管理员权限"
-                    >
-                      <Lock className="h-4 w-4" />
-                    </button>
-                  ) : (
-                    <a
-                      href={href}
-                      download
-                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2B221A] text-[#FFF7E8] transition hover:-translate-y-0.5 hover:bg-[#443326]"
-                      aria-label={`下载 ${item.name}`}
-                    >
-                      <Download className="h-4 w-4" />
-                    </a>
-                  )}
-                </article>
-              )
-            })}
-          </div>
-        ) : (
+        ) : items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[#D8C4A8] bg-[#FFF7EA] p-6 text-sm leading-relaxed text-[#6B5A49]">
             仓库暂时是空的。把文件放到 <span className="font-bold text-[#2B221A]">public/warehouse</span>，再在{' '}
             <span className="font-bold text-[#2B221A]">manifest.json</span> 里添加名称和文件名，部署后访客就能下载。
           </div>
+        ) : (
+          <section
+            id="warehouse-panel"
+            role="tabpanel"
+            aria-labelledby={activeTab === 'public' ? 'warehouse-tab-public' : 'warehouse-tab-private'}
+          >
+            <div
+              className={`mb-4 flex flex-wrap items-end justify-between gap-4 border-b pb-4 ${
+                activeTab === 'private' ? 'border-[#CFE0F0]' : 'border-[#E6D8C6]'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                    activeTab === 'private' ? 'bg-[#E8F3FF] text-[#315D86]' : 'bg-[#F0E4D2] text-[#8C633F]'
+                  }`}
+                >
+                  {activeTab === 'private' ? <Lock className="h-4 w-4" /> : <Download className="h-4 w-4" />}
+                </span>
+                <div>
+                  <h3 className="text-lg font-bold text-[#2B221A]">{activeTab === 'private' ? '私人文件' : '公开文件'}</h3>
+                  <p className="mt-0.5 text-xs text-[#8A7866]">
+                    {activeTab === 'private'
+                      ? '所有访客都可以查看文件信息，管理员解锁后可以下载。'
+                      : '所有访客都可以直接下载。'}
+                  </p>
+                </div>
+              </div>
+              <span
+                className={`rounded-full border px-3 py-1 text-xs ${
+                  activeTab === 'private' ? 'border-[#C7D8EA] text-[#315D86]' : 'border-[#D9C8B2] text-[#6F5F50]'
+                }`}
+              >
+                {visibleItems.length} 个文件
+              </span>
+            </div>
+            {visibleItems.length > 0 ? (
+              renderWarehouseGrid(visibleItems, activeTab)
+            ) : (
+              <div className="rounded-2xl border border-dashed border-[#D8C4A8] bg-[#FFF7EA] p-5 text-sm text-[#6B5A49]">
+                {activeTab === 'private' ? '暂无私人文件。' : '暂无公开文件。'}
+              </div>
+            )}
+          </section>
         )}
       </section>
     </main>
@@ -659,6 +761,69 @@ function FeatureCard({
   )
 }
 
+type GamePattern = 'abyss' | 'ember' | 'star' | 'rift'
+
+function GameKeyArt({ pattern }: { pattern: GamePattern }) {
+  if (pattern === 'abyss') {
+    return (
+      <>
+        <span className="absolute inset-0 bg-[#101C24]" />
+        <span className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_-12%,rgba(74,124,146,0.55),transparent_62%)]" />
+        <span className="absolute left-1/2 top-0 h-[74%] w-[34%] -translate-x-1/2 bg-[linear-gradient(to_bottom,rgba(198,236,238,0.2),transparent)] blur-[6px]" />
+        <span className="absolute left-1/2 top-[64%] h-[62%] w-[88%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-[#9FD3D8]/12" />
+        <span className="absolute left-1/2 top-[64%] h-[42%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-[#9FD3D8]/18" />
+        <span className="absolute left-1/2 top-[64%] h-[24%] w-[36%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-[#BEE6E6]/28" />
+        <span className="absolute left-1/2 top-[64%] h-[14%] w-[22%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(212,248,244,0.75),transparent)] blur-[3px]" />
+        <span className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_62%,transparent_38%,rgba(6,12,16,0.86))]" />
+      </>
+    )
+  }
+
+  if (pattern === 'ember') {
+    return (
+      <>
+        <span className="absolute inset-0 bg-[#24100E]" />
+        <span className="absolute inset-0 bg-[radial-gradient(100%_80%_at_50%_6%,rgba(120,40,24,0.6),transparent_66%)]" />
+        <span className="absolute inset-x-0 bottom-0 h-[52%] bg-[linear-gradient(to_top,rgba(255,104,28,0.62),transparent)]" />
+        <span className="absolute -left-[10%] bottom-[20%] h-[2px] w-[120%] -rotate-6 bg-[linear-gradient(90deg,transparent,rgba(255,198,124,0.8),transparent)] blur-[1px]" />
+        <span className="absolute -left-[6%] bottom-[32%] h-px w-[112%] -rotate-3 bg-[linear-gradient(90deg,transparent,rgba(255,150,80,0.55),transparent)]" />
+        <span className="absolute left-1/2 top-[42%] h-[72%] w-[44%] -translate-x-1/2 -translate-y-1/2 rotate-[18deg] rounded-[50%] border-[6px] border-[#EFB457]/85 shadow-[0_0_30px_rgba(255,142,54,0.5),inset_0_0_20px_rgba(255,196,120,0.45)]" />
+        <span className="absolute left-1/2 top-[42%] h-[54%] w-[32%] -translate-x-1/2 -translate-y-1/2 rotate-[18deg] rounded-[50%] border border-[#FFE2AE]/55" />
+        <span className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_58%,transparent_40%,rgba(20,8,6,0.82))]" />
+      </>
+    )
+  }
+
+  if (pattern === 'star') {
+    return (
+      <>
+        <span className="absolute inset-0 bg-[#070E20]" />
+        <span className="absolute inset-0 bg-[radial-gradient(90%_70%_at_80%_14%,rgba(84,132,220,0.42),transparent_64%),radial-gradient(70%_60%_at_10%_90%,rgba(118,86,198,0.34),transparent_66%)]" />
+        <span className="absolute -bottom-[52%] -right-[24%] h-[132%] w-[84%] rounded-full border border-[#9FC6FF]/25 bg-[radial-gradient(circle_at_32%_26%,rgba(126,176,255,0.42),rgba(9,16,38,0.92)_64%)]" />
+        <span className="absolute -bottom-[52%] -right-[24%] h-[132%] w-[84%] rounded-full border-t-2 border-[#D6E8FF]/70" />
+        <span className="absolute left-[4%] top-[44%] h-[34%] w-[88%] -rotate-[14deg] rounded-[50%] border border-[#BFD9FF]/40" />
+        <span className="absolute -left-[6%] top-[30%] h-px w-[74%] -rotate-[16deg] bg-[linear-gradient(90deg,transparent,rgba(226,238,255,0.9),transparent)]" />
+        <span className="absolute -left-[2%] top-[52%] h-px w-[52%] -rotate-[16deg] bg-[linear-gradient(90deg,transparent,rgba(160,200,255,0.6),transparent)]" />
+        <span className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_60%,transparent_42%,rgba(4,8,20,0.82))]" />
+      </>
+    )
+  }
+
+  return (
+    <>
+      <span className="absolute inset-0 bg-[#150C2A]" />
+      <span className="absolute inset-0 bg-[radial-gradient(80%_70%_at_50%_50%,rgba(120,78,206,0.5),transparent_70%)]" />
+      <span className="absolute left-1/2 top-1/2 h-[132%] w-[46%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,rgba(196,152,255,0.55),transparent_74%)] blur-[8px]" />
+      <span className="absolute left-1/2 top-[-8%] h-[116%] w-[13%] -translate-x-1/2 rotate-6 bg-[linear-gradient(to_bottom,transparent,rgba(226,198,255,0.55)_26%,transparent_78%)] blur-[6px]" />
+      <span className="absolute left-1/2 top-[-8%] h-[116%] w-[3.6%] -translate-x-1/2 rotate-6 bg-[linear-gradient(to_bottom,transparent,rgba(246,236,255,0.95)_30%,rgba(255,255,255,1)_50%,rgba(246,236,255,0.95)_70%,transparent)]" />
+      <span className="absolute inset-x-0 bottom-[14%] h-[24%] bg-[linear-gradient(to_top,rgba(120,222,220,0.3),transparent)]" />
+      <span className="absolute right-[20%] top-[18%] h-[28%] w-[2px] rotate-[26deg] bg-[linear-gradient(to_bottom,transparent,rgba(228,210,255,0.85),transparent)]" />
+      <span className="absolute left-[22%] top-[30%] h-[22%] w-[2px] -rotate-[20deg] bg-[linear-gradient(to_bottom,transparent,rgba(206,240,246,0.7),transparent)]" />
+      <span className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_54%,transparent_44%,rgba(8,5,18,0.84))]" />
+    </>
+  )
+}
+
 function IndieGamesShowcase() {
   const games = [
     {
@@ -667,10 +832,9 @@ function IndieGamesShowcase() {
       engine: 'GODOT',
       genre: '解密探索',
       icon: Puzzle,
-      accent: '#496779',
-      pattern: 'abyss',
+      pattern: 'abyss' as GamePattern,
       download: 'downloads/games/yuan-godot.zip',
-      description: '一款以环境线索与空间叙事为核心的解密游戏。',
+      description: '一款以环境线索与空间叙事为核心的解密游戏，玩家需要沿着幽暗竖井向下，拼合失落的真相。',
     },
     {
       title: '《魔戒 · 赤境》',
@@ -678,10 +842,29 @@ function IndieGamesShowcase() {
       engine: 'UNITY',
       genre: '奇幻冒险',
       icon: Flame,
-      accent: '#A95532',
-      pattern: 'ember',
+      pattern: 'ember' as GamePattern,
       download: '',
-      description: '一款围绕赤境世界展开的奇幻游戏项目。',
+      description: '一款围绕赤境世界展开的奇幻游戏项目，以熔岩河谷、黑石祭坛与赤色天幕构成主要舞台。',
+    },
+    {
+      title: '《星海决》',
+      number: '03',
+      engine: '待定',
+      genre: '星际远征',
+      icon: Orbit,
+      pattern: 'star' as GamePattern,
+      download: '',
+      description: '一款以星海远征与舰队对决为核心的游戏项目，在行星轨道之间展开长线对抗。',
+    },
+    {
+      title: '《异界来客》',
+      number: '04',
+      engine: '待定',
+      genre: '异界冒险',
+      icon: Globe2,
+      pattern: 'rift' as GamePattern,
+      download: '',
+      description: '一款围绕异界裂痕与不速之客展开的游戏项目，现实与异界的边界正在缓慢瓦解。',
     },
   ]
 
@@ -706,53 +889,48 @@ function IndieGamesShowcase() {
         </div>
       </div>
 
-      <div className="grid gap-px bg-[#E6D8C6] md:grid-cols-2">
-        {games.map(({ title, number, engine, genre, icon: Icon, accent, pattern, download, description }) => (
-          <article key={title} className="group bg-[#FFF9EF] p-6 sm:p-9">
-            <div
-              className={`relative mb-8 flex min-h-[220px] items-end overflow-hidden rounded-2xl border border-black/5 p-6 ${
-                pattern === 'abyss'
-                  ? 'bg-[#1E2B34] [background-image:radial-gradient(ellipse_at_66%_45%,transparent_0,transparent_18%,rgba(9,17,23,0.7)_19%,rgba(9,17,23,0.7)_20%,transparent_21%,transparent_29%,rgba(9,17,23,0.56)_30%,rgba(9,17,23,0.56)_31%,transparent_32%),linear-gradient(126deg,rgba(95,137,154,0.74),rgba(20,29,36,0.98)_70%)]'
-                  : 'bg-[#351A18] [background-image:radial-gradient(ellipse_at_72%_48%,transparent_0,transparent_16%,rgba(255,198,116,0.85)_17%,rgba(110,34,18,0.95)_19%,rgba(23,15,16,0.92)_21%,transparent_22%,transparent_29%,rgba(255,127,53,0.55)_30%,rgba(73,22,17,0.95)_32%,transparent_34%),linear-gradient(124deg,rgba(163,62,35,0.95),rgba(35,16,17,0.98)_73%)]'
-              }`}
-              style={{ boxShadow: `inset 0 0 0 1px ${accent}55, inset 0 -34px 60px rgba(15, 10, 8, 0.3)` }}
-            >
-              <div
-                className={`absolute inset-0 opacity-35 transition duration-700 group-hover:opacity-55 ${
-                  pattern === 'abyss'
-                    ? '[background-image:linear-gradient(118deg,transparent_0%,transparent_46%,rgba(190,222,220,0.18)_47%,transparent_48%,transparent_58%,rgba(190,222,220,0.12)_59%,transparent_60%),linear-gradient(74deg,transparent_0%,transparent_66%,rgba(160,204,210,0.18)_67%,transparent_68%)]'
-                    : '[background-image:linear-gradient(114deg,transparent_0%,transparent_45%,rgba(255,191,117,0.32)_46%,transparent_48%,transparent_58%,rgba(255,120,55,0.2)_59%,transparent_61%),linear-gradient(72deg,transparent_0%,transparent_68%,rgba(255,210,135,0.2)_69%,transparent_71%)]'
-                }`}
-              />
-              <div
-                className={`absolute right-[-10%] top-[-18%] h-[150%] w-[65%] rotate-[-16deg] rounded-[48%] border ${
-                  pattern === 'abyss' ? 'border-[#B8D7D7]/25 shadow-[inset_0_0_36px_rgba(150,211,219,0.16)]' : 'border-[#FFC77D]/45 shadow-[inset_0_0_42px_rgba(255,112,45,0.26)]'
-                }`}
-              />
-              <div
-                className={`absolute right-[13%] top-[16%] h-[70%] w-[27%] rotate-[-16deg] rounded-[48%] border ${
-                  pattern === 'abyss' ? 'border-[#D5E8E2]/18' : 'border-[#FFDA9C]/55'
-                }`}
-              />
-              <Icon className="absolute right-6 top-6 h-16 w-16 text-[#FFF9EF]/80" strokeWidth={1.2} />
-              <span className="relative text-xs uppercase tracking-[0.25em] text-[#FFF9EF]/75">PROJECT {number}</span>
+      <div className="grid gap-5 p-6 sm:p-9 md:grid-cols-2">
+        {games.map(({ title, number, engine, genre, icon: Icon, pattern, download, description }) => (
+          <article
+            key={title}
+            className="group flex flex-col overflow-hidden rounded-[1.4rem] border border-[#E2D1BA] bg-[#FFFDF8] p-4 shadow-[0_16px_44px_rgba(112,88,58,0.08)] transition duration-500 hover:-translate-y-1 hover:border-[#CDB99F] hover:shadow-[0_28px_70px_rgba(112,88,58,0.16)] sm:p-5"
+          >
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
+              <GameKeyArt pattern={pattern} />
+              <span className="absolute left-4 top-3 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70">
+                PROJECT {number}
+              </span>
+              <span className="absolute right-4 top-3 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[10px] font-bold tracking-[0.16em] text-white/85 backdrop-blur-sm">
+                {engine}
+              </span>
             </div>
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <h3 className="text-2xl text-[#2B221A] sm:text-3xl">{title}</h3>
-              <span className="mt-1 shrink-0 text-xs text-[#9B8A78]">{number}</span>
+
+            <div className="mt-6 flex items-start justify-between gap-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#E2D1BA] bg-[#F4E9D8] text-[#8C633F]">
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <h3 className="truncate text-2xl font-bold leading-tight text-[#2B221A] sm:text-[1.75rem]">{title}</h3>
+              </div>
+              <span className="mt-1 shrink-0 rounded-full border border-[#D9C8B2] px-3 py-1 text-[11px] font-semibold tracking-[0.12em] text-[#6F5F50]">
+                {genre}
+              </span>
             </div>
-            <p className="mb-6 max-w-md text-sm leading-relaxed text-[#6F5F50]">{description}</p>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5 text-[11px] font-semibold tracking-[0.12em] text-[#6F5F50]">{engine}</span>
-              <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5 text-xs text-[#6F5F50]">{genre}</span>
+            <p className="mt-3 flex-1 text-sm leading-relaxed text-[#6F5F50]">{description}</p>
+
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#EAE0CF] pt-4">
+              <span className="inline-flex items-center gap-2 text-xs text-[#8A7866]">
+                <span className={`h-1.5 w-1.5 rounded-full ${download ? 'bg-[#4E9C6B]' : 'bg-[#CBAE86]'}`} />
+                {download ? '已完成，可下载体验' : '开发中，文件待接入'}
+              </span>
               <a
                 href={download ? assetPath(download) : undefined}
                 download={Boolean(download)}
                 aria-disabled={!download}
-                className={`ml-auto inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition ${
                   download
-                    ? 'border-[#8C633F] text-[#8C633F] hover:-translate-y-0.5 hover:bg-[#8C633F] hover:text-[#FFF9EF]'
-                    : 'cursor-not-allowed border-[#D9C8B2] text-[#9B8A78]'
+                    ? 'bg-[#2B221A] text-[#FFF7E8] hover:-translate-y-0.5 hover:bg-[#443326]'
+                    : 'cursor-not-allowed border border-[#D9C8B2] text-[#9B8A78]'
                 }`}
               >
                 <Download className="h-3.5 w-3.5" aria-hidden="true" />
