@@ -1611,6 +1611,56 @@ function SunkenCrystalTempleShowcase() {
   )
 }
 
+function ArtworksShowcase() {
+  return (
+    <section id="artworks" className="bg-[#F8F1E6] px-4 pb-20 sm:px-6 md:pb-28">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#9B8A78]">Art Works</p>
+            <h2 className="mt-3 text-4xl leading-[0.95] text-[#2B221A] sm:text-5xl md:text-6xl">美术作品</h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-[#6B5A49] sm:text-right">
+            用图像、材质与光影记录我的美术探索，点击作品图进入对应的互动网站。
+          </p>
+        </div>
+
+        <a
+          href="https://tianxiuyangyang.github.io/cyber-magic-gesture/"
+          target="_blank"
+          rel="noreferrer"
+          className="group relative block overflow-hidden rounded-[1.5rem] border border-[#E6D8C6] bg-[#101018] shadow-[0_24px_70px_rgba(112,88,58,0.14)] outline-none transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(112,88,58,0.22)] focus-visible:ring-2 focus-visible:ring-[#8C633F] focus-visible:ring-offset-4 focus-visible:ring-offset-[#F8F1E6]"
+        >
+          <div className="relative aspect-[16/9] overflow-hidden">
+            <img
+              src={assetPath('/works/cyber-magic-art.jpg')}
+              alt="赛博魔法美术作品"
+              className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,6,16,0.88),rgba(8,6,16,0.12)_46%,transparent_72%)]" />
+            <span className="absolute left-5 top-5 rounded-full border border-white/25 bg-black/35 px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] text-white/90 backdrop-blur-md">
+              CYBER MAGIC
+            </span>
+            <div className="absolute inset-x-0 bottom-0 flex flex-col gap-4 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-white/65">Interactive Artwork</p>
+                <h3 className="mt-2 text-3xl text-[#FFF7E8] sm:text-4xl">赛博魔法</h3>
+              </div>
+              <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFF7E8]/95 px-4 py-2 text-xs font-bold text-[#2B221A] shadow-lg transition group-hover:gap-3">
+                打开网站
+                <ArrowRight className="h-4 w-4 -rotate-45" aria-hidden="true" />
+              </span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+  )
+}
+
+
 function AcademicPapersShowcase() {
   const paperDownload = assetPath('/papers/ai-workflow-profitability-paper.docx')
 
@@ -1722,11 +1772,13 @@ const works = [
     href: 'https://tianxiuyangyang.github.io/drive-mad-recreation/',
   },
   {
-    title: '作品四：风起大漠',
-    src: assetPath('/works/desert-runner-poster.jpg'),
+    title: '作品四：mc趣味测试',
+    src: assetPath('/works/mc-fate-test-poster.png'),
     type: 'image',
+    href: 'https://tianxiuyangyang.github.io/mc-fate-test/',
+    fit: 'contain',
   },
-] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link'; href?: string; promo?: string }>
+] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link'; href?: string; promo?: string; fit?: 'cover' | 'contain' }>
 
 const worksPlaylist = [
   { title: '默认主题', artist: '作品页音乐', src: assetPath('/music/works-player.mp3') },
@@ -1985,11 +2037,11 @@ function WorksPage({ onBack }: { onBack: () => void }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="relative aspect-[4/3] bg-[#E9DCCB]">
+              <div className={`relative aspect-[4/3] ${work.fit === 'contain' ? 'bg-[#E7EDED]' : 'bg-[#E9DCCB]'}`}>
                 {work.href ? (
                   <a href={work.href} target="_blank" rel="noreferrer" className="group block h-full outline-none">
                     <img
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                      className={`h-full w-full transition duration-500 group-hover:scale-[1.03] ${work.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
                       src={work.src}
                       alt={`${work.title}海报`}
                       loading={index === 0 ? 'eager' : 'lazy'}
@@ -2008,7 +2060,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                   </a>
                 ) : (
                   <img
-                    className="h-full w-full object-cover"
+                    className={`h-full w-full ${work.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
                     src={work.src}
                     alt={`${work.title}海报`}
                     loading={index === 0 ? 'eager' : 'lazy'}
@@ -3217,6 +3269,7 @@ function App() {
       <DesktopWallpaperShowcase />
       <ThreeDSceneShowcase />
       <SunkenCrystalTempleShowcase />
+      <ArtworksShowcase />
       <AcademicPapersShowcase />
     </main>
   )
