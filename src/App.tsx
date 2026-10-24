@@ -13,7 +13,6 @@ import {
   Disc3,
   Download,
   FileDown,
-  Flame,
   Globe2,
   Gamepad2,
   Images,
@@ -24,11 +23,9 @@ import {
   MapPin,
   MessageCircle,
   Music2,
-  Orbit,
   Pause,
   Play,
   PackageOpen,
-  Puzzle,
   SkipForward,
   Star,
   Sparkles,
@@ -761,113 +758,9 @@ function FeatureCard({
   )
 }
 
-type GamePattern = 'abyss' | 'ember' | 'star' | 'rift'
-
-function GameKeyArt({ pattern }: { pattern: GamePattern }) {
-  if (pattern === 'abyss') {
-    return (
-      <>
-        <span className="absolute inset-0 bg-[#101C24]" />
-        <span className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_-12%,rgba(74,124,146,0.55),transparent_62%)]" />
-        <span className="absolute left-1/2 top-0 h-[74%] w-[34%] -translate-x-1/2 bg-[linear-gradient(to_bottom,rgba(198,236,238,0.2),transparent)] blur-[6px]" />
-        <span className="absolute left-1/2 top-[64%] h-[62%] w-[88%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-[#9FD3D8]/12" />
-        <span className="absolute left-1/2 top-[64%] h-[42%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-[#9FD3D8]/18" />
-        <span className="absolute left-1/2 top-[64%] h-[24%] w-[36%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] border border-[#BEE6E6]/28" />
-        <span className="absolute left-1/2 top-[64%] h-[14%] w-[22%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(212,248,244,0.75),transparent)] blur-[3px]" />
-        <span className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_62%,transparent_38%,rgba(6,12,16,0.86))]" />
-      </>
-    )
-  }
-
-  if (pattern === 'ember') {
-    return (
-      <>
-        <span className="absolute inset-0 bg-[#24100E]" />
-        <span className="absolute inset-0 bg-[radial-gradient(100%_80%_at_50%_6%,rgba(120,40,24,0.6),transparent_66%)]" />
-        <span className="absolute inset-x-0 bottom-0 h-[52%] bg-[linear-gradient(to_top,rgba(255,104,28,0.62),transparent)]" />
-        <span className="absolute -left-[10%] bottom-[20%] h-[2px] w-[120%] -rotate-6 bg-[linear-gradient(90deg,transparent,rgba(255,198,124,0.8),transparent)] blur-[1px]" />
-        <span className="absolute -left-[6%] bottom-[32%] h-px w-[112%] -rotate-3 bg-[linear-gradient(90deg,transparent,rgba(255,150,80,0.55),transparent)]" />
-        <span className="absolute left-1/2 top-[42%] h-[72%] w-[44%] -translate-x-1/2 -translate-y-1/2 rotate-[18deg] rounded-[50%] border-[6px] border-[#EFB457]/85 shadow-[0_0_30px_rgba(255,142,54,0.5),inset_0_0_20px_rgba(255,196,120,0.45)]" />
-        <span className="absolute left-1/2 top-[42%] h-[54%] w-[32%] -translate-x-1/2 -translate-y-1/2 rotate-[18deg] rounded-[50%] border border-[#FFE2AE]/55" />
-        <span className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_58%,transparent_40%,rgba(20,8,6,0.82))]" />
-      </>
-    )
-  }
-
-  if (pattern === 'star') {
-    return (
-      <>
-        <span className="absolute inset-0 bg-[#070E20]" />
-        <span className="absolute inset-0 bg-[radial-gradient(90%_70%_at_80%_14%,rgba(84,132,220,0.42),transparent_64%),radial-gradient(70%_60%_at_10%_90%,rgba(118,86,198,0.34),transparent_66%)]" />
-        <span className="absolute -bottom-[52%] -right-[24%] h-[132%] w-[84%] rounded-full border border-[#9FC6FF]/25 bg-[radial-gradient(circle_at_32%_26%,rgba(126,176,255,0.42),rgba(9,16,38,0.92)_64%)]" />
-        <span className="absolute -bottom-[52%] -right-[24%] h-[132%] w-[84%] rounded-full border-t-2 border-[#D6E8FF]/70" />
-        <span className="absolute left-[4%] top-[44%] h-[34%] w-[88%] -rotate-[14deg] rounded-[50%] border border-[#BFD9FF]/40" />
-        <span className="absolute -left-[6%] top-[30%] h-px w-[74%] -rotate-[16deg] bg-[linear-gradient(90deg,transparent,rgba(226,238,255,0.9),transparent)]" />
-        <span className="absolute -left-[2%] top-[52%] h-px w-[52%] -rotate-[16deg] bg-[linear-gradient(90deg,transparent,rgba(160,200,255,0.6),transparent)]" />
-        <span className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_60%,transparent_42%,rgba(4,8,20,0.82))]" />
-      </>
-    )
-  }
-
-  return (
-    <>
-      <span className="absolute inset-0 bg-[#150C2A]" />
-      <span className="absolute inset-0 bg-[radial-gradient(80%_70%_at_50%_50%,rgba(120,78,206,0.5),transparent_70%)]" />
-      <span className="absolute left-1/2 top-1/2 h-[132%] w-[46%] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(closest-side,rgba(196,152,255,0.55),transparent_74%)] blur-[8px]" />
-      <span className="absolute left-1/2 top-[-8%] h-[116%] w-[13%] -translate-x-1/2 rotate-6 bg-[linear-gradient(to_bottom,transparent,rgba(226,198,255,0.55)_26%,transparent_78%)] blur-[6px]" />
-      <span className="absolute left-1/2 top-[-8%] h-[116%] w-[3.6%] -translate-x-1/2 rotate-6 bg-[linear-gradient(to_bottom,transparent,rgba(246,236,255,0.95)_30%,rgba(255,255,255,1)_50%,rgba(246,236,255,0.95)_70%,transparent)]" />
-      <span className="absolute inset-x-0 bottom-[14%] h-[24%] bg-[linear-gradient(to_top,rgba(120,222,220,0.3),transparent)]" />
-      <span className="absolute right-[20%] top-[18%] h-[28%] w-[2px] rotate-[26deg] bg-[linear-gradient(to_bottom,transparent,rgba(228,210,255,0.85),transparent)]" />
-      <span className="absolute left-[22%] top-[30%] h-[22%] w-[2px] -rotate-[20deg] bg-[linear-gradient(to_bottom,transparent,rgba(206,240,246,0.7),transparent)]" />
-      <span className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_54%,transparent_44%,rgba(8,5,18,0.84))]" />
-    </>
-  )
-}
-
-function IndieGamesShowcase() {
-  const games = [
-    {
-      title: '《渊》',
-      number: '01',
-      engine: 'GODOT',
-      genre: '解密探索',
-      icon: Puzzle,
-      pattern: 'abyss' as GamePattern,
-      download: 'downloads/games/yuan-godot.zip',
-      description: '一款以环境线索与空间叙事为核心的解密游戏，玩家需要沿着幽暗竖井向下，拼合失落的真相。',
-    },
-    {
-      title: '《魔戒 · 赤境》',
-      number: '02',
-      engine: 'UNITY',
-      genre: '奇幻冒险',
-      icon: Flame,
-      pattern: 'ember' as GamePattern,
-      download: '',
-      description: '一款围绕赤境世界展开的奇幻游戏项目，以熔岩河谷、黑石祭坛与赤色天幕构成主要舞台。',
-    },
-    {
-      title: '《星海决》',
-      number: '03',
-      engine: 'UNITY',
-      genre: '星际远征',
-      icon: Orbit,
-      pattern: 'star' as GamePattern,
-      poster: assetPath('/works/xinghaijue-poster.jpg'),
-      download: githubMediaPath('/warehouse/星海决.zip'),
-      description: '一款以星海远征与舰队对决为核心的游戏项目，在行星轨道之间展开长线对抗。',
-    },
-    {
-      title: '《异界来客》',
-      number: '04',
-      engine: '待定',
-      genre: '异界冒险',
-      icon: Globe2,
-      pattern: 'rift' as GamePattern,
-      download: '',
-      description: '一款围绕异界裂痕与不速之客展开的游戏项目，现实与异界的边界正在缓慢瓦解。',
-    },
-  ]
+function IndieGamesShowcase({ onOpenDetails }: { onOpenDetails: () => void }) {
+  const poster = assetPath('/works/xinghaijue-poster.jpg')
+  const download = githubMediaPath('/warehouse/星海决.zip')
 
   return (
     <section
@@ -884,81 +777,194 @@ function IndieGamesShowcase() {
             <h2 className="text-3xl leading-none text-[#2B221A] sm:text-4xl">独立游戏作品</h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-[#6F5F50] sm:text-right">
-            沉沦于无尽幽暗，焚寂于猩红绝境。<br />
-            以孤躯破尽虚妄，重塑世界终序。
+            穿过星海的边界，在既定轨道之外决出最后的胜负。
           </p>
         </div>
       </div>
 
-      <div className="grid gap-5 p-6 sm:p-9 md:grid-cols-2">
-        {games.map(({ title, number, engine, genre, icon: Icon, pattern, poster, download, description }) => (
-          <article
-            key={title}
-            className="group flex flex-col overflow-hidden rounded-[1.4rem] border border-[#E2D1BA] bg-[#FFFDF8] p-4 shadow-[0_16px_44px_rgba(112,88,58,0.08)] transition duration-500 hover:-translate-y-1 hover:border-[#CDB99F] hover:shadow-[0_28px_70px_rgba(112,88,58,0.16)] sm:p-5"
-          >
-            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-[#0B1226]">
-              {poster ? (
-                <>
-                  <img
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
-                    src={poster}
-                    alt="游戏海报"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <span className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(to_bottom,rgba(6,10,20,0.55),transparent)]" />
-                </>
-              ) : (
-                <GameKeyArt pattern={pattern} />
-              )}
-              <span className="absolute left-4 top-3 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70">
-                PROJECT {number}
-              </span>
-              <span className="absolute right-4 top-3 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[10px] font-bold tracking-[0.16em] text-white/85 backdrop-blur-sm">
-                {engine}
-              </span>
-            </div>
+      <div className="p-5 sm:p-8">
+        <article className="group overflow-hidden rounded-[1.5rem] border border-[#E2D1BA] bg-[#FFFDF8] shadow-[0_16px_44px_rgba(112,88,58,0.08)]">
+          <div className="relative aspect-[16/9] overflow-hidden bg-[#050B18]">
+            <img
+              src={poster}
+              alt="《星海决》游戏海报"
+              className="h-full w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.03]"
+              loading="lazy"
+              decoding="async"
+            />
+            <span className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(to_bottom,rgba(4,8,18,0.62),transparent)]" />
+            <span className="absolute left-5 top-4 text-[10px] font-bold uppercase tracking-[0.3em] text-white/75">PROJECT 01</span>
+            <span className="absolute right-5 top-4 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[10px] font-bold tracking-[0.16em] text-white/85 backdrop-blur-sm">UNITY</span>
+          </div>
 
-            <div className="mt-6 flex items-start justify-between gap-4">
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#E2D1BA] bg-[#F4E9D8] text-[#8C633F]">
-                  <Icon className="h-4 w-4" aria-hidden="true" />
-                </span>
-                <h3 className="truncate text-2xl font-bold leading-tight text-[#2B221A] sm:text-[1.75rem]">{title}</h3>
+          <div className="grid gap-7 border-t border-[#EAE0CF] p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-10">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#9A6B3F]">Featured Game</p>
+              <h3 className="mt-3 text-4xl font-bold leading-[0.95] tracking-[-0.02em] text-[#2B221A] sm:text-5xl">《星海决》</h3>
+              <p className="mt-4 max-w-xl text-sm leading-[1.8] text-[#5F5144] sm:text-base">
+                一款以星海远征与舰队对决为核心的游戏项目。驾驶舰队穿过行星轨道，在既定航线之外寻找胜负的另一种可能。
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-[#6F5F50]">
+                <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5">星际远征</span>
+                <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5">Unity</span>
+                <span className="rounded-full border border-[#D9C8B2] px-3 py-1.5">Windows</span>
               </div>
-              <span className="mt-1 shrink-0 rounded-full border border-[#D9C8B2] px-3 py-1 text-[11px] font-semibold tracking-[0.12em] text-[#6F5F50]">
-                {genre}
-              </span>
             </div>
-            <p className="mt-3 flex-1 text-sm leading-relaxed text-[#6F5F50]">{description}</p>
 
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[#EAE0CF] pt-4">
+            <div className="flex flex-col gap-3 lg:items-end">
               <span className="inline-flex items-center gap-2 text-xs text-[#8A7866]">
-                <span className={`h-1.5 w-1.5 rounded-full ${download ? 'bg-[#4E9C6B]' : 'bg-[#CBAE86]'}`} />
-                {download ? '已完成，可下载体验' : '开发中，文件待接入'}
+                <span className="h-1.5 w-1.5 rounded-full bg-[#4E9C6B]" />
+                已完成 · 可下载体验
               </span>
-              <a
-                href={download ? (download.startsWith('http') ? download : assetPath(download)) : undefined}
-                download={Boolean(download)}
-                aria-disabled={!download}
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold transition ${
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={onOpenDetails}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[#8C633F] px-5 py-3 text-sm font-bold text-[#8C633F] transition hover:-translate-y-0.5 hover:bg-[#F4E9D8]"
+                >
+                  <Info className="h-4 w-4" aria-hidden="true" />
+                  查看详情
+                </button>
+                <a
+                  href={download}
                   download
-                    ? 'bg-[#2B221A] text-[#FFF7E8] hover:-translate-y-0.5 hover:bg-[#443326]'
-                    : 'cursor-not-allowed border border-[#D9C8B2] text-[#9B8A78]'
-                }`}
-              >
-                <Download className="h-3.5 w-3.5" aria-hidden="true" />
-                {download ? '下载游戏' : '下载包待托管'}
-              </a>
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#2B221A] px-6 py-3 text-sm font-bold text-[#FFF7E8] transition hover:-translate-y-0.5 hover:bg-[#443326]"
+                >
+                  <Download className="h-4 w-4" aria-hidden="true" />
+                  下载游戏
+                </a>
+              </div>
+              <p className="text-[11px] leading-relaxed text-[#9B8A78]">Windows 版 · 119.2 MB · 解压后运行 星海决.exe</p>
             </div>
-          </article>
-        ))}
+          </div>
+        </article>
       </div>
     </section>
   )
 }
 
-function Features({ onOpenWorks, onOpenResume }: { onOpenWorks: () => void; onOpenResume: () => void }) {
+function XinghaijueDetailPage({ onBack }: { onBack: () => void }) {
+  const poster = assetPath('/works/xinghaijue-poster.jpg')
+  const shots = [
+    { src: assetPath('/works/xinghaijue-shot-1.jpg'), label: '场景截图 01' },
+    { src: assetPath('/works/xinghaijue-shot-2.jpg'), label: '场景截图 02' },
+  ]
+  const download = githubMediaPath('/warehouse/星海决.zip')
+  const facts = [
+    ['引擎', 'Unity'],
+    ['平台', 'Windows'],
+    ['类型', '星际远征'],
+    ['文件大小', '119.2 MB'],
+    ['当前状态', '已完成'],
+  ]
+
+  return (
+    <main className="min-h-screen bg-[#F8F1E6] px-4 py-6 text-[#2B221A] sm:px-6 md:py-8">
+      <div className="mx-auto max-w-6xl">
+        <button
+          type="button"
+          onClick={onBack}
+          className="mb-6 inline-flex items-center gap-2 rounded-full bg-[#2B221A] py-1 pl-5 pr-1 text-sm font-bold text-[#FFF7E8] transition hover:gap-3"
+        >
+          返回
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FFF7E8]">
+            <ArrowRight className="h-4 w-4 rotate-180 text-[#2B221A]" />
+          </span>
+        </button>
+
+        <section className="overflow-hidden rounded-[1.75rem] border border-[#E2D1BA] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.10)]">
+          <div className="relative aspect-[16/9] overflow-hidden bg-[#050B18]">
+            <img src={poster} alt="《星海决》游戏海报" className="h-full w-full object-cover" loading="eager" decoding="async" />
+            <span className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(to_bottom,rgba(4,8,18,0.62),transparent)]" />
+            <span className="absolute left-5 top-4 text-[10px] font-bold uppercase tracking-[0.3em] text-white/75">PROJECT 01</span>
+            <span className="absolute right-5 top-4 rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[10px] font-bold tracking-[0.16em] text-white/85 backdrop-blur-sm">UNITY</span>
+          </div>
+          <div className="flex flex-col gap-6 p-6 sm:p-8 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#9A6B3F]">Game Detail</p>
+              <h1 className="mt-3 text-4xl font-bold leading-[0.95] tracking-[-0.02em] text-[#2B221A] sm:text-5xl md:text-6xl">《星海决》</h1>
+              <p className="mt-4 max-w-xl text-sm leading-[1.8] text-[#5F5144] sm:text-base">
+                一款以星海远征与舰队对决为核心的游戏，使用 Unity 制作，目前已完成 Windows 版本打包。
+              </p>
+            </div>
+            <a
+              href={download}
+              download
+              className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-[#2B221A] px-6 py-3 text-sm font-bold text-[#FFF7E8] transition hover:-translate-y-0.5 hover:bg-[#443326]"
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              下载游戏
+            </a>
+          </div>
+        </section>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
+          <section className="rounded-[1.5rem] border border-[#E2D1BA] bg-[#FFF9EF] p-6 sm:p-8">
+            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#9A6B3F]">Overview</p>
+            <h2 className="mt-3 text-2xl font-bold text-[#2B221A] sm:text-3xl">关于这款游戏</h2>
+            <p className="mt-4 text-sm leading-[1.9] text-[#5F5144] sm:text-base">
+              《星海决》把视线放在群星之间的远征与对决上。玩家驾驶舰队穿行于行星轨道，在既定的航线之外寻找新的突破口，并在一次次交锋中推进属于自己的航线。
+            </p>
+            <p className="mt-4 text-sm leading-[1.9] text-[#5F5144] sm:text-base">
+              项目使用 Unity 完成开发与打包，当前提供 Windows 版本的下载包，解压后即可运行。
+            </p>
+          </section>
+
+          <section className="rounded-[1.5rem] border border-[#E2D1BA] bg-[#FFF9EF] p-6 sm:p-8">
+            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#9A6B3F]">Game Info</p>
+            <h2 className="mt-3 text-2xl font-bold text-[#2B221A] sm:text-3xl">游戏信息</h2>
+            <dl className="mt-5 divide-y divide-[#EAE0CF]">
+              {facts.map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between gap-4 py-3 text-sm">
+                  <dt className="text-[#8A7866]">{label}</dt>
+                  <dd className="font-semibold text-[#2B221A]">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        </div>
+
+        <section className="mt-6">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#9A6B3F]">Screenshots</p>
+              <h2 className="mt-2 text-2xl font-bold text-[#2B221A] sm:text-3xl">游戏截图</h2>
+            </div>
+            <span className="rounded-full border border-[#D9C8B2] px-3 py-1 text-xs text-[#6F5F50]">{shots.length} 张</span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {shots.map((shot) => (
+              <figure key={shot.src} className="overflow-hidden rounded-[1.25rem] border border-[#E2D1BA] bg-[#FFF9EF] shadow-[0_16px_44px_rgba(112,88,58,0.08)]">
+                <img src={shot.src} alt={`《星海决》${shot.label}`} className="aspect-[1282/752] w-full object-cover" loading="lazy" decoding="async" />
+                <figcaption className="flex items-center justify-between px-4 py-3 text-xs text-[#8A7866]">
+                  <span>{shot.label}</span>
+                  <span className="tracking-[0.18em] text-[#B49C84]">XINGHAIJUE</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-6 flex flex-col gap-5 rounded-[1.5rem] border border-[#2B221A] bg-[#2B221A] p-6 text-[#FFF7E8] sm:p-8 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold sm:text-3xl">下载《星海决》</h2>
+            <p className="mt-2 text-sm leading-relaxed text-[#D7C3A7]">Windows 版 · 119.2 MB · 解压后运行 星海决.exe</p>
+          </div>
+          <a
+            href={download}
+            download
+            className="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFF7E8] px-6 py-3 text-sm font-bold text-[#2B221A] transition hover:-translate-y-0.5 hover:bg-white"
+          >
+            <Download className="h-4 w-4" aria-hidden="true" />
+            立即下载
+          </a>
+        </section>
+      </div>
+    </main>
+  )
+}
+
+function Features({ onOpenWorks, onOpenResume, onOpenGameDetails }: { onOpenWorks: () => void; onOpenResume: () => void; onOpenGameDetails: () => void }) {
   const cards = [
     {
       title: '项目叙事板。',
@@ -1022,7 +1028,7 @@ function Features({ onOpenWorks, onOpenResume }: { onOpenWorks: () => void; onOp
             <FeatureCard key={card.title} {...card} index={index + 1} />
           ))}
         </div>
-        <IndieGamesShowcase />
+        <IndieGamesShowcase onOpenDetails={onOpenGameDetails} />
       </div>
     </section>
   )
@@ -1455,6 +1461,7 @@ function ThreeDSceneShowcase() {
       href: 'https://tianxiuyangyang.github.io/molten-realm/?region=citadel',
       accent: '#FF8D39',
       creator: 'chat GTP 6-Astra',
+      wide: false,
     },
     {
       number: '02',
@@ -1465,6 +1472,18 @@ function ThreeDSceneShowcase() {
       href: 'https://tianxiuyangyang.github.io/molten-realm/?region=portal',
       accent: '#D56BFF',
       creator: 'chat GTP 6-Astra',
+      wide: false,
+    },
+    {
+      number: '03',
+      title: '雨夜便利店',
+      eyebrow: 'RAINY NIGHT STORE',
+      description: '雨幕里的街角便利店，暖黄灯光落在湿漉漉的路面上，构成一段安静的夜间片段。',
+      image: assetPath('/works/rainy-night-store.jpg'),
+      href: 'https://tianxiuyangyang.github.io/molten-realm/',
+      accent: '#6FC3E0',
+      creator: 'AI 辅助工具',
+      wide: true,
     },
   ]
 
@@ -1488,13 +1507,13 @@ function ThreeDSceneShowcase() {
               href={scene.href}
               target="_blank"
               rel="noreferrer"
-              className="group relative block overflow-hidden rounded-[1.5rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.12)] outline-none transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(112,88,58,0.20)] focus-visible:ring-2 focus-visible:ring-[#8C633F] focus-visible:ring-offset-4 focus-visible:ring-offset-[#F8F1E6]"
+              className={`group relative block overflow-hidden rounded-[1.5rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.12)] outline-none transition duration-500 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(112,88,58,0.20)] focus-visible:ring-2 focus-visible:ring-[#8C633F] focus-visible:ring-offset-4 focus-visible:ring-offset-[#F8F1E6] ${scene.wide ? 'lg:col-span-2' : ''}`}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="relative aspect-[1.6/1] overflow-hidden bg-[#211412]">
+              <div className={`relative overflow-hidden bg-[#211412] ${scene.wide ? 'aspect-[2/1]' : 'aspect-[1.6/1]'}`}>
                 <img
                   src={scene.image}
                   alt={`${scene.title} 3D场景设计图`}
@@ -3145,7 +3164,7 @@ function SecretSpacePage({ onBack }: { onBack: () => void }) {
 }
 
 function App() {
-  const [page, setPage] = useState<'home' | 'works' | 'details' | 'secret' | 'warehouse'>('home')
+  const [page, setPage] = useState<'home' | 'works' | 'details' | 'secret' | 'warehouse' | 'xinghaijue'>('home')
   const [detailsTarget, setDetailsTarget] = useState<'top' | 'resume'>('top')
 
   if (page === 'works') {
@@ -3162,6 +3181,10 @@ function App() {
 
   if (page === 'warehouse') {
     return <WarehousePage onBack={() => setPage('home')} />
+  }
+
+  if (page === 'xinghaijue') {
+    return <XinghaijueDetailPage onBack={() => setPage('home')} />
   }
 
   return (
@@ -3188,6 +3211,7 @@ function App() {
           setDetailsTarget('resume')
           setPage('details')
         }}
+        onOpenGameDetails={() => setPage('xinghaijue')}
       />
       <ImageLab />
       <DesktopWallpaperShowcase />
