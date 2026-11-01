@@ -6,6 +6,7 @@ import {
   ArrowRight,
   Award,
   BookOpen,
+  Boxes,
   CalendarDays,
   Check,
   Clapperboard,
@@ -13,11 +14,14 @@ import {
   Disc3,
   Download,
   FileDown,
+  Film,
   Globe2,
   Gamepad2,
   Images,
   Info,
+  Layers,
   Leaf,
+  Lightbulb,
   Lock,
   Mail,
   MapPin,
@@ -843,6 +847,163 @@ function IndieGamesShowcase({ onOpenDetails }: { onOpenDetails: () => void }) {
   )
 }
 
+function UnrealShowcase() {
+  const poster = assetPath('/works/magic-library-poster.jpg')
+  const download = githubMediaPath('/warehouse/魔法图书馆.zip')
+  const facts = [
+    ['引擎', 'Unreal Engine 5.8.4'],
+    ['场景规模', '3,511 个 Actor'],
+    ['灯光', '83 盏'],
+    ['工程大小', '51.1 MB'],
+  ]
+  const capabilities = [
+    {
+      number: '01',
+      title: '程序化场景生成',
+      icon: Boxes,
+      text: '石墙、尖拱、双层回廊、12 组书柜与魔法阵全部由 Python 逐件生成，3511 个 Actor 没有一个是手工摆放。',
+    },
+    {
+      number: '02',
+      title: '实时全局光照',
+      icon: Lightbulb,
+      text: '83 盏窗光、烛光与补光共同参与 Lumen 实时反弹，DX12 下完成反射、虚拟阴影与 TSR 抗锯齿。',
+    },
+    {
+      number: '03',
+      title: '参数化材质系统',
+      icon: Layers,
+      text: '一个主材质派生 40 个实例，木材、石材、金属与自发光共用参数，换配色不用重做模型。',
+    },
+    {
+      number: '04',
+      title: '影视级镜头输出',
+      icon: Film,
+      text: 'Sequencer 编排运镜，Movie Render Queue 直接渲染 1920×1080 预览，与编辑器视口所见一致。',
+    },
+  ]
+  const tags = ['程序化生成', 'Lumen', '参数化材质', 'Sequencer', 'Python 工具链']
+
+  return (
+    <section
+      id="unreal-engine"
+      className="mt-12 overflow-hidden rounded-[1.75rem] border border-[#3A2A1E] bg-[#14100C] text-[#F4E7D2] shadow-[0_28px_80px_rgba(60,40,20,0.22)]"
+    >
+      <div className="border-b border-white/10 px-6 py-8 sm:px-9 sm:py-10">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#C8A46E]">
+              <Boxes className="h-4 w-4" aria-hidden="true" />
+              <span className="sm:hidden">Real-Time / Unreal Engine</span>
+              <span className="hidden sm:inline">Real-Time Production / Unreal Engine</span>
+            </div>
+            <h2 className="text-3xl leading-none text-[#FFF7E8] sm:text-4xl">虚幻引擎应用能力</h2>
+          </div>
+          <div className="flex flex-col gap-3 sm:items-end">
+            <span className="w-fit rounded-full border border-[#C8A46E]/40 bg-[#C8A46E]/10 px-3 py-1.5 text-[11px] font-bold tracking-[0.18em] text-[#E8C994]">
+              UNREAL ENGINE 5.8
+            </span>
+            <p className="max-w-xs text-sm leading-relaxed text-[#BFA98C] sm:text-right">
+              从程序化建模到实时渲染，把一间魔法图书馆完整搭进引擎。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-5 sm:p-8">
+        <figure className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0B0806]">
+          <div className="relative">
+            <img
+              src={poster}
+              alt="《魔法图书馆》Unreal Engine 5.8 实时场景"
+              className="aspect-[16/9] w-full object-cover transition duration-1000 ease-out group-hover:scale-[1.02]"
+              loading="lazy"
+              decoding="async"
+            />
+            <span className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#080604]/75 to-transparent" />
+            <span className="absolute inset-x-0 bottom-0 hidden h-3/5 bg-gradient-to-t from-[#080604]/90 via-[#080604]/40 to-transparent sm:block" />
+            <span className="absolute left-4 top-4 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70 sm:left-7 sm:top-6">
+              <span className="sm:hidden">PROJECT 02</span>
+              <span className="hidden sm:inline">PROJECT 02 · REAL-TIME SCENE</span>
+            </span>
+            <span className="absolute right-4 top-4 flex gap-2 sm:right-7 sm:top-6">
+              <span className="rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[10px] font-bold tracking-[0.14em] text-white/85 backdrop-blur-sm">
+                LUMEN
+              </span>
+              <span className="rounded-full border border-white/20 bg-black/35 px-3 py-1 text-[10px] font-bold tracking-[0.14em] text-white/85 backdrop-blur-sm">
+                UE 5.8
+              </span>
+            </span>
+          </div>
+          <figcaption className="px-5 py-5 sm:absolute sm:inset-x-8 sm:bottom-7 sm:p-0">
+            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#E8C994]">Magic Library</p>
+            <h3 className="mt-2 text-2xl font-bold leading-none tracking-[-0.02em] text-white sm:text-5xl">魔法图书馆</h3>
+            <p className="mt-3 max-w-2xl text-xs leading-relaxed text-[#E4D5BF] sm:text-sm">
+              全程序化生成的哥特式魔法图书馆：3511 个 Actor、约 1500 册书、83 盏灯，在 Lumen 的实时全局光照下组成一个可以自由取景的镜头空间。
+            </p>
+          </figcaption>
+        </figure>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
+          <div>
+            <p className="text-sm leading-[1.9] text-[#D8C6AC]">
+              这是我用 Unreal Engine 5.8 完成的实时场景项目。整间图书馆由 Python 脚本调用引擎基础几何体搭建：从石墙、尖拱、双层回廊，到 12 组落地书柜与自发光魔法阵，尺寸和配色都写成参数，修改后可以一键重建。灯光、材质与后处理都在引擎内完成，最终通过 Sequencer 与 Movie Render Queue 输出预览画面。
+            </p>
+            <p className="mt-4 text-xs leading-relaxed text-[#9C8870]">
+              工程保留完整的关卡、40 个材质实例与 4 段 Python 生成脚本，可以继续编辑，也可以重新生成整套场景。
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-[#D8C6AC]">
+              {tags.map((tag) => (
+                <span key={tag} className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+            <dl className="divide-y divide-white/10">
+              {facts.map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between gap-4 py-3 text-sm first:pt-0 last:pb-0">
+                  <dt className="text-[#9C8870]">{label}</dt>
+                  <dd className="text-right font-semibold text-[#F4E7D2]">{value}</dd>
+                </div>
+              ))}
+            </dl>
+            <a
+              href={download}
+              download
+              className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#E8C994] px-5 py-3 text-sm font-bold text-[#241A10] transition hover:-translate-y-0.5 hover:bg-[#F2D9AC]"
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              下载 UE 工程 · 51.1 MB
+            </a>
+            <p className="mt-3 text-[11px] leading-relaxed text-[#9C8870]">
+              解压后双击 MagicLibrary.uproject 打开，需 Unreal Engine 5.8.4；首次打开编译着色器约 3–8 分钟。
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-3 border-t border-white/10 pt-6 sm:grid-cols-2 xl:grid-cols-4">
+          {capabilities.map((item) => {
+            const Icon = item.icon
+            return (
+              <article key={item.number} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <Icon className="h-5 w-5 text-[#E8C994]" aria-hidden="true" />
+                  <span className="text-[10px] tracking-[0.2em] text-[#8E7A62]">{item.number}</span>
+                </div>
+                <h4 className="mt-4 text-base font-bold text-[#FFF7E8]">{item.title}</h4>
+                <p className="mt-2 text-xs leading-relaxed text-[#B9A78E]">{item.text}</p>
+              </article>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function XinghaijueDetailPage({ onBack }: { onBack: () => void }) {
   const poster = assetPath('/works/xinghaijue-poster.jpg')
   const shots = [
@@ -1029,6 +1190,7 @@ function Features({ onOpenWorks, onOpenResume, onOpenGameDetails }: { onOpenWork
           ))}
         </div>
         <IndieGamesShowcase onOpenDetails={onOpenGameDetails} />
+        <UnrealShowcase />
       </div>
     </section>
   )

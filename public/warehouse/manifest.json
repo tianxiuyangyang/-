@@ -161,5 +161,11 @@
     "file": "星海决.zip",
     "description": "Unity 制作的星际题材游戏《星海决》最新 Windows 版打包文件。",
     "size": "141.3 MB"
+  },
+  {
+    "name": "魔法图书馆（UE 5.8 工程）",
+    "file": "魔法图书馆.zip",
+    "description": "Unreal Engine 5.8 实时场景《魔法图书馆》工程文件，含关卡、材质与程序化生成脚本。",
+    "size": "51.1 MB"
   }
 ]
