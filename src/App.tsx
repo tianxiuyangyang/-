@@ -834,7 +834,7 @@ function IndieGamesShowcase({ onOpenDetails }: { onOpenDetails: () => void }) {
                   下载游戏
                 </a>
               </div>
-              <p className="text-[11px] leading-relaxed text-[#9B8A78]">Windows 版 · 119.2 MB · 解压后运行 星海决.exe</p>
+              <p className="text-[11px] leading-relaxed text-[#9B8A78]">Windows 版 · 141.3 MB · 解压后运行 星海决.exe</p>
             </div>
           </div>
         </article>
@@ -854,7 +854,7 @@ function XinghaijueDetailPage({ onBack }: { onBack: () => void }) {
     ['引擎', 'Unity'],
     ['平台', 'Windows'],
     ['类型', '星际远征'],
-    ['文件大小', '119.2 MB'],
+    ['文件大小', '141.3 MB'],
     ['当前状态', '已完成'],
   ]
 
@@ -948,7 +948,7 @@ function XinghaijueDetailPage({ onBack }: { onBack: () => void }) {
         <section className="mt-6 flex flex-col gap-5 rounded-[1.5rem] border border-[#2B221A] bg-[#2B221A] p-6 text-[#FFF7E8] sm:p-8 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-2xl font-bold sm:text-3xl">下载《星海决》</h2>
-            <p className="mt-2 text-sm leading-relaxed text-[#D7C3A7]">Windows 版 · 119.2 MB · 解压后运行 星海决.exe</p>
+            <p className="mt-2 text-sm leading-relaxed text-[#D7C3A7]">Windows 版 · 141.3 MB · 解压后运行 星海决.exe</p>
           </div>
           <a
             href={download}

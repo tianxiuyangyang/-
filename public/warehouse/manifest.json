@@ -79,10 +79,10 @@
     "size": "585.3 MB"
   },
   {
-    "name": "起床·星海决（新版）",
-    "file": "起床·星海决（新版）.zip",
-    "description": "Latest version of the game archive for visitors to download.",
-    "size": "208.8 MB"
+    "name": "星海决（源码）",
+    "file": "星海决（源码）.zip",
+    "description": "《星海决》Unity 2022.3 工程源码，含 Assets、Packages 与 ProjectSettings，解压后用 Unity Hub 打开。",
+    "size": "95.3 MB"
   },
   {
     "name": "宝石矿井",
@@ -159,7 +159,7 @@
   {
     "name": "星海决",
     "file": "星海决.zip",
-    "description": "Unity 制作的星际题材游戏《星海决》Windows 版打包文件。",
-    "size": "119.2 MB"
+    "description": "Unity 制作的星际题材游戏《星海决》最新 Windows 版打包文件。",
+    "size": "141.3 MB"
   }
 ]
