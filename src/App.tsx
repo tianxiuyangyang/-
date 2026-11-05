@@ -1721,58 +1721,6 @@ function ThreeDSceneShowcase() {
   )
 }
 
-function SunkenCrystalTempleShowcase() {
-  const [selectedNote, setSelectedNote] = useState<SceneNote | null>(null)
-
-  return (
-    <section id="sunken-crystal-temple" aria-labelledby="crystal-temple-title" className="bg-[#F8F1E6] px-4 pb-20 sm:px-6 md:pb-28">
-      <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-2">
-        <a
-          href="https://tianxiuyangyang.github.io/sunken-crystal-temple/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group block overflow-hidden rounded-[1.5rem] border border-[#E6D8C6] bg-[#FFF9EF] shadow-[0_24px_70px_rgba(112,88,58,0.12)] transition duration-500 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#8C633F]"
-        >
-        <div className="relative aspect-[1.45/1] overflow-hidden bg-[#0A1C29]">
-          <img
-            src={assetPath('/works/sunken-crystal-temple.jpg')}
-            alt="沉没的水晶神殿：蓝紫水晶悬于洞顶，石拱环绕水中的发光祭坛"
-            width={1920}
-            height={1079}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full scale-[1.09] object-cover object-center transition duration-700 group-hover:scale-[1.14]"
-          />
-          <span className="absolute left-4 top-4 rounded-full border border-white/25 bg-[#091D2B]/80 px-3 py-2 text-[10px] font-bold tracking-[0.18em] text-[#D4F3FA] sm:left-6 sm:top-6">SUNKEN CRYSTAL TEMPLE</span>
-          <span className="absolute bottom-5 right-5 inline-flex items-center gap-2 rounded-full bg-[#193B48]/95 px-4 py-2 text-xs font-bold text-[#EEF9FA] shadow-lg backdrop-blur-sm transition group-hover:bg-[#285365]">
-            打开3D场景<ArrowRight className="h-4 w-4 -rotate-45" aria-hidden="true" />
-          </span>
-        </div>
-        <div className="flex items-start justify-between gap-6 p-5 sm:p-6">
-          <div>
-            <h2 id="crystal-temple-title" className="text-2xl text-[#2B221A] sm:text-3xl">沉没的水晶神殿</h2>
-            <p className="mt-2 max-w-sm text-sm leading-relaxed text-[#6B5A49]">循着水晶微光，探访沉入幽深水域的古老神殿。</p>
-          </div>
-          <span className="flex shrink-0 flex-col items-end gap-3 pt-1">
-            <button
-              type="button"
-              aria-label="沉没的水晶神殿设计说明"
-              title="设计说明"
-              onClick={(event) => { event.preventDefault(); event.stopPropagation(); setSelectedNote({ title: '沉没的水晶神殿', creator: 'deepseek v4-flash' }) }}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#D9C8B2] px-2.5 py-1.5 text-[11px] font-semibold text-[#8C633F] transition hover:border-[#8C633F] hover:bg-[#F4E9D8]"
-            >
-              <Info className="h-3.5 w-3.5" aria-hidden="true" />
-              设计说明
-            </button>
-          </span>
-        </div>
-        </a>
-      </div>
-      {selectedNote && <DesignNoteModal note={selectedNote} onClose={() => setSelectedNote(null)} />}
-    </section>
-  )
-}
-
 function ArtworksShowcase() {
   return (
     <section id="artworks" className="bg-[#F8F1E6] px-4 pb-20 sm:px-6 md:pb-28">
@@ -3430,7 +3378,6 @@ function App() {
       <ImageLab />
       <DesktopWallpaperShowcase />
       <ThreeDSceneShowcase />
-      <SunkenCrystalTempleShowcase />
       <ArtworksShowcase />
       <AcademicPapersShowcase />
     </main>
