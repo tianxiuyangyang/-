@@ -15,7 +15,6 @@ import {
   Download,
   FileDown,
   Film,
-  Globe2,
   Gamepad2,
   Images,
   Info,
@@ -1004,6 +1003,80 @@ function UnrealShowcase() {
   )
 }
 
+function UnrealRealismSkillShowcase() {
+  const download = assetPath('/downloads/UE更真实的虚幻优化.zip')
+  const tags = ['CG 感诊断', '物理光路', '三平面 PBR', '倒角几何', '避坑手册']
+  const steps = [
+    ['01', '物理光路', '在墙上开真实窗洞，补上 SkyAtmosphere、DirectionalLight 与 SkyLight，让光有来源。'],
+    ['02', '三平面 PBR', '离线生成 albedo / normal / roughness，用 WorldAlignedTexture 免 UV 贴图。'],
+    ['03', '倒角几何', '用 100cm 倒角立方体替换家具硬边，墙板等大块体量仍保留普通方块。'],
+    ['04', '内容随机化', '书籍按色系、高度与厚度分布排列，打散“色卡”式的整齐感。'],
+    ['05', '几何污渍', '用深色薄盒做墙脚、柱脚与地面边缘积灰，少堆材质节点。'],
+  ]
+
+  return (
+    <section
+      id="ue-realism-skill"
+      className="mt-6 overflow-hidden rounded-[1.75rem] border border-[#3B2B1D] bg-[#1A130D] text-[#F4E7D2] shadow-[0_24px_70px_rgba(60,40,20,0.18)]"
+    >
+      <div className="grid gap-0 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+        <div className="p-6 sm:p-9">
+          <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#C8A46E]">
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
+            Unreal Realism / Agent Skill
+          </div>
+          <h2 className="text-3xl leading-none text-[#FFF7E8] sm:text-4xl">UE更真实的虚幻优化</h2>
+          <p className="mt-5 text-sm leading-[1.9] text-[#D8C6AC]">
+            一个从真实哥特图书馆项目、15 轮场景重建里沉淀出来的 Agent Skill。它先做六点诊断，判断场景的「CG 感」到底来自光路、材质、边缘、内容还是污渍，再按五步流程逐轮重建——而不是靠叠后期或换地形工具。
+          </p>
+          <p className="mt-3 text-sm leading-[1.9] text-[#B9A78E]">
+            压缩包内含 SKILL.md、诊断清单、完整 playbook、避坑手册，以及倒角立方体、可平铺纹理生成和 UE MCP 客户端三个脚本。
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-[#D8C6AC]">
+            {tags.map((tag) => (
+              <span key={tag} className="rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <div className="mt-7 flex flex-wrap items-center gap-4">
+            <a
+              href={download}
+              download="UE更真实的虚幻优化.zip"
+              className="inline-flex items-center gap-2 rounded-full bg-[#E8C994] px-6 py-3 text-sm font-bold text-[#241A10] transition hover:-translate-y-0.5 hover:bg-[#F2D9AC]"
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
+              下载 Skill · 18.8 KB
+            </a>
+            <span className="text-xs leading-relaxed text-[#9C8870]">解压后放入你的 skills 目录即可使用</span>
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 bg-white/[0.03] p-6 sm:p-9 lg:border-l lg:border-t-0">
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#C8A46E]">Five-pass pipeline</p>
+            <span className="text-[10px] tracking-[0.18em] text-[#8E7A62]">01 — 05</span>
+          </div>
+          <ol className="mt-5 space-y-4">
+            {steps.map(([number, title, text]) => (
+              <li key={number} className="flex gap-4">
+                <span className="mt-0.5 w-6 shrink-0 text-[11px] font-bold tracking-[0.16em] text-[#C8A46E]">{number}</span>
+                <div>
+                  <h3 className="text-sm font-bold text-[#FFF7E8]">{title}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-[#B9A78E]">{text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-5 border-t border-white/10 pt-4 text-[11px] leading-relaxed text-[#8E7A62]">
+            适用范围：Unreal Engine 5 程序化场景，以及通过 MCP 驱动编辑器的工作流。
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function XinghaijueDetailPage({ onBack }: { onBack: () => void }) {
   const poster = assetPath('/works/xinghaijue-poster.jpg')
   const shots = [
@@ -1191,6 +1264,7 @@ function Features({ onOpenWorks, onOpenResume, onOpenGameDetails }: { onOpenWork
         </div>
         <IndieGamesShowcase onOpenDetails={onOpenGameDetails} />
         <UnrealShowcase />
+        <UnrealRealismSkillShowcase />
       </div>
     </section>
   )
@@ -1945,9 +2019,6 @@ const hunterTongueNotes = [
   ['故事背景', '小说以南京沦陷为背景，讲述了淮扬菜名厨骆宁安为报血海深仇，忍辱负重进入日本领事馆做厨师，最终在庆功宴上以“厨艺”完成复仇的故事。其故事原型来自抗战期间南京日本总领事馆发生的一起真实投毒事件。'],
   ['创作特色', '评论界认为，这篇小说突破了传统抗战文学的宏大叙事，聚焦于大时代下普通个体的命运与选择，在历史的细节处挖掘被遮蔽的人性与抗争精神。'],
 ] as const
-const knowledgeSkillImageSrc = assetPath('/works/personal-knowledge-skill.webp')
-const knowledgeSkillGithubUrl = 'https://github.com/tianxiuyangyang/personal-knowledge-base-organizer'
-const knowledgeSkillDownloadSrc = assetPath('/downloads/personal-knowledge-base-organizer-skill.zip')
 
 function RecordPlayer({ showSkipButton = false }: { showSkipButton?: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -2341,57 +2412,6 @@ function WorksPage({ onBack }: { onBack: () => void }) {
             </div>
           </div>
         ) : null}
-        <motion.article
-          id="personal-knowledge-skill"
-          className="mt-6 overflow-hidden rounded-3xl border border-[#C9D4CB] bg-[#EAF0EA] shadow-[0_22px_70px_rgba(63,82,67,0.14)]"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: (works.length + 2) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="grid gap-0 md:grid-cols-[minmax(0,1.08fr)_minmax(300px,0.92fr)]">
-            <div className="relative aspect-[16/10] bg-[#F5F7F2] p-3 sm:p-5 md:aspect-auto md:min-h-[430px]">
-              <img
-                src={knowledgeSkillImageSrc}
-                alt="个人知识库整理 Skill GitHub 仓库页面截图"
-                className="h-full w-full rounded-2xl border border-[#D5DFD5] object-contain shadow-[0_12px_32px_rgba(63,82,67,0.10)]"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div className="flex flex-col justify-center p-6 text-[#26352B] sm:p-8 md:p-10">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.28em] text-[#66806B]">GitHub 开源作品</p>
-              <h2 className="max-w-xl text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">个人知识库整理 Skill</h2>
-              <p className="mt-5 max-w-xl text-sm leading-relaxed text-[#506257] sm:text-base">
-                一个可复用的 Codex Skill，用于快速搭建高级感、中文优先、可编辑的个人知识库网站。它把知识整理方法、网站交互规范与一键生成脚本组合在一起，让 AI 可以为不同用户生成独立的个人知识库空间。
-              </p>
-              <div className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-[#526A58]">
-                <span className="rounded-full border border-[#B8CBB9] bg-white/65 px-3 py-2">PARA 知识整理</span>
-                <span className="rounded-full border border-[#B8CBB9] bg-white/65 px-3 py-2">无限知识网络</span>
-                <span className="rounded-full border border-[#B8CBB9] bg-white/65 px-3 py-2">全屏工作台</span>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href={knowledgeSkillGithubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#26352B] px-6 py-3 text-sm font-bold text-[#F4F8F2] transition hover:-translate-y-0.5 hover:bg-[#3E5545]"
-                >
-                  <Globe2 className="h-4 w-4" aria-hidden="true" />
-                  查看 GitHub 源码
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </a>
-                <a
-                  href={knowledgeSkillDownloadSrc}
-                  download="个人知识库整理skill.zip"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#8FA793] bg-white/70 px-6 py-3 text-sm font-bold text-[#26352B] transition hover:-translate-y-0.5 hover:border-[#66806B] hover:bg-white"
-                >
-                  <Download className="h-4 w-4" aria-hidden="true" />
-                  下载 Skill
-                </a>
-              </div>
-            </div>
-          </div>
-        </motion.article>
       </section>
     </main>
   )
