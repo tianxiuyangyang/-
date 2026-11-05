@@ -1004,6 +1004,7 @@ function UnrealShowcase() {
 }
 
 function UnrealRealismSkillShowcase() {
+  const poster = assetPath('/works/ue-realism-skill-poster.jpg')
   const download = assetPath('/downloads/UE更真实的虚幻优化.zip')
   const tags = ['CG 感诊断', '物理光路', '三平面 PBR', '倒角几何', '避坑手册']
   const steps = [
@@ -1017,15 +1018,35 @@ function UnrealRealismSkillShowcase() {
   return (
     <section
       id="ue-realism-skill"
-      className="mt-6 overflow-hidden rounded-[1.75rem] border border-[#3B2B1D] bg-[#1A130D] text-[#F4E7D2] shadow-[0_24px_70px_rgba(60,40,20,0.18)]"
+      className="relative mt-6 overflow-hidden rounded-[1.75rem] border border-[#3B2B1D] bg-[#1A130D] text-[#F4E7D2] shadow-[0_24px_70px_rgba(60,40,20,0.18)]"
     >
-      <div className="grid gap-0 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#C8A46E]/70 to-transparent" aria-hidden="true" />
+      <div className="grid gap-0 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)]">
         <div className="p-6 sm:p-9">
-          <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#C8A46E]">
-            <Sparkles className="h-4 w-4" aria-hidden="true" />
-            Unreal Realism / Agent Skill
+          <div className="flex items-start gap-4 sm:gap-6">
+            <figure className="group relative w-24 shrink-0 overflow-hidden rounded-xl border border-[#C8A46E]/25 bg-black shadow-[0_18px_40px_rgba(0,0,0,0.38)] sm:w-40">
+              <img
+                src={poster}
+                alt="雪山日出下站在岩壁上的登山者，UE 写实优化 Skill 概念海报"
+                className="aspect-[4/5] w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/85 to-transparent" />
+              <span className="absolute inset-x-2 bottom-2 text-[8px] font-bold uppercase tracking-[0.18em] text-[#E8C994] sm:inset-x-3 sm:bottom-3 sm:text-[9px]">
+                Realism / UE5
+              </span>
+            </figure>
+            <div className="min-w-0 pt-1">
+              <div className="mb-3 flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-[#C8A46E] sm:text-xs sm:tracking-[0.25em]">
+                <Sparkles className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden="true" />
+                <span className="sm:hidden">UE Realism Skill</span>
+                <span className="hidden sm:inline">Unreal Realism / Agent Skill</span>
+              </div>
+              <h2 className="text-2xl leading-[1.05] text-[#FFF7E8] sm:text-4xl">UE更真实的虚幻优化</h2>
+              <p className="mt-2 text-xs leading-relaxed text-[#B9A78E] sm:text-sm">把 UE 场景的「积木感」改成照片感。</p>
+            </div>
           </div>
-          <h2 className="text-3xl leading-none text-[#FFF7E8] sm:text-4xl">UE更真实的虚幻优化</h2>
           <p className="mt-5 text-sm leading-[1.9] text-[#D8C6AC]">
             一个从真实哥特图书馆项目、15 轮场景重建里沉淀出来的 Agent Skill。它先做六点诊断，判断场景的「CG 感」到底来自光路、材质、边缘、内容还是污渍，再按五步流程逐轮重建——而不是靠叠后期或换地形工具。
           </p>
@@ -1039,7 +1060,7 @@ function UnrealRealismSkillShowcase() {
               </span>
             ))}
           </div>
-          <div className="mt-7 flex flex-wrap items-center gap-4">
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-white/10 pt-5">
             <a
               href={download}
               download="UE更真实的虚幻优化.zip"
@@ -1048,7 +1069,10 @@ function UnrealRealismSkillShowcase() {
               <Download className="h-4 w-4" aria-hidden="true" />
               下载 Skill · 18.8 KB
             </a>
-            <span className="text-xs leading-relaxed text-[#9C8870]">解压后放入你的 skills 目录即可使用</span>
+            <div className="text-[11px] leading-relaxed text-[#9C8870]">
+              <span className="block">5 步流程 · 3 份参考 · 3 个脚本</span>
+              <span className="mt-0.5 block">解压后放入你的 skills 目录即可使用</span>
+            </div>
           </div>
         </div>
 
@@ -1059,9 +1083,9 @@ function UnrealRealismSkillShowcase() {
           </div>
           <ol className="mt-5 space-y-4">
             {steps.map(([number, title, text]) => (
-              <li key={number} className="flex gap-4">
-                <span className="mt-0.5 w-6 shrink-0 text-[11px] font-bold tracking-[0.16em] text-[#C8A46E]">{number}</span>
-                <div>
+              <li key={number} className="flex gap-3.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#C8A46E]/30 bg-[#C8A46E]/10 text-[10px] font-bold text-[#E8C994]">{number}</span>
+                <div className="pt-0.5">
                   <h3 className="text-sm font-bold text-[#FFF7E8]">{title}</h3>
                   <p className="mt-1 text-xs leading-relaxed text-[#B9A78E]">{text}</p>
                 </div>
