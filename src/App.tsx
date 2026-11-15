@@ -49,7 +49,6 @@ const githubMediaPath = (path: string) => {
 
   return `${githubMediaBase}/${encodedPath}`
 }
-const portfolioUrl = 'https://hdjajbx.github.io/guanyifei-portfolio/'
 const heroVideo =
   'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4'
 const cardVideo =
@@ -1968,10 +1967,10 @@ const works = [
     promo: assetPath('/works/gem-mine-promo.mp4'),
   },
   {
-    title: '作品二：网站设计',
-    src: assetPath('/works/portfolio-poster.jpg'),
+    title: '作品二：花瓣尾流',
+    src: assetPath('/works/petalwake-poster.jpg'),
     type: 'image',
-    href: portfolioUrl,
+    href: 'https://tianxiuyangyang.github.io/petalwake-zh/',
   },
   {
     title: '作品三：狂行险道',
@@ -1980,13 +1979,12 @@ const works = [
     href: 'https://tianxiuyangyang.github.io/drive-mad-recreation/',
   },
   {
-    title: '作品四：mc趣味测试',
-    src: assetPath('/works/mc-fate-test-poster.png'),
+    title: '作品四：油画世界',
+    src: assetPath('/works/oil-paint-poster.jpg'),
     type: 'image',
-    href: 'https://tianxiuyangyang.github.io/mc-fate-test/',
-    fit: 'contain',
+    href: 'https://tianxiuyangyang.github.io/oil-paint/',
   },
-] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link'; href?: string; promo?: string; fit?: 'cover' | 'contain' }>
+] satisfies Array<{ title: string; description?: string; src: string; type: 'image' | 'video' | 'link'; href?: string; promo?: string }>
 
 const worksPlaylist = [
   { title: '默认主题', artist: '作品页音乐', src: assetPath('/music/works-player.mp3') },
@@ -2242,11 +2240,11 @@ function WorksPage({ onBack }: { onBack: () => void }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className={`relative aspect-[4/3] ${work.fit === 'contain' ? 'bg-[#E7EDED]' : 'bg-[#E9DCCB]'}`}>
+              <div className="relative aspect-[4/3] bg-[#E9DCCB]">
                 {work.href ? (
                   <a href={work.href} target="_blank" rel="noreferrer" className="group block h-full outline-none">
                     <img
-                      className={`h-full w-full transition duration-500 group-hover:scale-[1.03] ${work.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                       src={work.src}
                       alt={`${work.title}海报`}
                       loading={index === 0 ? 'eager' : 'lazy'}
@@ -2265,7 +2263,7 @@ function WorksPage({ onBack }: { onBack: () => void }) {
                   </a>
                 ) : (
                   <img
-                    className={`h-full w-full ${work.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
+                    className="h-full w-full object-cover"
                     src={work.src}
                     alt={`${work.title}海报`}
                     loading={index === 0 ? 'eager' : 'lazy'}
