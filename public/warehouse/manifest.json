@@ -30,12 +30,6 @@
     "size": "30.3 MB"
   },
   {
-    "name": "起床·星海决（最新测试版）",
-    "file": "起床·星海决（最新测试版）.zip",
-    "description": "Latest test build archive for visitors to download.",
-    "size": "718 KB"
-  },
-  {
     "name": "Codex",
     "file": "codex.zip",
     "description": "Codex archive for visitors to download.",
@@ -167,5 +161,19 @@
     "file": "魔法图书馆.zip",
     "description": "Unreal Engine 5.8 实时场景《魔法图书馆》工程文件，含关卡、材质与程序化生成脚本。",
     "size": "51.1 MB"
+  },
+  {
+    "name": "花瓣尾流",
+    "file": "花瓣尾流.zip",
+    "description": "《花瓣尾流》项目完整工程与 Git 仓库，管理员专属下载。",
+    "size": "250.0 MB",
+    "restricted": true
+  },
+  {
+    "name": "油画奇旅",
+    "file": "油画奇旅.zip",
+    "description": "《油画奇旅》项目完整工程与 Git 仓库，管理员专属下载。",
+    "size": "86.1 MB",
+    "restricted": true
   }
 ]
